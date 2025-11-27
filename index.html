@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RescueCards Pro (Hidden Symptoms)</title>
+    <title>RescueCards Pro</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -12,18 +12,14 @@
             --bg: #f4f7f9;
             --card-bg: #ffffff;
             --text: #333;
-            /* Kategorien */
             --neuro: #8e44ad; --meta: #f39c12; --resp: #27ae60; 
             --cardio: #c0392b; --trauma: #2980b9; --other: #7f8c8d;
         }
-
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; color: var(--text); }
-        
         header { background: #2c3e50; color: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         h1 { margin: 0; font-size: 1.3rem; }
-        .search-container { margin-top: 10px; }
-        input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 1rem; box-sizing: border-box; }
-
+        input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 1rem; box-sizing: border-box; margin-top: 10px; }
+        
         /* Nav */
         nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         nav button { flex: 1; padding: 12px; border: none; background: none; font-weight: 600; color: #999; font-size: 0.8rem; }
@@ -36,7 +32,6 @@
 
         /* Cards */
         .card { background: white; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #eee; }
-        
         .card-header { padding: 12px 15px; color: white; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .neuro { background-color: var(--neuro) !important; } 
         .meta { background-color: var(--meta) !important; color: #fff !important; } 
@@ -52,23 +47,20 @@
         .badge-nef { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
         .preview-text { color: #555; font-size: 0.95rem; line-height: 1.4; }
         
-        /* Details */
         .card-details { display: none; background: #fff; }
         .card-details.open { display: block; }
-        
         .section-title { background: #f8f9fa; color: #444; padding: 10px 15px; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-top: 0; }
         .grid-row { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid #eee; }
         .grid-item { padding: 10px 15px; word-wrap: break-word; }
         .grid-full { grid-column: 1 / -1; padding: 10px 15px; border-bottom: 1px solid #eee; word-wrap: break-word; }
         .label { display: block; font-size: 0.7rem; color: #888; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
         .val { font-size: 1rem; color: #222; line-height: 1.5; white-space: pre-wrap; }
-        
-        /* Highlight Box für Leitsymptome */
         .highlight-box { background: #fff3cd; color: #856404; border-bottom: 1px solid #ffeeba; }
         .highlight-box .label { color: #856404; opacity: 0.8; }
 
-        /* Loading */
-        #status-msg { text-align: center; padding: 50px; color: #666; }
+        /* Loading & Error */
+        #status-msg { text-align: center; padding: 40px 20px; color: #666; word-wrap: break-word; }
+        .error-box { background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; text-align: left; font-size: 0.85rem; font-family: monospace; border: 1px solid #ef9a9a; display: inline-block; max-width: 100%; }
 
         /* Compare */
         .comp-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; table-layout: fixed; }
@@ -86,9 +78,7 @@
 
 <header>
     <h1>🚑 RescueCards <small>Pro</small></h1>
-    <div class="search-container">
-        <input type="text" id="search" placeholder="Suche (z.B. Atemnot, SHT)..." onkeyup="renderCards()">
-    </div>
+    <input type="text" id="search" placeholder="Suche (z.B. Atemnot, SHT)..." onkeyup="renderCards()">
 </header>
 
 <div id="status-msg">
@@ -114,7 +104,6 @@
         <p style="color:#888; font-size:0.8rem; text-transform:uppercase; font-weight:bold;">Fallbeispiel</p>
         <h3 id="q-text" style="font-size:1.1rem; min-height:60px; margin-bottom:20px;">Lade Frage...</h3>
         <button class="btn" onclick="solveQuiz()">Auflösen</button>
-        
         <div id="q-sol" style="display:none; margin-top:20px; text-align:left; background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #eee;">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
                 <span id="q-sol-icon" style="font-size:1.5rem;"></span>
@@ -133,39 +122,74 @@
 </nav>
 
 <script>
-    // --- KONFIGURATION ---
+    // --- LINK KONFIGURATION ---
     const GOOGLE_CSV_LINK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBMZadFA7O2nMGOeaUcnEZz5MuNW2WeHdmSU_m94SI9VDdUiI8AfsJXJ-KAhtxv0zRZ6pkRIM_jj1X/pub?gid=1914308692&single=true&output=csv";
-    //const PROXY_URL = "https://corsproxy.io/?" + encodeURIComponent(GOOGLE_CSV_LINK);
+    
+    // Fallback Proxy (stabiler als allorigins)
+    const PROXY_URL = "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(GOOGLE_CSV_LINK);
     
     let db = [];
 
-    // --- INITIALISIERUNG ---
-    function init() {
-        Papa.parse(PROXY_URL, {
-            download: true,
-            header: true,
-            skipEmptyLines: true,
-            complete: function(results) {
-                db = results.data;
-                db = db.filter(row => row.id && row.name);
-
-                if(db.length > 0) {
-                    document.getElementById('status-msg').style.display = 'none';
-                    nav('learn');
-                    renderCards();
-                    initCompare();
-                    nextQuiz();
-                } else {
-                    document.getElementById('status-msg').innerHTML = "❌ Fehler: Tabelle scheint leer zu sein.";
-                }
-            },
-            error: function(err) {
-                document.getElementById('status-msg').innerHTML = "❌ Ladefehler.<br>" + err;
+    // --- SMART INIT: Versucht Direkt -> Dann Proxy -> Dann Error Report ---
+    async function init() {
+        const statusEl = document.getElementById('status-msg');
+        
+        try {
+            // Versuch 1: Direkt (Funktioniert oft am Mac/PC)
+            console.log("Versuche direkten Download...");
+            await loadData(GOOGLE_CSV_LINK);
+            
+        } catch (e1) {
+            console.warn("Direkt fehlgeschlagen, versuche Proxy...", e1);
+            
+            try {
+                // Versuch 2: Über Proxy (Für iPhone/Safari oft nötig)
+                await loadData(PROXY_URL);
+                
+            } catch (e2) {
+                // GAU: Nichts geht. Fehler anzeigen.
+                console.error("Alles fehlgeschlagen.");
+                statusEl.innerHTML = `
+                    <h3>❌ Fehler beim Laden</h3>
+                    <p>Die Datenbank konnte nicht abgerufen werden.</p>
+                    <div class="error-box">
+                        <strong>Direkt:</strong> ${e1.message}<br><br>
+                        <strong>Proxy:</strong> ${e2.message}
+                    </div>
+                    <p style="font-size:0.8rem; margin-top:20px;">Tipp: Versuche es in ein paar Minuten erneut oder nutze Chrome.</p>
+                `;
             }
+        }
+    }
+
+    // Helper Funktion zum Laden und Parsen
+    function loadData(url) {
+        return new Promise((resolve, reject) => {
+            Papa.parse(url, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    db = results.data.filter(row => row.id && row.name);
+                    if(db.length > 0) {
+                        document.getElementById('status-msg').style.display = 'none';
+                        nav('learn');
+                        renderCards();
+                        initCompare();
+                        nextQuiz();
+                        resolve();
+                    } else {
+                        reject(new Error("Tabelle geladen, aber leer oder falsches Format."));
+                    }
+                },
+                error: function(err) {
+                    reject(new Error(err.message || "Netzwerkfehler"));
+                }
+            });
         });
     }
 
-    // --- RENDER LOGIC ---
+    // --- RENDER LOGIC (Rest bleibt gleich) ---
     function renderCards() {
         const term = document.getElementById('search').value.toLowerCase();
         const container = document.getElementById('card-container');
@@ -205,69 +229,32 @@
                 <div class="card-preview" onclick="toggleCard(this.previousElementSibling)">
                     ${(lagerungBadge || nefBadge) ? `<div class="preview-badges">${lagerungBadge} ${nefBadge}</div>` : ''}
                     ${item.def ? `<div class="preview-text"><em>${item.def}</em></div>` : ''}
-                    <!-- HIER WURDEN DIE LEITSYMPTOME ENTFERNT -->
                 </div>
 
                 <div class="card-details">
-                    <!-- HIER SIND DIE LEITSYMPTOME JETZT (Ganz oben, Gelb) -->
                     ${item.leitsymptome ? `
                     <div class="grid-full highlight-box">
                         <span class="label">⚠️ Leitsymptome</span>
                         <div class="val" style="font-weight:bold">${item.leitsymptome}</div>
                     </div>` : ''}
-
-                    <!-- A -->
                     ${field('Definition / Ursache', item.def, true)}
                     ${field('Erster Eindruck', item.erster_eindruck, true)}
-
-                    <!-- B -->
                     ${(item.a_atemwege || item.b_atemgeraeusche || item.b_atemfrequenz || item.b_spo2) ? '<div class="section-title">🫁 Airway & Breathing</div>' : ''}
-                    <div class="grid-row">
-                        ${field('Atemwege', item.a_atemwege)}
-                        ${field('Geräusche', item.b_atemgeraeusche)}
-                    </div>
-                    <div class="grid-row">
-                        ${field('Atemfrequenz', item.b_atemfrequenz)}
-                        ${field('SpO2', item.b_spo2)}
-                    </div>
-                    <div class="grid-row">
-                        ${field('Halsvenen', item.b_halsvenen)}
-                        ${field('Zyanose', item.b_zyanose)}
-                    </div>
-
-                    <!-- C -->
+                    <div class="grid-row">${field('Atemwege', item.a_atemwege)}${field('Geräusche', item.b_atemgeraeusche)}</div>
+                    <div class="grid-row">${field('Atemfrequenz', item.b_atemfrequenz)}${field('SpO2', item.b_spo2)}</div>
+                    <div class="grid-row">${field('Halsvenen', item.b_halsvenen)}${field('Zyanose', item.b_zyanose)}</div>
                     ${(item.c_blutdruck || item.c_herzfrequenz || item.c_haut) ? '<div class="section-title">❤️ Circulation</div>' : ''}
-                    <div class="grid-row">
-                        ${field('Blutdruck', item.c_blutdruck)}
-                        ${field('Puls', item.c_herzfrequenz)}
-                    </div>
+                    <div class="grid-row">${field('Blutdruck', item.c_blutdruck)}${field('Puls', item.c_herzfrequenz)}</div>
                     ${field('Hautstatus', item.c_haut, true)}
-
-                    <!-- D -->
                     ${(item.bewusstsein || item.d_bz || item.d_pupillen) ? '<div class="section-title">🧠 Disability</div>' : ''}
-                    <div class="grid-row">
-                        ${field('Bewusstsein', item.bewusstsein)}
-                        ${field('GCS / AVPU', item.d_avpu)}
-                    </div>
-                    <div class="grid-row">
-                        ${field('Pupillen', item.d_pupillen)}
-                        ${field('Blutzucker', item.d_bz)}
-                    </div>
+                    <div class="grid-row">${field('Bewusstsein', item.bewusstsein)}${field('GCS / AVPU', item.d_avpu)}</div>
+                    <div class="grid-row">${field('Pupillen', item.d_pupillen)}${field('Blutzucker', item.d_bz)}</div>
                     ${field('Neuro / FAST', item.d_fast, true)}
-
-                    <!-- E -->
                     <div class="section-title">🚑 Maßnahmen & Sonstiges</div>
                     ${field('Spezifische Symptome', item.e_symptome, true)}
-                    <div class="grid-row">
-                        ${field('Schmerzen', item.e_nausea)}
-                        ${field('Temperatur', item.e_temp)}
-                    </div>
-                    <div class="grid-row">
-                        ${field('Lagerung', item.lagerung)}
-                        ${field('O2 Gabe', item.o2)}
-                    </div>
+                    <div class="grid-row">${field('Schmerzen', item.e_nausea)}${field('Temperatur', item.e_temp)}</div>
+                    <div class="grid-row">${field('Lagerung', item.lagerung)}${field('O2 Gabe', item.o2)}</div>
                     ${field('Besonderes / Med.', item.sonstiges, true)}
-                    
                     ${item.einteilung1 ? `<div class="grid-full" style="background:#fffde7; margin-top:5px;"><span class="label">Differenzierung</span><div class="val">${item.einteilung1}<br>${item.einteilung2||''}</div></div>` : ''}
                 </div>
             </div>`;
@@ -279,12 +266,10 @@
         const details = header.nextElementSibling.nextElementSibling;
         const arrow = header.querySelector('.toggle-arrow');
         const isOpen = details.classList.contains('open');
-        
         details.classList.toggle('open');
         if(arrow) arrow.innerText = isOpen ? '▼' : '▲';
     }
 
-    // --- COMPARE & QUIZ ---
     function initCompare() {
         const s1 = document.getElementById('s1');
         const s2 = document.getElementById('s2');
