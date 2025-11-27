@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RescueCards Pro</title>
+    <title>RescueCards Pro v2</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -124,45 +124,26 @@
 <script>
     // --- LINK KONFIGURATION ---
     const GOOGLE_CSV_LINK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBMZadFA7O2nMGOeaUcnEZz5MuNW2WeHdmSU_m94SI9VDdUiI8AfsJXJ-KAhtxv0zRZ6pkRIM_jj1X/pub?gid=1914308692&single=true&output=csv";
-    
-    // Fallback Proxy (stabiler als allorigins)
     const PROXY_URL = "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(GOOGLE_CSV_LINK);
     
     let db = [];
 
-    // --- SMART INIT: Versucht Direkt -> Dann Proxy -> Dann Error Report ---
     async function init() {
         const statusEl = document.getElementById('status-msg');
-        
         try {
-            // Versuch 1: Direkt (Funktioniert oft am Mac/PC)
             console.log("Versuche direkten Download...");
             await loadData(GOOGLE_CSV_LINK);
-            
         } catch (e1) {
             console.warn("Direkt fehlgeschlagen, versuche Proxy...", e1);
-            
             try {
-                // Versuch 2: Über Proxy (Für iPhone/Safari oft nötig)
                 await loadData(PROXY_URL);
-                
             } catch (e2) {
-                // GAU: Nichts geht. Fehler anzeigen.
                 console.error("Alles fehlgeschlagen.");
-                statusEl.innerHTML = `
-                    <h3>❌ Fehler beim Laden</h3>
-                    <p>Die Datenbank konnte nicht abgerufen werden.</p>
-                    <div class="error-box">
-                        <strong>Direkt:</strong> ${e1.message}<br><br>
-                        <strong>Proxy:</strong> ${e2.message}
-                    </div>
-                    <p style="font-size:0.8rem; margin-top:20px;">Tipp: Versuche es in ein paar Minuten erneut oder nutze Chrome.</p>
-                `;
+                statusEl.innerHTML = `<h3>❌ Fehler beim Laden</h3><div class="error-box">Direkt: ${e1.message}<br>Proxy: ${e2.message}</div>`;
             }
         }
     }
 
-    // Helper Funktion zum Laden und Parsen
     function loadData(url) {
         return new Promise((resolve, reject) => {
             Papa.parse(url, {
@@ -179,17 +160,15 @@
                         nextQuiz();
                         resolve();
                     } else {
-                        reject(new Error("Tabelle geladen, aber leer oder falsches Format."));
+                        reject(new Error("Tabelle leer oder falsches Format."));
                     }
                 },
-                error: function(err) {
-                    reject(new Error(err.message || "Netzwerkfehler"));
-                }
+                error: function(err) { reject(new Error(err.message || "Netzwerkfehler")); }
             });
         });
     }
 
-    // --- RENDER LOGIC ---
+    // --- KARTEN RENDERING ---
     function renderCards() {
         const term = document.getElementById('search').value.toLowerCase();
         const container = document.getElementById('card-container');
@@ -232,32 +211,44 @@
                 </div>
 
                 <div class="card-details">
-                    ${item.leitsymptome ? `
-                    <div class="grid-full highlight-box">
-                        <span class="label">⚠️ Leitsymptome</span>
-                        <div class="val" style="font-weight:bold">${item.leitsymptome}</div>
-                    </div>` : ''}
+                    <!-- LEITSYMPTOME -->
+                    ${item.leitsymptome ? `<div class="grid-full highlight-box"><span class="label">⚠️ Leitsymptome</span><div class="val" style="font-weight:bold">${item.leitsymptome}</div></div>` : ''}
+                    
                     ${field('Definition / Ursache', item.def, true)}
                     ${field('Erster Eindruck', item.erster_eindruck, true)}
-                    ${(item.a_atemwege || item.b_atemgeraeusche || item.b_atemfrequenz || item.b_spo2) ? '<div class="section-title">🫁 Airway & Breathing</div>' : ''}
+
+                    <!-- B: ATMUNG -->
+                    ${(item.a_atemwege || item.b_atemgeraeusche || item.b_atemfrequenz || item.b_spo2 || item.b_atemnot) ? '<div class="section-title">🫁 Airway & Breathing</div>' : ''}
                     <div class="grid-row">${field('Atemwege', item.a_atemwege)}${field('Geräusche', item.b_atemgeraeusche)}</div>
-                    <div class="grid-row">${field('Atemfrequenz', item.b_atemfrequenz)}${field('SpO2', item.b_spo2)}</div>
+                    <div class="grid-row">${field('Atemnot', item.b_atemnot)}${field('Atemfrequenz', item.b_atemfrequenz)}</div>
                     <div class="grid-row">${field('Halsvenen', item.b_halsvenen)}${field('Zyanose', item.b_zyanose)}</div>
+                    ${field('SpO2', item.b_spo2, true)}
+
+                    <!-- C: KREISLAUF -->
                     ${(item.c_blutdruck || item.c_herzfrequenz || item.c_haut) ? '<div class="section-title">❤️ Circulation</div>' : ''}
                     <div class="grid-row">${field('Blutdruck', item.c_blutdruck)}${field('Puls', item.c_herzfrequenz)}</div>
                     ${field('Hautstatus', item.c_haut, true)}
-                    ${(item.bewusstsein || item.d_bz || item.d_pupillen) ? '<div class="section-title">🧠 Disability</div>' : ''}
+
+                    <!-- D: NEURO (Jetzt mit Lähmung & Krämpfe & ZOPS) -->
+                    ${(item.bewusstsein || item.d_bz || item.d_pupillen || item.e_laehmung || item.d_avpu) ? '<div class="section-title">🧠 Disability</div>' : ''}
                     <div class="grid-row">${field('Bewusstsein', item.bewusstsein)}${field('GCS / AVPU', item.d_avpu)}</div>
                     <div class="grid-row">${field('Pupillen', item.d_pupillen)}${field('Blutzucker', item.d_bz)}</div>
-                    ${field('Neuro / FAST', item.d_fast, true)}
-                    <div class="section-title">🚑 Maßnahmen & Sonstiges</div>
+                    <div class="grid-row">${field('Neuro / FAST', item.d_fast)}${field('Lähmung', item.e_laehmung)}</div>
+                    <div class="grid-row">${field('ZOPS', item.d_zops)}${field('Krämpfe', item.e_kraempfe)}</div>
+                    ${field('Sonstiges (Neuro)', item.d_sonstiges, true)}
+
+                    <!-- E: SYMPTOME (Jetzt mit Durst & Ausscheidung) -->
+                    <div class="section-title">🚑 Maßnahmen & Symptome</div>
                     ${field('Spezifische Symptome', item.e_symptome, true)}
-                    <div class="grid-row">${field('Schmerzen', item.e_nausea)}${field('Temperatur', item.e_temp)}</div>
-                    <div class="grid-row">${field('Lagerung', item.lagerung)}${field('O2 Gabe', item.o2)}</div>
-                    ${field('Besonderes / Med.', item.sonstiges, true)}
+                    <div class="grid-row">${field('Übelkeit/Nausea', item.e_nausea)}${field('Schmerzen', item.e_schmerz)}</div>
+                    <div class="grid-row">${field('Durst', item.e_durst)}${field('Ausscheidung', item.e_harn_stuhl)}</div>
+                    ${field('Temperatur', item.e_temp, true)}
                     
-                    <!-- HIER IST EINTEILUNG 2 MIT DRIN: -->
-                    ${item.einteilung1 ? `<div class="grid-full" style="background:#fffde7; margin-top:5px;"><span class="label">Differenzierung</span><div class="val">${item.einteilung1}<br>${item.einteilung2||''}</div></div>` : ''}
+                    <div class="grid-row">${field('Lagerung', item.lagerung)}${field('O2 Gabe', item.o2)}</div>
+                    <div class="grid-row">${field('Absaugen', item.absaugen)}${field('Besonderes', item.sonstiges)}</div>
+                    
+                    <!-- EINTEILUNG / DIFFERENZIERUNG -->
+                    ${(item.einteilung1 || item.einteilung2) ? `<div class="grid-full" style="background:#fffde7; margin-top:5px;"><span class="label">Differenzierung / Ursachen</span><div class="val">${item.einteilung1 || ''}<br>${item.einteilung2||''}</div></div>` : ''}
                 </div>
             </div>`;
             container.insertAdjacentHTML('beforeend', html);
