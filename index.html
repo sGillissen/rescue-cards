@@ -3,86 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RescueCards Pro v2</title>
+    <title>RescueCards V3 (Cockpit)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
         :root {
             --primary: #0056b3;
-            --bg: #f4f7f9;
-            --card-bg: #ffffff;
-            --text: #333;
-            --neuro: #8e44ad; --meta: #f39c12; --resp: #27ae60; 
-            --cardio: #c0392b; --trauma: #2980b9; --other: #7f8c8d;
+            --bg: #eceff1;
+            --text: #263238;
+            
+            /* Sektions-Farben */
+            --col-ab: #0288d1; /* Blau */
+            --col-c:  #d32f2f; /* Rot */
+            --col-d:  #fbc02d; /* Gelb */
+            --col-e:  #388e3c; /* Grün */
+            
+            /* Kategorien Header */
+            --cat-neuro: #8e44ad; --cat-meta: #f39c12; --cat-resp: #27ae60; 
+            --cat-cardio: #c0392b; --cat-trauma: #2980b9; --cat-other: #78909c;
         }
+
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; color: var(--text); }
-        header { background: #2c3e50; color: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        h1 { margin: 0; font-size: 1.3rem; }
-        input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 1rem; box-sizing: border-box; margin-top: 10px; }
         
+        header { background: #263238; color: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { margin: 0; font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 1rem; box-sizing: border-box; margin-top: 10px; background: #37474f; color: white; }
+        input::placeholder { color: #b0bec5; }
+
         /* Nav */
         nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-        nav button { flex: 1; padding: 12px; border: none; background: none; font-weight: 600; color: #999; font-size: 0.8rem; }
-        nav button.active { color: var(--primary); background: #f0f8ff; }
+        nav button { flex: 1; padding: 12px; border: none; background: none; font-weight: 600; color: #90a4ae; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        nav button.active { color: var(--col-ab); background: #e1f5fe; }
 
         /* Views */
-        .view-section { display: none; padding: 15px; max-width: 800px; margin: 0 auto; }
+        .view-section { display: none; padding: 10px; max-width: 800px; margin: 0 auto; }
         .view-section.active { display: block; animation: fadeIn 0.2s; }
         @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
-        /* Cards */
-        .card { background: white; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #eee; }
-        .card-header { padding: 12px 15px; color: white; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .neuro { background-color: var(--neuro) !important; } 
-        .meta { background-color: var(--meta) !important; color: #fff !important; } 
-        .resp { background-color: var(--resp) !important; } 
-        .cardio { background-color: var(--cardio) !important; } 
-        .trauma { background-color: var(--trauma) !important; } 
-        .other { background-color: var(--other) !important; }
-
-        .card-preview { padding: 15px; border-bottom: 1px solid #f0f0f0; display: flex; flex-direction: column; gap: 8px; cursor: pointer; }
-        .preview-badges { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 5px; }
-        .badge { font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; font-weight: bold; display: inline-block;}
-        .badge-pos { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
-        .badge-nef { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
-        .preview-text { color: #555; font-size: 0.95rem; line-height: 1.4; }
+        /* --- CARD DESIGN V3 --- */
+        .card { background: white; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #cfd8dc; }
         
+        /* Header */
+        .card-header { padding: 12px 15px; color: white; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .neuro { background: var(--cat-neuro); } .meta { background: var(--cat-meta); } 
+        .resp { background: var(--cat-resp); } .cardio { background: var(--cat-cardio); } 
+        .trauma { background: var(--cat-trauma); } .other { background: var(--cat-other); }
+
+        .card-preview { padding: 15px; cursor: pointer; }
+        .def-text { font-style: italic; color: #546e7a; margin-bottom: 5px; font-size: 0.95rem; }
+        
+        /* Details Container */
         .card-details { display: none; background: #fff; }
         .card-details.open { display: block; }
-        .section-title { background: #f8f9fa; color: #444; padding: 10px 15px; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-top: 0; }
-        .grid-row { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid #eee; }
-        .grid-item { padding: 10px 15px; word-wrap: break-word; }
-        .grid-full { grid-column: 1 / -1; padding: 10px 15px; border-bottom: 1px solid #eee; word-wrap: break-word; }
-        .label { display: block; font-size: 0.7rem; color: #888; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
-        .val { font-size: 1rem; color: #222; line-height: 1.5; white-space: pre-wrap; }
-        .highlight-box { background: #fff3cd; color: #856404; border-bottom: 1px solid #ffeeba; }
-        .highlight-box .label { color: #856404; opacity: 0.8; }
+
+        /* ⚠️ Leitsymptome Box */
+        .symptom-box { background: #fff8e1; color: #f57f17; padding: 12px 15px; border-bottom: 1px solid #ffe082; display: flex; gap: 10px; align-items: start; }
+        .symptom-box .icon { font-size: 1.2rem; }
+        .symptom-box .text { font-weight: 700; font-size: 0.95rem; line-height: 1.4; }
+
+        /* 📟 Vital-Cockpit (Das Herzstück) */
+        .cockpit { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 10px 15px; background: #f5f5f5; border-bottom: 1px solid #e0e0e0; }
+        .vital-tile { background: white; padding: 8px; border-radius: 6px; border: 1px solid #e0e0e0; text-align: center; display: flex; flex-direction: column; justify-content: center; }
+        .vital-label { font-size: 0.7rem; color: #78909c; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+        .vital-val { font-weight: 800; font-size: 1rem; color: #37474f; }
+        
+        /* Dynamische Farben für Pfeile */
+        .trend-up { color: #d32f2f !important; } /* Rot bei Hoch */
+        .trend-down { color: #1976d2 !important; } /* Blau bei Niedrig */
+
+        /* ABCDE Sections */
+        .abc-section { padding: 10px 15px; border-bottom: 1px solid #eee; position: relative; }
+        .abc-section.sec-ab { border-left: 5px solid var(--col-ab); }
+        .abc-section.sec-c { border-left: 5px solid var(--col-c); }
+        .abc-section.sec-d { border-left: 5px solid var(--col-d); }
+        .abc-section.sec-e { border-left: 5px solid var(--col-e); }
+
+        .sec-title { font-size: 0.75rem; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        
+        /* Grid Layout für Inhalte */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .info-full { grid-column: 1 / -1; }
+        
+        .info-item { display: flex; flex-direction: column; }
+        .info-label { font-size: 0.7rem; color: #90a4ae; font-weight: 600; margin-bottom: 2px; display: flex; align-items: center; gap: 4px; }
+        .info-val { font-size: 0.95rem; color: #263238; font-weight: 500; line-height: 1.3; }
+
+        /* 🚑 Action Bar (Footer) */
+        .action-bar { background: #263238; color: white; padding: 12px 15px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .action-item { background: rgba(255,255,255,0.1); padding: 8px; border-radius: 4px; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+        .action-icon { font-size: 1.2rem; }
+        .nef-badge { background: #c62828; color: white; font-weight: bold; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: auto; }
+
+        /* Differenzierung */
+        .diff-box { background: #fff3e0; padding: 10px 15px; border-top: 1px solid #ffe0b2; font-size: 0.9rem; color: #e65100; }
 
         /* Loading & Error */
-        #status-msg { text-align: center; padding: 40px 20px; color: #666; word-wrap: break-word; }
-        .error-box { background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; text-align: left; font-size: 0.85rem; font-family: monospace; border: 1px solid #ef9a9a; display: inline-block; max-width: 100%; }
+        #status-msg { text-align: center; padding: 40px 20px; color: #666; }
+        .error-box { background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; text-align: left; font-size: 0.85rem; border: 1px solid #ef9a9a; display: inline-block; }
 
-        /* Compare */
-        .comp-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; table-layout: fixed; }
-        .comp-table th { background: #f0f0f0; padding: 8px; text-align: left; font-size: 0.75rem; color: #666; }
-        .comp-table td { border: 1px solid #eee; padding: 10px; vertical-align: top; width: 50%; white-space: pre-wrap; }
-        .diff { background: #fff9c4; }
-
-        /* Quiz */
-        .quiz-box { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .btn { background: var(--primary); color: white; padding: 12px 30px; border-radius: 25px; border: none; font-size: 1rem; margin-top: 15px; cursor: pointer; width: 100%; font-weight: bold; }
-        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        /* Compare & Quiz */
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; table-layout: fixed; background: white; border-radius: 8px; overflow: hidden; }
+        .comp-table th { background: #cfd8dc; padding: 10px; text-align: left; font-size: 0.75rem; color: #455a64; }
+        .comp-table td { border-bottom: 1px solid #eee; padding: 12px; vertical-align: top; width: 50%; white-space: pre-wrap; border-right: 1px solid #eee; }
+        .diff { background: #fffde7; }
+        
+        .quiz-box { background: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .btn { background: var(--col-ab); color: white; padding: 14px 30px; border-radius: 30px; border: none; font-size: 1rem; margin-top: 15px; cursor: pointer; width: 100%; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>🚑 RescueCards <small>Pro</small></h1>
-    <input type="text" id="search" placeholder="Suche (z.B. Atemnot, SHT)..." onkeyup="renderCards()">
+    <h1>🚑 RescueCards <small>v3</small></h1>
+    <input type="text" id="search" placeholder="Suche (z.B. Dyspnoe, Schock)..." onkeyup="renderCards()">
 </header>
 
 <div id="status-msg">
-    <h2>Lade Datenbank...</h2>
+    <h3>Lade Daten...</h3>
     <p>⏳</p>
 </div>
 
@@ -92,25 +129,25 @@
 </div>
 
 <div id="compare" class="view-section">
-    <div style="display:flex; gap:10px; margin-bottom:10px;">
-        <select id="s1" onchange="renderCompare()" style="width:100%; padding:8px;"></select>
-        <select id="s2" onchange="renderCompare()" style="width:100%; padding:8px;"></select>
+    <div style="display:flex; gap:10px; margin-bottom:15px;">
+        <select id="s1" onchange="renderCompare()" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;"></select>
+        <select id="s2" onchange="renderCompare()" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;"></select>
     </div>
     <div id="compare-result"></div>
 </div>
 
 <div id="quiz" class="view-section">
     <div class="quiz-box">
-        <p style="color:#888; font-size:0.8rem; text-transform:uppercase; font-weight:bold;">Fallbeispiel</p>
-        <h3 id="q-text" style="font-size:1.1rem; min-height:60px; margin-bottom:20px;">Lade Frage...</h3>
+        <p style="color:#90a4ae; font-size:0.8rem; text-transform:uppercase; font-weight:bold; letter-spacing:1px;">Fallbeispiel</p>
+        <h3 id="q-text" style="font-size:1.2rem; min-height:80px; margin-bottom:20px; line-height:1.5;">Lade Frage...</h3>
         <button class="btn" onclick="solveQuiz()">Auflösen</button>
-        <div id="q-sol" style="display:none; margin-top:20px; text-align:left; background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #eee;">
+        <div id="q-sol" style="display:none; margin-top:25px; text-align:left; background:#f5f5f5; padding:20px; border-radius:8px; border:1px solid #eee;">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                <span id="q-sol-icon" style="font-size:1.5rem;"></span>
-                <h2 id="q-sol-title" style="margin:0; font-size:1.2rem;"></h2>
+                <span id="q-sol-icon" style="font-size:2rem;"></span>
+                <h2 id="q-sol-title" style="margin:0; font-size:1.4rem; color:#37474f;"></h2>
             </div>
-            <div style="font-size:0.95rem; color:#444; white-space: pre-wrap;" id="q-sol-desc"></div>
-            <button class="btn btn-outline" onclick="nextQuiz()">Nächste Frage</button>
+            <div style="font-size:1rem; color:#546e7a; white-space: pre-wrap; line-height:1.6;" id="q-sol-desc"></div>
+            <button class="btn" style="background:transparent; border:2px solid var(--col-ab); color:var(--col-ab); margin-top:20px;" onclick="nextQuiz()">Nächste Frage</button>
         </div>
     </div>
 </div>
@@ -128,18 +165,15 @@
     
     let db = [];
 
+    // --- INIT ---
     async function init() {
         const statusEl = document.getElementById('status-msg');
         try {
-            console.log("Versuche direkten Download...");
             await loadData(GOOGLE_CSV_LINK);
         } catch (e1) {
-            console.warn("Direkt fehlgeschlagen, versuche Proxy...", e1);
-            try {
-                await loadData(PROXY_URL);
-            } catch (e2) {
-                console.error("Alles fehlgeschlagen.");
-                statusEl.innerHTML = `<h3>❌ Fehler beim Laden</h3><div class="error-box">Direkt: ${e1.message}<br>Proxy: ${e2.message}</div>`;
+            try { await loadData(PROXY_URL); } 
+            catch (e2) {
+                statusEl.innerHTML = `<h3>❌ Ladefehler</h3><div class="error-box">Bitte Internet prüfen oder Seite neu laden.<br><small>${e2.message}</small></div>`;
             }
         }
     }
@@ -147,28 +181,30 @@
     function loadData(url) {
         return new Promise((resolve, reject) => {
             Papa.parse(url, {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
+                download: true, header: true, skipEmptyLines: true,
                 complete: function(results) {
                     db = results.data.filter(row => row.id && row.name);
                     if(db.length > 0) {
                         document.getElementById('status-msg').style.display = 'none';
-                        nav('learn');
-                        renderCards();
-                        initCompare();
-                        nextQuiz();
-                        resolve();
-                    } else {
-                        reject(new Error("Tabelle leer oder falsches Format."));
-                    }
+                        nav('learn'); renderCards(); initCompare(); nextQuiz(); resolve();
+                    } else { reject(new Error("Leere Tabelle")); }
                 },
-                error: function(err) { reject(new Error(err.message || "Netzwerkfehler")); }
+                error: function(err) { reject(new Error(err.message)); }
             });
         });
     }
 
-    // --- KARTEN RENDERING ---
+    // --- HELPER: Pfeil-Erkennung ---
+    function formatValue(val) {
+        if (!val) return "";
+        // Färbe Pfeile ein: Hoch=Rot, Niedrig=Blau
+        let style = "";
+        if (val.includes("⬆️") || val.toLowerCase().includes("hoch")) style = "trend-up";
+        if (val.includes("⬇️") || val.toLowerCase().includes("niedrig")) style = "trend-down";
+        return `<span class="${style}">${val}</span>`;
+    }
+
+    // --- RENDER LOGIC ---
     function renderCards() {
         const term = document.getElementById('search').value.toLowerCase();
         const container = document.getElementById('card-container');
@@ -180,75 +216,126 @@
         });
 
         if(filtered.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">Keine Treffer.</div>';
+            container.innerHTML = '<div style="text-align:center; padding:40px; color:#90a4ae;">Keine Treffer gefunden.</div>';
             return;
         }
 
         filtered.forEach(item => {
-            const field = (label, value, fullWidth) => {
-                if(!value || value.trim() === "") return "";
-                const css = fullWidth ? 'grid-full' : 'grid-item';
-                return `<div class="${css}"><span class="label">${label}</span><div class="val">${value}</div></div>`;
+            // Helper für Grid Items
+            const itemHTML = (icon, label, val, full=false) => {
+                if(!val || val.trim()==="") return "";
+                const gridClass = full ? 'info-full' : 'info-item';
+                return `<div class="${gridClass}">
+                    <div class="info-label">${icon} ${label}</div>
+                    <div class="info-val">${formatValue(val)}</div>
+                </div>`;
             };
 
-            const nefBadge = item.nef ? `<span class="badge badge-nef">📞 NEF</span>` : '';
-            const lagerungBadge = item.lagerung ? `<span class="badge badge-pos">🛏️ ${item.lagerung}</span>` : '';
+            const nefBadge = item.nef ? `<span class="nef-badge">NEF</span>` : '';
             const icon = item.icon ? item.icon : '🚑';
 
+            // HTML Konstruktion
             const html = `
             <div class="card">
                 <div class="card-header ${item.category}" onclick="toggleCard(this)">
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <span style="font-size:1.5rem;">${icon}</span>
-                        <span style="font-weight:bold; font-size:1.1rem;">${item.name}</span>
+                        <span style="font-size:1.6rem;">${icon}</span>
+                        <span style="font-weight:700; font-size:1.1rem;">${item.name}</span>
                     </div>
-                    <span class="toggle-arrow" style="opacity:0.7">▼</span>
+                    <span class="toggle-arrow" style="opacity:0.8">▼</span>
                 </div>
                 
+                <!-- PREVIEW -->
                 <div class="card-preview" onclick="toggleCard(this.previousElementSibling)">
-                    ${(lagerungBadge || nefBadge) ? `<div class="preview-badges">${lagerungBadge} ${nefBadge}</div>` : ''}
-                    ${item.def ? `<div class="preview-text"><em>${item.def}</em></div>` : ''}
+                    ${item.def ? `<div class="def-text">${item.def}</div>` : ''}
+                    <div style="display:flex; gap:10px; margin-top:5px; color:#78909c; font-size:0.85rem;">
+                         <span>${item.lagerung ? '🛏️ ' + item.lagerung : ''}</span>
+                         <span>${item.nef ? '📞 NEF' : ''}</span>
+                    </div>
                 </div>
 
                 <div class="card-details">
-                    <!-- LEITSYMPTOME -->
-                    ${item.leitsymptome ? `<div class="grid-full highlight-box"><span class="label">⚠️ Leitsymptome</span><div class="val" style="font-weight:bold">${item.leitsymptome}</div></div>` : ''}
-                    
-                    ${field('Definition / Ursache', item.def, true)}
-                    ${field('Erster Eindruck', item.erster_eindruck, true)}
+                    <!-- LEITSYMPTOME (GELB) -->
+                    ${item.leitsymptome ? `
+                    <div class="symptom-box">
+                        <span class="icon">⚠️</span>
+                        <span class="text">${item.leitsymptome}</span>
+                    </div>` : ''}
 
-                    <!-- B: ATMUNG -->
-                    ${(item.a_atemwege || item.b_atemgeraeusche || item.b_atemfrequenz || item.b_spo2 || item.b_atemnot) ? '<div class="section-title">🫁 Airway & Breathing</div>' : ''}
-                    <div class="grid-row">${field('Atemwege', item.a_atemwege)}${field('Geräusche', item.b_atemgeraeusche)}</div>
-                    <div class="grid-row">${field('Atemnot', item.b_atemnot)}${field('Atemfrequenz', item.b_atemfrequenz)}</div>
-                    <div class="grid-row">${field('Halsvenen', item.b_halsvenen)}${field('Zyanose', item.b_zyanose)}</div>
-                    ${field('SpO2', item.b_spo2, true)}
+                    <!-- COCKPIT: VITALWERTE (Wenn vorhanden) -->
+                    ${(item.c_herzfrequenz || item.c_blutdruck || item.b_atemfrequenz || item.b_spo2) ? `
+                    <div class="cockpit">
+                        ${item.c_herzfrequenz ? `<div class="vital-tile"><div class="vital-label">❤️ Puls</div><div class="vital-val">${formatValue(item.c_herzfrequenz)}</div></div>` : ''}
+                        ${item.c_blutdruck ? `<div class="vital-tile"><div class="vital-label">🩸 RR</div><div class="vital-val">${formatValue(item.c_blutdruck)}</div></div>` : ''}
+                        ${item.b_spo2 ? `<div class="vital-tile"><div class="vital-label">☁️ SpO2</div><div class="vital-val">${formatValue(item.b_spo2)}</div></div>` : ''}
+                        ${item.b_atemfrequenz ? `<div class="vital-tile"><div class="vital-label">💨 AF</div><div class="vital-val">${formatValue(item.b_atemfrequenz)}</div></div>` : ''}
+                    </div>` : ''}
 
-                    <!-- C: KREISLAUF -->
-                    ${(item.c_blutdruck || item.c_herzfrequenz || item.c_haut) ? '<div class="section-title">❤️ Circulation</div>' : ''}
-                    <div class="grid-row">${field('Blutdruck', item.c_blutdruck)}${field('Puls', item.c_herzfrequenz)}</div>
-                    ${field('Hautstatus', item.c_haut, true)}
+                    <!-- A & B: ATMUNG (BLAU) -->
+                    <div class="abc-section sec-ab">
+                        <div class="sec-title" style="color:var(--col-ab)">🫁 Airway & Breathing</div>
+                        <div class="info-grid">
+                            ${itemHTML('🗣️', 'Atemwege', item.a_atemwege, true)}
+                            ${itemHTML('🔊', 'Geräusche', item.b_atemgeraeusche)}
+                            ${itemHTML('😮', 'Atemnot', item.b_atemnot)}
+                            ${itemHTML('🔵', 'Zyanose', item.b_zyanose)}
+                            ${itemHTML('👔', 'Halsvenen', item.b_halsvenen)}
+                        </div>
+                    </div>
 
-                    <!-- D: NEURO (Jetzt mit Lähmung & Krämpfe & ZOPS) -->
-                    ${(item.bewusstsein || item.d_bz || item.d_pupillen || item.e_laehmung || item.d_avpu) ? '<div class="section-title">🧠 Disability</div>' : ''}
-                    <div class="grid-row">${field('Bewusstsein', item.bewusstsein)}${field('GCS / AVPU', item.d_avpu)}</div>
-                    <div class="grid-row">${field('Pupillen', item.d_pupillen)}${field('Blutzucker', item.d_bz)}</div>
-                    <div class="grid-row">${field('Neuro / FAST', item.d_fast)}${field('Lähmung', item.e_laehmung)}</div>
-                    <div class="grid-row">${field('ZOPS', item.d_zops)}${field('Krämpfe', item.e_kraempfe)}</div>
-                    ${field('Sonstiges (Neuro)', item.d_sonstiges, true)}
+                    <!-- C: KREISLAUF (ROT) -->
+                    <div class="abc-section sec-c">
+                        <div class="sec-title" style="color:var(--col-c)">❤️ Circulation</div>
+                        <div class="info-grid">
+                            ${itemHTML('🎨', 'Hautstatus', item.c_haut, true)}
+                            ${itemHTML('👁️', 'Erster Eindruck', item.erster_eindruck, true)}
+                        </div>
+                    </div>
 
-                    <!-- E: SYMPTOME (Jetzt mit Durst & Ausscheidung) -->
-                    <div class="section-title">🚑 Maßnahmen & Symptome</div>
-                    ${field('Spezifische Symptome', item.e_symptome, true)}
-                    <div class="grid-row">${field('Übelkeit/Nausea', item.e_nausea)}${field('Schmerzen', item.e_schmerz)}</div>
-                    <div class="grid-row">${field('Durst', item.e_durst)}${field('Ausscheidung', item.e_harn_stuhl)}</div>
-                    ${field('Temperatur', item.e_temp, true)}
-                    
-                    <div class="grid-row">${field('Lagerung', item.lagerung)}${field('O2 Gabe', item.o2)}</div>
-                    <div class="grid-row">${field('Absaugen', item.absaugen)}${field('Besonderes', item.sonstiges)}</div>
-                    
-                    <!-- EINTEILUNG / DIFFERENZIERUNG -->
-                    ${(item.einteilung1 || item.einteilung2) ? `<div class="grid-full" style="background:#fffde7; margin-top:5px;"><span class="label">Differenzierung / Ursachen</span><div class="val">${item.einteilung1 || ''}<br>${item.einteilung2||''}</div></div>` : ''}
+                    <!-- D: NEURO (GELB) -->
+                    <div class="abc-section sec-d">
+                        <div class="sec-title" style="color:#f9a825">🧠 Disability</div>
+                        <div class="info-grid">
+                            ${itemHTML('😴', 'Bewusstsein', item.bewusstsein, true)}
+                            ${itemHTML('📊', 'GCS / AVPU', item.d_avpu)}
+                            ${itemHTML('🍬', 'Blutzucker', item.d_bz)}
+                            ${itemHTML('👀', 'Pupillen', item.d_pupillen)}
+                            ${itemHTML('⚡', 'Krämpfe', item.e_kraempfe)}
+                            ${itemHTML('💪', 'Lähmung', item.e_laehmung)}
+                            ${itemHTML('🤖', 'FAST / Neuro', item.d_fast, true)}
+                        </div>
+                    </div>
+
+                    <!-- E: EXPOSURE (GRÜN) -->
+                    <div class="abc-section sec-e">
+                        <div class="sec-title" style="color:var(--col-e)">🔍 Exposure & Symptome</div>
+                        <div class="info-grid">
+                            ${itemHTML('🤒', 'Spezifisch', item.e_symptome, true)}
+                            ${itemHTML('😖', 'Schmerzen', item.e_schmerz)}
+                            ${itemHTML('🤢', 'Übelkeit', item.e_nausea)}
+                            ${itemHTML('🌡️', 'Temperatur', item.e_temp)}
+                            ${itemHTML('🚰', 'Durst', item.e_durst)}
+                            ${itemHTML('🚽', 'Ausscheidung', item.e_harn_stuhl)}
+                        </div>
+                    </div>
+
+                    <!-- DIFFERENZIERUNG -->
+                    ${(item.einteilung1 || item.einteilung2) ? `
+                    <div class="diff-box">
+                        <strong>📌 Differenzierung / Ursachen:</strong><br>
+                        ${item.einteilung1 || ''}<br>
+                        ${item.einteilung2 || ''}
+                    </div>` : ''}
+
+                    <!-- ACTION BAR (FOOTER) -->
+                    <div class="action-bar">
+                        <div class="action-item"><span class="action-icon">🛏️</span> ${item.lagerung || '-'}</div>
+                        <div class="action-item"><span class="action-icon">💨</span> ${item.o2 || '-'}</div>
+                        ${item.nef ? `<div class="action-item" style="grid-column: 1/-1; background:#c62828;"><span class="action-icon">📞</span> Notarzt indikator!</div>` : ''}
+                        ${item.absaugen ? `<div class="action-item"><span class="action-icon">🪠</span> Absaugen</div>` : ''}
+                         ${item.sonstiges ? `<div class="action-item" style="grid-column: 1/-1; font-style:italic">ℹ️ ${item.sonstiges}</div>` : ''}
+                    </div>
+
                 </div>
             </div>`;
             container.insertAdjacentHTML('beforeend', html);
@@ -263,6 +350,7 @@
         if(arrow) arrow.innerText = isOpen ? '▼' : '▲';
     }
 
+    // --- COMPARE & QUIZ (Logik bleibt gleich) ---
     function initCompare() {
         const s1 = document.getElementById('s1');
         const s2 = document.getElementById('s2');
@@ -292,7 +380,7 @@
             const v1 = d1[row.k] || '-';
             const v2 = d2[row.k] || '-';
             const highlight = (v1 !== v2 && v1 !== '-' && v2 !== '-') ? 'diff' : '';
-            html += `<tr><th colspan="2">${row.l}</th></tr><tr class="${highlight}"><td>${v1}</td><td>${v2}</td></tr>`;
+            html += `<tr><th colspan="2">${row.l}</th></tr><tr class="${highlight}"><td>${formatValue(v1)}</td><td>${formatValue(v2)}</td></tr>`;
         });
         html += `</table>`;
         document.getElementById('compare-result').innerHTML = html;
