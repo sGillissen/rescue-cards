@@ -189,7 +189,7 @@
         });
     }
 
-    // --- RENDER LOGIC (Rest bleibt gleich) ---
+    // --- RENDER LOGIC ---
     function renderCards() {
         const term = document.getElementById('search').value.toLowerCase();
         const container = document.getElementById('card-container');
@@ -255,6 +255,8 @@
                     <div class="grid-row">${field('Schmerzen', item.e_nausea)}${field('Temperatur', item.e_temp)}</div>
                     <div class="grid-row">${field('Lagerung', item.lagerung)}${field('O2 Gabe', item.o2)}</div>
                     ${field('Besonderes / Med.', item.sonstiges, true)}
+                    
+                    <!-- HIER IST EINTEILUNG 2 MIT DRIN: -->
                     ${item.einteilung1 ? `<div class="grid-full" style="background:#fffde7; margin-top:5px;"><span class="label">Differenzierung</span><div class="val">${item.einteilung1}<br>${item.einteilung2||''}</div></div>` : ''}
                 </div>
             </div>`;
