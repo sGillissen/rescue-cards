@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RescueCards V5.1 (Fixed)</title>
+    <title>RescueCards V5.2 (Smart Images)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -19,14 +19,12 @@
         .controls { margin-top: 10px; }
         input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 1rem; box-sizing: border-box; background: #37474f; color: white; margin-bottom: 10px; }
         
-        /* Filter Chips */
         .filter-container { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 5px; }
         .filter-chip { background: #455a64; color: #cfd8dc; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; border: 1px solid #546e7a; user-select: none; display: flex; align-items: center; gap: 5px; }
         .filter-chip.active { background: #29b6f6; color: #000; border-color: #29b6f6; }
         .filter-reset { background: #c62828; color: white; border-color: #c62828; display: none; }
         .filter-reset.visible { display: inline-flex; }
 
-        /* Nav */
         nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         nav button { flex: 1; padding: 12px; border: none; background: none; font-weight: 600; color: #90a4ae; font-size: 0.75rem; text-transform: uppercase; }
         nav button.active { color: var(--col-ab); background: #e1f5fe; }
@@ -35,15 +33,22 @@
         .view-section.active { display: block; animation: fadeIn 0.2s; }
         @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
-        /* Card Styles */
         .card { background: white; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #cfd8dc; }
         .card-header { padding: 12px 15px; color: white; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .neuro { background: var(--cat-neuro); } .meta { background: var(--cat-meta); } 
         .resp { background: var(--cat-resp); } .cardio { background: var(--cat-cardio); } 
         .trauma { background: var(--cat-trauma); } .other { background: var(--cat-other); }
 
-        /* BILD STYLE */
-        .card-img { width: 100%; height: 180px; object-fit: cover; display: block; cursor: pointer; border-bottom: 1px solid #eee; }
+        /* --- BILD STYLE ANGEPASST (HÖHER) --- */
+        .card-img { 
+            width: 100%; 
+            height: 300px;  /* Hier wurde die Höhe vergrößert */
+            object-fit: cover; /* Bild füllt den Bereich aus (wird ggf. beschnitten) */
+            /* Alternativ: object-fit: contain; (Bild wird ganz gezeigt, evtl. weiße Ränder) */
+            display: block; 
+            cursor: pointer; 
+            border-bottom: 1px solid #eee; 
+        }
 
         .card-preview { padding: 15px; cursor: pointer; }
         .def-text { font-style: italic; color: #546e7a; margin-bottom: 5px; font-size: 0.95rem; }
@@ -84,7 +89,7 @@
 <body>
 
 <header>
-    <h1>🚑 RescueCards <small>v5.1</small></h1>
+    <h1>🚑 RescueCards <small>v5.2</small></h1>
     <div class="controls">
         <input type="text" id="search" placeholder="Suche..." onkeyup="renderCards()">
         <div class="filter-container" id="filter-container">
@@ -122,7 +127,12 @@
 </nav>
 
 <script>
+    // --- KONFIGURATION ---
     const GOOGLE_CSV_LINK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBMZadFA7O2nMGOeaUcnEZz5MuNW2WeHdmSU_m94SI9VDdUiI8AfsJXJ-KAhtxv0zRZ6pkRIM_jj1X/pub?gid=1914308692&single=true&output=csv";
+    
+    // HIER: Deine GitHub Basis-Adresse
+    const IMAGE_BASE_URL = "https://raw.githubusercontent.com/sGillissen/rescue-cards/main/bilder/";
+
     const PROXY_URL = "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(GOOGLE_CSV_LINK);
     
     let db = [];
@@ -225,9 +235,15 @@
             const nefBadge = item.nef ? `<span class="nef-badge">NEF</span>` : '';
             const lagerungBadge = item.lagerung ? `<span class="badge badge-pos">🛏️ ${item.lagerung}</span>` : '';
             
-            // Logik: Hat Item ein Bild? Falls ja, anzeigen.
-            // WICHTIG: Funktioniert nur mit Direktlinks!
-            const imageHTML = item.picture ? `<img src="${item.picture}" class="card-img" onclick="openCard(this)" onerror="this.style.display='none'" loading="lazy">` : '';
+            // --- SMART BILD LOGIK ---
+            let imgSrc = item.picture;
+            // Falls Link nicht leer ist UND NICHT mit http anfängt, hängen wir den Basis-Link davor
+            if(imgSrc && !imgSrc.toLowerCase().startsWith('http')) {
+                imgSrc = IMAGE_BASE_URL + imgSrc;
+            }
+
+            const imageHTML = imgSrc ? `<img src="${imgSrc}" class="card-img" onclick="openCard(this)" onerror="this.style.display='none'" loading="lazy">` : '';
+            // ------------------------
 
             const html = `
             <div class="card">
@@ -270,13 +286,10 @@
         });
     }
 
-    // Verbesserte Toggle Funktion (funktioniert von Header, Bild oder Preview aus)
     function openCard(element) {
-        // Suche das Eltern-Element "card"
         const card = element.closest('.card');
         const details = card.querySelector('.card-details');
         const arrow = card.querySelector('.toggle-arrow');
-        
         details.classList.toggle('open');
         if(arrow) arrow.innerText = details.classList.contains('open') ? '▲' : '▼';
     }
