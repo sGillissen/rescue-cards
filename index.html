@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RescueCards V4 (Diagnose)</title>
+    <title>RescueCards V5 (Images)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -26,12 +26,11 @@
         header { background: #263238; color: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         h1 { margin: 0; font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
         
-        /* Suche & Filter Container */
         .controls { margin-top: 10px; }
         input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 1rem; box-sizing: border-box; background: #37474f; color: white; margin-bottom: 10px; }
         input::placeholder { color: #b0bec5; }
 
-        /* FILTER CHIPS DESIGN */
+        /* FILTER CHIPS */
         .filter-container { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 5px; }
         .filter-chip { 
             background: #455a64; color: #cfd8dc; 
@@ -58,12 +57,22 @@
         .view-section.active { display: block; animation: fadeIn 0.2s; }
         @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
-        /* Cards V3 Styles */
+        /* Cards V5 Styles */
         .card { background: white; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #cfd8dc; }
         .card-header { padding: 12px 15px; color: white; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .neuro { background: var(--cat-neuro); } .meta { background: var(--cat-meta); } 
         .resp { background: var(--cat-resp); } .cardio { background: var(--cat-cardio); } 
         .trauma { background: var(--cat-trauma); } .other { background: var(--cat-other); }
+
+        /* NEU: BILD STYLE */
+        .card-img {
+            width: 100%;
+            height: 160px; /* Feste Höhe für Einheitlichkeit */
+            object-fit: cover; /* Bild wird zugeschnitten, nicht verzerrt */
+            display: block;
+            cursor: pointer;
+            background: #eee;
+        }
 
         .card-preview { padding: 15px; cursor: pointer; }
         .def-text { font-style: italic; color: #546e7a; margin-bottom: 5px; font-size: 0.95rem; }
@@ -108,16 +117,12 @@
 <body>
 
 <header>
-    <h1>🚑 RescueCards <small>v4</small></h1>
+    <h1>🚑 RescueCards <small>v5</small></h1>
     <div class="controls">
         <input type="text" id="search" placeholder="Suche Text (z.B. Apoplex)..." onkeyup="renderCards()">
         
-        <!-- NEU: FILTER BUTTONS -->
         <div class="filter-container" id="filter-container">
-            <!-- Reset Button -->
             <div class="filter-chip filter-reset" onclick="resetFilters()">✖ Reset</div>
-            
-            <!-- Dynamische Filter werden hier per JS eingefügt -->
         </div>
     </div>
 </header>
@@ -152,14 +157,14 @@
 </nav>
 
 <script>
+    // --- LINK ---
     const GOOGLE_CSV_LINK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBMZadFA7O2nMGOeaUcnEZz5MuNW2WeHdmSU_m94SI9VDdUiI8AfsJXJ-KAhtxv0zRZ6pkRIM_jj1X/pub?gid=1914308692&single=true&output=csv";
     const PROXY_URL = "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(GOOGLE_CSV_LINK);
     
     let db = [];
     let activeFilters = new Set();
 
-    // --- 1. FILTER DEFINITIONEN (Die "Intelligenz") ---
-    // Hier definieren wir, was "RR Hoch" eigentlich im CSV bedeutet
+    // --- FILTER ---
     const filterDefs = [
         { id: 'rr_high', label: '🩸 RR ⬆️', check: (i) => isHigh(i.c_blutdruck) },
         { id: 'rr_low',  label: '🩸 RR ⬇️', check: (i) => isLow(i.c_blutdruck) },
@@ -171,22 +176,9 @@
         { id: 'pain',    label: '⚡ Schmerz', check: (i) => hasText(i.e_schmerz, 'ja') || hasText(i.e_nausea, 'schmerz') }
     ];
 
-    // Helper zur Interpretation der Icons/Texte
-    function isHigh(val) { 
-        if(!val) return false; 
-        val = val.toLowerCase();
-        return val.includes('⬆️') || val.includes('hoch') || val.includes('>') || val.includes('+');
-    }
-    function isLow(val) { 
-        if(!val) return false; 
-        val = val.toLowerCase();
-        return val.includes('⬇️') || val.includes('niedrig') || val.includes('<') || val.includes('-');
-    }
-    function hasText(val, ...terms) {
-        if(!val) return false;
-        val = val.toLowerCase();
-        return terms.some(t => val.includes(t));
-    }
+    function isHigh(val) { if(!val) return false; val = val.toLowerCase(); return val.includes('⬆️') || val.includes('hoch') || val.includes('>') || val.includes('+'); }
+    function isLow(val) { if(!val) return false; val = val.toLowerCase(); return val.includes('⬇️') || val.includes('niedrig') || val.includes('<') || val.includes('-'); }
+    function hasText(val, ...terms) { if(!val) return false; val = val.toLowerCase(); return terms.some(t => val.includes(t)); }
 
     // --- INIT ---
     async function init() {
@@ -207,19 +199,11 @@
     }
 
     function toggleFilter(id, btnElement) {
-        if(activeFilters.has(id)) {
-            activeFilters.delete(id);
-            btnElement.classList.remove('active');
-        } else {
-            activeFilters.add(id);
-            btnElement.classList.add('active');
-        }
-        
-        // Reset Button anzeigen wenn Filter aktiv
+        if(activeFilters.has(id)) { activeFilters.delete(id); btnElement.classList.remove('active'); } 
+        else { activeFilters.add(id); btnElement.classList.add('active'); }
         document.querySelector('.filter-reset').classList.toggle('visible', activeFilters.size > 0);
-        renderCards(); // Neu filtern
+        renderCards();
     }
-
     function resetFilters() {
         activeFilters.clear();
         document.querySelectorAll('.filter-chip').forEach(el => el.classList.remove('active'));
@@ -242,7 +226,6 @@
         });
     }
 
-    // --- FORMAT HELPER ---
     function formatValue(val) {
         if (!val) return "";
         let style = "";
@@ -251,22 +234,18 @@
         return `<span class="${style}">${val}</span>`;
     }
 
-    // --- MAIN RENDER LOGIC ---
+    // --- RENDER CARDS ---
     function renderCards() {
         const searchTerm = document.getElementById('search').value.toLowerCase();
         const container = document.getElementById('card-container');
         container.innerHTML = '';
 
-        // FILTER LOGIK: Text-Suche UND alle aktiven Filter Chips müssen passen (AND)
         const filtered = db.filter(item => {
-            // 1. Text Suche
             const textMatch = (item.name + item.def + item.leitsymptome + item.e_symptome).toLowerCase().includes(searchTerm);
             if(!textMatch) return false;
-
-            // 2. Chip Filter (Alle aktiven müssen wahr sein)
             for (let filterId of activeFilters) {
                 const def = filterDefs.find(d => d.id === filterId);
-                if (def && !def.check(item)) return false; // Wenn Check fehlschlägt, rauswerfen
+                if (def && !def.check(item)) return false;
             }
             return true;
         });
@@ -282,6 +261,12 @@
                 return `<div class="${full?'info-full':'info-item'}"><div class="info-label">${icon} ${label}</div><div class="info-val">${formatValue(val)}</div></div>`;
             };
 
+            const nefBadge = item.nef ? `<span class="nef-badge">NEF</span>` : '';
+            const lagerungBadge = item.lagerung ? `<span class="badge badge-pos">🛏️ ${item.lagerung}</span>` : '';
+            
+            // BILD LOGIK: Prüfen ob Bild-Link da ist
+            const imageHTML = item.picture ? `<img src="${item.picture}" class="card-img" onclick="toggleCard(this.previousElementSibling)" onerror="this.style.display='none'" loading="lazy">` : '';
+
             const html = `
             <div class="card">
                 <div class="card-header ${item.category}" onclick="toggleCard(this)">
@@ -292,7 +277,10 @@
                     <span class="toggle-arrow" style="opacity:0.8">▼</span>
                 </div>
                 
-                <div class="card-preview" onclick="toggleCard(this.previousElementSibling)">
+                <!-- BILD HIER EINFÜGEN -->
+                ${imageHTML}
+                
+                <div class="card-preview" onclick="toggleCard(this.previousElementSibling.tagName === 'IMG' ? this.previousElementSibling.previousElementSibling : this.previousElementSibling)">
                     ${item.def ? `<div class="def-text">${item.def}</div>` : ''}
                     <div style="display:flex; gap:10px; margin-top:5px; color:#78909c; font-size:0.85rem;">
                          <span>${item.lagerung ? '🛏️ ' + item.lagerung : ''}</span>
@@ -372,7 +360,12 @@
     }
 
     function toggleCard(header) {
-        const details = header.nextElementSibling.nextElementSibling;
+        // Findet den Details Block. Wenn Bild da ist, ist Struktur anders.
+        let details = header.nextElementSibling;
+        while(details && !details.classList.contains('card-details')) {
+            details = details.nextElementSibling;
+        }
+        
         const arrow = header.querySelector('.toggle-arrow');
         const isOpen = details.classList.contains('open');
         details.classList.toggle('open');
