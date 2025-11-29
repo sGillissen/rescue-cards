@@ -3,34 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RescueCards V5.8 (Optimized UI)</title>
+    <title>RescueCards V5.9</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
         :root {
-            --primary: #0056b3; --bg: #eceff1; --text: #263238;
+            --primary: #263238; --accent: #0288d1; --bg: #eceff1; --text: #263238;
             --col-ab: #0288d1; --col-c: #d32f2f; --col-d: #fbc02d; --col-e: #388e3c;
             --cat-neuro: #8e44ad; --cat-meta: #f39c12; --cat-resp: #27ae60; 
             --cat-cardio: #c0392b; --cat-trauma: #2980b9; --cat-other: #78909c;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; color: var(--text); }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; color: var(--text); }
         
-        /* HEADER */
+        /* HEADER & SEARCH */
         header { 
-            background: #263238; color: white; padding: 10px 12px; 
+            background: var(--primary); color: white; padding: 10px 12px; 
             position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.2); 
         }
-        .header-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        h1 { margin: 0; font-size: 1.1rem; font-weight: 700; white-space: nowrap; }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .brand-area { display: flex; align-items: baseline; gap: 6px; }
+        h1 { margin: 0; font-size: 1.1rem; font-weight: 700; }
+        .version { font-size: 0.75rem; color: #b0bec5; font-weight: 400; }
+        
+        .header-controls { display: flex; gap: 10px; align-items: center; width: 100%; }
         input[type="text"] { 
-            width: 100%; padding: 8px 12px; border-radius: 6px; border: none; 
+            flex: 1; padding: 8px 12px; border-radius: 6px; border: none; 
             font-size: 0.95rem; background: #37474f; color: white; outline: none;
         }
         input::placeholder { color: #b0bec5; }
+        
+        /* HAMBURGER MENU */
+        .menu-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; padding: 0 5px; }
+        .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; opacity: 0; transition: opacity 0.3s; }
+        .menu-overlay.visible { display: block; opacity: 1; }
+        .side-menu { 
+            position: fixed; top: 0; right: -280px; width: 260px; height: 100%; background: white; 
+            z-index: 1001; transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+            display: flex; flex-direction: column;
+        }
+        .side-menu.open { right: 0; }
+        .menu-header { background: var(--primary); color: white; padding: 20px; font-weight: bold; font-size: 1.2rem; display: flex; justify-content: space-between; align-items: center; }
+        .menu-item { padding: 15px 20px; border-bottom: 1px solid #eee; font-size: 1rem; color: #333; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .menu-item:hover { background: #f5f5f5; }
+        .menu-item.active { background: #e1f5fe; color: var(--accent); font-weight: bold; }
 
         /* FILTER */
         .filter-container { 
-            display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 8px; padding-bottom: 2px;
+            display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 8px; padding-bottom: 2px; margin-top: 8px;
             -webkit-overflow-scrolling: touch; scrollbar-width: none; 
         }
         .filter-container::-webkit-scrollbar { display: none; }
@@ -43,12 +62,8 @@
         .filter-reset { background: #c62828; color: white; border-color: #c62828; display: none; }
         .filter-reset.visible { display: inline-flex; }
 
-        /* NAV */
-        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-        nav button { flex: 1; padding: 10px; border: none; background: none; font-weight: 600; color: #90a4ae; font-size: 0.7rem; text-transform: uppercase; }
-        nav button.active { color: var(--col-ab); background: #e1f5fe; }
-
-        .view-section { display: none; padding: 10px; max-width: 800px; margin: 0 auto; }
+        /* VIEWS */
+        .view-section { display: none; padding: 10px; max-width: 800px; margin: 0 auto; padding-bottom: 40px; }
         .view-section.active { display: block; animation: fadeIn 0.2s; }
         @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
@@ -67,22 +82,30 @@
         .card-details { display: none; background: #fff; }
         .card-details.open { display: block; }
         
-        /* SYMPTOM & EINDRUCK BOXEN */
+        /* SYMPTOM BOXEN */
         .symptom-box { padding: 10px 15px; border-bottom: 1px solid rgba(0,0,0,0.1); display: flex; gap: 10px; font-size: 0.9rem; font-weight: bold; }
         .box-yellow { background: #fff8e1; color: #f57f17; border-color: #ffe082; }
         .box-blue   { background: #e3f2fd; color: #0277bd; border-color: #90caf9; }
         
-        /* COCKPIT */
-        .cockpit-container { background: #f5f5f5; border-bottom: 1px solid #e0e0e0; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; }
-        .cockpit-row { display: flex; gap: 4px; width: 100%; }
+        /* COCKPIT (Optimiert) */
+        .cockpit-container { background: #f5f5f5; border-bottom: 1px solid #e0e0e0; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
+        .cockpit-row { display: flex; gap: 6px; width: 100%; }
         
-        .vital-tile { flex: 1; background: white; padding: 4px 2px; border-radius: 6px; border: 1px solid #e0e0e0; text-align: center; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+        .vital-tile { 
+            flex: 1; padding: 6px 2px; border-radius: 8px; border: 1px solid #e0e0e0; 
+            text-align: center; min-width: 0; display: flex; flex-direction: column; justify-content: center;
+            background: #fff; opacity: 0.6; /* Default: Blass */
+        }
+        /* Wenn Daten vorhanden sind: Hervorhebung */
+        .vital-tile.has-data { 
+            background: #e1f5fe; border-color: #b3e5fc; opacity: 1; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
         .vital-label { font-size: 0.6rem; color: #78909c; font-weight: 700; text-transform: uppercase; white-space: nowrap; margin-bottom: 2px; }
-        /* Schrift etwas kleiner, falls Bewusstsein viel Text hat */
         .vital-val { font-weight: 800; font-size: 0.85rem; color: #37474f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .trend-up { color: #d32f2f !important; } .trend-down { color: #1976d2 !important; }
 
-        /* HYBRID UI STYLES */
+        /* HYBRID UI */
         .abc-section { padding: 12px 15px; border-bottom: 1px solid #eee; }
         .abc-section.sec-ab { border-left: 5px solid var(--col-ab); }
         .abc-section.sec-c { border-left: 5px solid var(--col-c); }
@@ -103,11 +126,18 @@
 
         .action-bar { background: #263238; color: white; padding: 10px 15px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
         .action-item { background: rgba(255,255,255,0.1); padding: 6px 8px; border-radius: 4px; display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
-        .nef-badge { background: #c62828; color: white; font-weight: bold; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: auto; }
         .diff-box { background: #fff3e0; padding: 10px 15px; border-top: 1px solid #ffe0b2; font-size: 0.85rem; color: #e65100; }
 
+        /* STANDARDWERTE TABLE */
+        .std-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-size: 0.8rem; }
+        .std-table th, .std-table td { padding: 8px 5px; text-align: center; border: 1px solid #e0e0e0; }
+        .std-table th { background: #f5f5f5; font-weight: 700; color: #37474f; }
+        .std-row-header { font-weight: bold; text-align: left; background: #fafafa; }
+        .norm-icon { color: #2e7d32; } .warn-icon { color: #f9a825; }
+        .std-val { display: block; font-weight: 500; margin-bottom: 2px; }
+
         #status-msg { text-align: center; padding: 40px 20px; color: #666; }
-        .quiz-box { background: white; padding: 20px; border-radius: 12px; text-align: center; }
+        .quiz-box { background: white; padding: 20px; border-radius: 12px; text-align: center; border: 1px solid #ddd; }
         .btn { background: var(--col-ab); color: white; padding: 12px 30px; border-radius: 30px; border: none; font-size: 1rem; margin-top: 15px; cursor: pointer; width: 100%; font-weight: bold; }
         .comp-table { width: 100%; border-collapse: collapse; background: white; }
         .comp-table td { border-bottom: 1px solid #eee; padding: 10px; width: 50%; vertical-align: top; font-size: 0.85rem; }
@@ -116,8 +146,14 @@
 <body>
 
 <header>
-    <div class="header-row">
-        <h1>🚑 RescueCards</h1>
+    <div class="header-top">
+        <div class="brand-area">
+            <h1>🚑 RescueCards</h1>
+            <span class="version">V5.9</span>
+        </div>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    </div>
+    <div class="header-controls">
         <input type="text" id="search" placeholder="Suche..." onkeyup="renderCards()">
     </div>
     <div class="filter-container" id="filter-container">
@@ -125,9 +161,118 @@
     </div>
 </header>
 
+<!-- SIDE MENU -->
+<div class="menu-overlay" id="menu-overlay" onclick="toggleMenu()"></div>
+<div class="side-menu" id="side-menu">
+    <div class="menu-header">
+        <span>Menü</span>
+        <span onclick="toggleMenu()" style="cursor:pointer">✕</span>
+    </div>
+    <div class="menu-item active" id="nav-learn" onclick="nav('learn')">🗂️ Karten</div>
+    <div class="menu-item" id="nav-compare" onclick="nav('compare')">⚖️ Vergleich</div>
+    <div class="menu-item" id="nav-standards" onclick="nav('standards')">📏 Standardwerte</div>
+    <div class="menu-item" id="nav-quiz" onclick="nav('quiz')">🧠 Quiz</div>
+    <div style="margin-top:auto; padding:20px; font-size:0.7rem; color:#999; text-align:center;">
+        RescueCards V5.9<br>Offline-Ready
+    </div>
+</div>
+
 <div id="status-msg"><h3>Starte App...</h3><p>⏳</p></div>
 
+<!-- VIEW: CARDS -->
 <div id="learn" class="view-section"><div id="card-container"></div></div>
+
+<!-- VIEW: STANDARDS -->
+<div id="standards" class="view-section">
+    <h3 style="margin-top:0; margin-bottom:15px; color:#37474f;">📏 Vitalwerte-Referenz</h3>
+    <table class="std-table">
+        <thead>
+            <tr>
+                <th style="width:20%">Wert</th>
+                <th style="width:10%"></th>
+                <th style="width:23%">Erwachsen</th>
+                <th style="width:23%">Kinder</th>
+                <th style="width:23%">Säugling</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- ATMUNG -->
+            <tr>
+                <td rowspan="2" class="std-row-header">Atmung<br><span style="font-weight:normal; font-size:0.7rem">/min</span></td>
+                <td><span class="norm-icon">✅</span></td>
+                <td>12-16</td>
+                <td>16-30</td>
+                <td>30-40</td>
+            </tr>
+            <tr>
+                <td><span class="warn-icon">⚠️</span></td>
+                <td>&lt;10 / &gt;30</td>
+                <td>&lt;15 / &gt;50</td>
+                <td>&lt;20 / &gt;60</td>
+            </tr>
+            <!-- PULS -->
+            <tr style="border-top:2px solid #ddd">
+                <td rowspan="2" class="std-row-header">Puls<br><span style="font-weight:normal; font-size:0.7rem">/min</span></td>
+                <td><span class="norm-icon">✅</span></td>
+                <td>60-80</td>
+                <td>80-110</td>
+                <td>110-140</td>
+            </tr>
+            <tr>
+                <td><span class="warn-icon">⚠️</span></td>
+                <td>&lt;40 / &gt;140</td>
+                <td>-</td>
+                <td>&lt;60 / &gt;160</td>
+            </tr>
+            <!-- SPO2 -->
+            <tr style="border-top:2px solid #ddd">
+                <td rowspan="2" class="std-row-header">SpO2<br><span style="font-weight:normal; font-size:0.7rem">%</span></td>
+                <td><span class="norm-icon">✅</span></td>
+                <td colspan="3">94+ (COPD 90+)</td>
+            </tr>
+            <tr>
+                <td><span class="warn-icon">⚠️</span></td>
+                <td colspan="3">&lt;94 (90- COPD)</td>
+            </tr>
+            <!-- RR -->
+            <tr style="border-top:2px solid #ddd">
+                <td rowspan="2" class="std-row-header">RR<br><span style="font-weight:normal; font-size:0.7rem">mmHg</span></td>
+                <td><span class="norm-icon">✅</span></td>
+                <td>120-130<br>80-85</td>
+                <td>100-130<br>65-75</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td><span class="warn-icon">⚠️</span></td>
+                <td>&lt;90 / &gt;200</td>
+                <td>&lt;80</td>
+                <td>-</td>
+            </tr>
+            <!-- BZ -->
+            <tr style="border-top:2px solid #ddd">
+                <td rowspan="2" class="std-row-header">BZ<br><span style="font-weight:normal; font-size:0.7rem">mg/dl</span></td>
+                <td><span class="norm-icon">✅</span></td>
+                <td colspan="3">60 - 100</td>
+            </tr>
+            <tr>
+                <td><span class="warn-icon">⚠️</span></td>
+                <td colspan="3">&lt;40 / &gt;300</td>
+            </tr>
+            <!-- TEMP -->
+            <tr style="border-top:2px solid #ddd">
+                <td rowspan="2" class="std-row-header">Temp<br><span style="font-weight:normal; font-size:0.7rem">°C</span></td>
+                <td><span class="norm-icon">✅</span></td>
+                <td colspan="3">36 - 37</td>
+            </tr>
+            <tr>
+                <td><span class="warn-icon">⚠️</span></td>
+                <td colspan="3">&lt;35 / &gt;39</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- VIEW: COMPARE -->
 <div id="compare" class="view-section">
     <div style="display:flex; gap:10px; margin-bottom:15px;">
         <select id="s1" onchange="renderCompare()" style="width:100%; padding:8px; border-radius:6px;"></select>
@@ -135,6 +280,8 @@
     </div>
     <div id="compare-result"></div>
 </div>
+
+<!-- VIEW: QUIZ -->
 <div id="quiz" class="view-section">
     <div class="quiz-box">
         <h3 id="q-text" style="min-height:60px;">Lade Frage...</h3>
@@ -147,12 +294,6 @@
     </div>
 </div>
 
-<nav>
-    <button onclick="nav('learn')" id="btn-learn">🗂️ Karten</button>
-    <button onclick="nav('compare')" id="btn-compare">⚖️ Vergleich</button>
-    <button onclick="nav('quiz')" id="btn-quiz">🧠 Quiz</button>
-</nav>
-
 <script>
     const CACHE_KEY = "rescue_cards_data_v1";
     const GOOGLE_CSV_LINK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBMZadFA7O2nMGOeaUcnEZz5MuNW2WeHdmSU_m94SI9VDdUiI8AfsJXJ-KAhtxv0zRZ6pkRIM_jj1X/pub?gid=1914308692&single=true&output=csv";
@@ -162,7 +303,6 @@
     
     let db = [];
     let activeFilters = new Set();
-
     const filterDefs = [
         { id: 'rr_high', label: '🩸 RR ⬆️', check: (i) => isHigh(i.c_blutdruck) },
         { id: 'rr_low',  label: '🩸 RR ⬇️', check: (i) => isLow(i.c_blutdruck) },
@@ -216,6 +356,41 @@
         if(!currentQuizItem && db.length > 0) nextQuiz();
     }
 
+    // --- MENU LOGIC ---
+    function toggleMenu() {
+        const menu = document.getElementById('side-menu');
+        const overlay = document.getElementById('menu-overlay');
+        const isOpen = menu.classList.contains('open');
+        if(isOpen) {
+            menu.classList.remove('open');
+            overlay.classList.remove('visible');
+            setTimeout(() => overlay.style.display = 'none', 300);
+        } else {
+            overlay.style.display = 'block';
+            setTimeout(() => {
+                menu.classList.add('open');
+                overlay.classList.add('visible');
+            }, 10);
+        }
+    }
+
+    function nav(viewName) {
+        // Close Menu
+        const menu = document.getElementById('side-menu');
+        if(menu.classList.contains('open')) toggleMenu();
+
+        // Switch View
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById(viewName).classList.add('active');
+        
+        // Update Menu Active State
+        document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+        const btn = document.getElementById('nav-' + viewName);
+        if(btn) btn.classList.add('active');
+        
+        window.scrollTo(0,0);
+    }
+
     function renderFilterButtons() {
         const container = document.getElementById('filter-container');
         filterDefs.forEach(f => {
@@ -246,6 +421,12 @@
         if (isHigh(val)) style = "trend-up";
         if (isLow(val)) style = "trend-down";
         return `<span class="${style}">${val}</span>`;
+    }
+
+    // Helper für Cockpit Kacheln (Check ob Daten da sind für Styling)
+    function getTileClass(val) {
+        const hasData = (val && val.trim() !== "" && val.trim() !== "-");
+        return hasData ? "vital-tile has-data" : "vital-tile";
     }
 
     function renderBlock(label, val) {
@@ -289,19 +470,17 @@
             if(imgSrc && !imgSrc.toLowerCase().startsWith('http')) imgSrc = IMAGE_BASE_URL + imgSrc;
             const imageHTML = imgSrc ? `<img src="${imgSrc}" class="card-img" onclick="openCard(this)" onerror="this.onerror=null;this.src='${FALLBACK_IMG}';" loading="lazy">` : '';
 
-            // A & B (Zyanose entfernt, da jetzt oben)
+            // A & B
             let contentA = renderBlock('Atemwege', item.a_atemwege);
             contentA += renderBlock('Atemgeräusche', item.b_atemgeraeusche);
             
             let contentB = renderBlock('Atemnot', item.b_atemnot);
-            contentB += renderMicro([
-                {l: 'Halsvenen', v: item.b_halsvenen}
-            ]);
+            contentB += renderMicro([{l: 'Halsvenen', v: item.b_halsvenen}]);
 
             // C
             let contentC = renderBlock('Hautzustand', item.c_haut);
 
-            // D (Bewusstsein entfernt, da jetzt oben)
+            // D
             let contentD = renderMicro([
                 {l: 'GCS / AVPU', v: item.d_avpu},
                 {l: 'Pupillen', v: item.d_pupillen}
@@ -322,8 +501,10 @@
             ]);
             contentE += renderBlock('Ausscheidung', item.e_harn_stuhl);
             
-            // Cockpit Values Logic
+            // Cockpit Logic
             const zyanoseVal = (item.b_zyanose && item.b_zyanose.toLowerCase().includes('ja')) ? '🔵' : formatValue(item.b_zyanose);
+            // Check ob Zyanose relevanten Inhalt hat für Hervorhebung (nicht nur "-")
+            const zyanoseRaw = (item.b_zyanose && item.b_zyanose.toLowerCase().includes('ja')) ? 'ja' : item.b_zyanose;
 
             const html = `
             <div class="card">
@@ -345,25 +526,25 @@
                 </div>
 
                 <div class="card-details">
-                    <!-- 1. ERSTER EINDRUCK (BLAU) - JETZT OBEN -->
+                    <!-- 1. ERSTER EINDRUCK -->
                     ${item.erster_eindruck ? `<div class="symptom-box box-blue"><span class="icon">👁️</span><span class="text">${item.erster_eindruck}</span></div>` : ''}
                     
-                    <!-- 2. LEITSYMPTOME (GELB) -->
+                    <!-- 2. LEITSYMPTOME -->
                     ${item.leitsymptome ? `<div class="symptom-box box-yellow"><span class="icon">⚠️</span><span class="text">${item.leitsymptome}</span></div>` : ''}
 
-                    <!-- FULL COCKPIT -->
+                    <!-- FULL COCKPIT (Styled Tiles) -->
                     <div class="cockpit-container">
                         <div class="cockpit-row">
-                            <div class="vital-tile"><div class="vital-label">❤️ Puls</div><div class="vital-val">${formatValue(item.c_herzfrequenz)}</div></div>
-                            <div class="vital-tile"><div class="vital-label">🩸 RR</div><div class="vital-val">${formatValue(item.c_blutdruck)}</div></div>
-                            <div class="vital-tile"><div class="vital-label">☁️ SpO2</div><div class="vital-val">${formatValue(item.b_spo2)}</div></div>
-                            <div class="vital-tile"><div class="vital-label">💨 AF</div><div class="vital-val">${formatValue(item.b_atemfrequenz)}</div></div>
+                            <div class="${getTileClass(item.c_herzfrequenz)}"><div class="vital-label">❤️ Puls</div><div class="vital-val">${formatValue(item.c_herzfrequenz)}</div></div>
+                            <div class="${getTileClass(item.c_blutdruck)}"><div class="vital-label">🩸 RR</div><div class="vital-val">${formatValue(item.c_blutdruck)}</div></div>
+                            <div class="${getTileClass(item.b_spo2)}"><div class="vital-label">☁️ SpO2</div><div class="vital-val">${formatValue(item.b_spo2)}</div></div>
+                            <div class="${getTileClass(item.b_atemfrequenz)}"><div class="vital-label">💨 AF</div><div class="vital-val">${formatValue(item.b_atemfrequenz)}</div></div>
                         </div>
                         <div class="cockpit-row">
-                            <div class="vital-tile"><div class="vital-label">🍬 BZ</div><div class="vital-val">${formatValue(item.d_bz)}</div></div>
-                            <div class="vital-tile"><div class="vital-label">🌡️ Temp</div><div class="vital-val">${formatValue(item.e_temp)}</div></div>
-                            <div class="vital-tile"><div class="vital-label">🧠 Bewusst.</div><div class="vital-val">${formatValue(item.bewusstsein)}</div></div>
-                            <div class="vital-tile"><div class="vital-label">🔵 Zyanose</div><div class="vital-val">${zyanoseVal}</div></div>
+                            <div class="${getTileClass(item.d_bz)}"><div class="vital-label">🍬 BZ</div><div class="vital-val">${formatValue(item.d_bz)}</div></div>
+                            <div class="${getTileClass(item.e_temp)}"><div class="vital-label">🌡️ Temp</div><div class="vital-val">${formatValue(item.e_temp)}</div></div>
+                            <div class="${getTileClass(item.bewusstsein)}"><div class="vital-label">🧠 Bewusst.</div><div class="vital-val">${formatValue(item.bewusstsein)}</div></div>
+                            <div class="${getTileClass(zyanoseRaw)}"><div class="vital-label">🔵 Zyanose</div><div class="vital-val">${zyanoseVal}</div></div>
                         </div>
                     </div>
 
@@ -445,13 +626,6 @@
         document.getElementById('q-sol-desc').innerText = `Lagerung: ${currentQuizItem.lagerung}`;
     }
 
-    function nav(viewName) {
-        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-        document.getElementById(viewName).classList.add('active');
-        document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
-        document.getElementById('btn-' + viewName).classList.add('active');
-        window.scrollTo(0,0);
-    }
     init();
 </script>
 </body>
