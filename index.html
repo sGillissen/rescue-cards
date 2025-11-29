@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RescueCards V5.4 (Compact & Optimized)</title>
+    <title>RescueCards V5.5 (Hybrid UI)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -72,39 +72,35 @@
         .box-yellow { background: #fff8e1; color: #f57f17; border-color: #ffe082; }
         .box-blue   { background: #e3f2fd; color: #0277bd; border-color: #90caf9; }
         
-        /* NEUES COCKPIT (Einzeilig) */
-        .cockpit { 
-            display: flex; 
-            justify-content: space-between; 
-            gap: 4px; 
-            padding: 8px 10px; 
-            background: #f5f5f5; 
-            border-bottom: 1px solid #e0e0e0; 
-        }
-        .vital-tile { 
-            flex: 1; /* Alle gleich breit */
-            background: white; 
-            padding: 4px 2px; 
-            border-radius: 6px; 
-            border: 1px solid #e0e0e0; 
-            text-align: center; 
-            min-width: 0; /* Verhindert Overflow */
-        }
+        /* COCKPIT */
+        .cockpit { display: flex; justify-content: space-between; gap: 4px; padding: 8px 10px; background: #f5f5f5; border-bottom: 1px solid #e0e0e0; }
+        .vital-tile { flex: 1; background: white; padding: 4px 2px; border-radius: 6px; border: 1px solid #e0e0e0; text-align: center; min-width: 0; }
         .vital-label { font-size: 0.6rem; color: #78909c; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
         .vital-val { font-weight: 800; font-size: 0.9rem; color: #37474f; white-space: nowrap; }
         .trend-up { color: #d32f2f !important; } .trend-down { color: #1976d2 !important; }
 
-        .abc-section { padding: 10px 15px; border-bottom: 1px solid #eee; }
+        /* --- HYBRID UI STYLES (NEU in V5.5) --- */
+        .abc-section { padding: 12px 15px; border-bottom: 1px solid #eee; }
         .abc-section.sec-ab { border-left: 5px solid var(--col-ab); }
         .abc-section.sec-c { border-left: 5px solid var(--col-c); }
         .abc-section.sec-d { border-left: 5px solid var(--col-d); }
         .abc-section.sec-e { border-left: 5px solid var(--col-e); }
-        .sec-title { font-size: 0.75rem; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; }
         
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .info-full { grid-column: 1 / -1; }
-        .info-label { font-size: 0.7rem; color: #90a4ae; font-weight: 600; }
-        .info-val { font-size: 0.9rem; color: #263238; font-weight: 500; }
+        .sec-title { font-size: 0.75rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+
+        /* TEXT BLOCKS (Für lange Texte) */
+        .info-block { margin-bottom: 12px; }
+        .info-block:last-child { margin-bottom: 0; }
+        .info-label-sm { font-size: 0.7rem; font-weight: 700; color: #b0bec5; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+        .info-val-lg { font-size: 1rem; color: #263238; line-height: 1.4; font-weight: 500; }
+
+        /* MICRO GRID (Für kurze Werte) */
+        .micro-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+        .micro-tile { flex: 1; min-width: 80px; background: #f5f5f5; border-radius: 8px; padding: 8px 10px; border: 1px solid #eee; }
+        .micro-label { font-size: 0.65rem; color: #78909c; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 2px; }
+        .micro-val { font-size: 0.95rem; font-weight: 700; color: #37474f; word-break: break-word; }
+
+        /* --- ENDE HYBRID UI --- */
 
         .action-bar { background: #263238; color: white; padding: 10px 15px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
         .action-item { background: rgba(255,255,255,0.1); padding: 6px 8px; border-radius: 4px; display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
@@ -234,6 +230,25 @@
         return `<span class="${style}">${val}</span>`;
     }
 
+    /* --- UI HELPERS FOR HYBRID DESIGN --- */
+    function renderBlock(label, val) {
+        if(!val || val.trim() === "") return "";
+        return `<div class="info-block"><div class="info-label-sm">${label}</div><div class="info-val-lg">${formatValue(val)}</div></div>`;
+    }
+
+    function renderMicro(items) {
+        // Filter empty items
+        const validItems = items.filter(i => i.v && i.v.trim() !== "");
+        if(validItems.length === 0) return "";
+        
+        let html = `<div class="micro-grid">`;
+        validItems.forEach(i => {
+            html += `<div class="micro-tile"><span class="micro-label">${i.l}</span><span class="micro-val">${formatValue(i.v)}</span></div>`;
+        });
+        html += `</div>`;
+        return html;
+    }
+
     function renderCards() {
         const searchTerm = document.getElementById('search').value.toLowerCase();
         const container = document.getElementById('card-container');
@@ -255,16 +270,51 @@
         }
 
         filtered.forEach(item => {
-            const itemHTML = (icon, label, val, full=false) => {
-                if(!val || val.trim()==="") return "";
-                return `<div class="${full?'info-full':'info-item'}"><div class="info-label">${icon} ${label}</div><div class="info-val">${formatValue(val)}</div></div>`;
-            };
-
             let imgSrc = item.picture;
             if(imgSrc && !imgSrc.toLowerCase().startsWith('http')) {
                 imgSrc = IMAGE_BASE_URL + imgSrc;
             }
             const imageHTML = imgSrc ? `<img src="${imgSrc}" class="card-img" onclick="openCard(this)" onerror="this.style.display='none'" loading="lazy">` : '';
+
+            /* --- CONTENT GENERATION --- */
+            
+            // A - Airway
+            let contentA = renderBlock('Atemwege', item.a_atemwege);
+            contentA += renderBlock('Atemgeräusche', item.b_atemgeraeusche);
+            
+            // B - Breathing (Mixed)
+            let contentB = renderBlock('Atemnot', item.b_atemnot);
+            contentB += renderMicro([
+                {l: 'Zyanose', v: item.b_zyanose},
+                {l: 'Halsvenen', v: item.b_halsvenen}
+            ]);
+
+            // C - Circulation (Mostly Text)
+            let contentC = renderBlock('Hautzustand', item.c_haut);
+
+            // D - Disability (Heavy on Micro Tiles)
+            let contentD = renderBlock('Bewusstsein', item.bewusstsein);
+            contentD += renderMicro([
+                {l: 'GCS / AVPU', v: item.d_avpu},
+                {l: 'Blutzucker', v: item.d_bz},
+                {l: 'Pupillen', v: item.d_pupillen}
+            ]);
+            contentD += renderMicro([
+                {l: 'Krämpfe', v: item.e_kraempfe},
+                {l: 'Lähmung', v: item.e_laehmung},
+                {l: 'FAST / Neuro', v: item.d_fast}
+            ]);
+            contentD += renderBlock('Sonstiges', item.d_sonstiges);
+
+            // E - Exposure
+            let contentE = renderBlock('Spezifische Symptome', item.e_symptome);
+            contentE += renderMicro([
+                {l: 'Schmerz', v: item.e_schmerz},
+                {l: 'Nausea', v: item.e_nausea},
+                {l: 'Temperatur', v: item.e_temp},
+                {l: 'Durst', v: item.e_durst}
+            ]);
+            contentE += renderBlock('Ausscheidung', item.e_harn_stuhl);
 
             const html = `
             <div class="card">
@@ -281,7 +331,6 @@
                 <div class="card-preview" onclick="openCard(this)">
                     ${item.def ? `<div class="def-text">${item.def}</div>` : ''}
                     <div style="display:flex; justify-content: space-between; margin-top:5px; color:#78909c; font-size:0.85rem;">
-                         <!-- 'Lagerung' HIER ENTFERNT -->
                          <span>${item.nef ? '📞 Notarzt-Indikation' : ''}</span>
                     </div>
                 </div>
@@ -290,10 +339,10 @@
                     <!-- LEITSYMPTOME (GELB) -->
                     ${item.leitsymptome ? `<div class="symptom-box box-yellow"><span class="icon">⚠️</span><span class="text">${item.leitsymptome}</span></div>` : ''}
                     
-                    <!-- ERSTER EINDRUCK (HIERHIN VERSCHOBEN, BLAU) -->
+                    <!-- ERSTER EINDRUCK (BLAU) -->
                     ${item.erster_eindruck ? `<div class="symptom-box box-blue"><span class="icon">👁️</span><span class="text">Eindruck: ${item.erster_eindruck}</span></div>` : ''}
 
-                    <!-- COMPACT COCKPIT (EINZEILIG) -->
+                    <!-- COMPACT COCKPIT -->
                     ${(item.c_herzfrequenz || item.c_blutdruck || item.b_atemfrequenz || item.b_spo2) ? `
                     <div class="cockpit">
                         <div class="vital-tile"><div class="vital-label">❤️ Puls</div><div class="vital-val">${formatValue(item.c_herzfrequenz) || '-'}</div></div>
@@ -302,17 +351,31 @@
                         <div class="vital-tile"><div class="vital-label">💨 AF</div><div class="vital-val">${formatValue(item.b_atemfrequenz) || '-'}</div></div>
                     </div>` : ''}
 
-                    <div class="abc-section sec-ab"><div class="sec-title" style="color:var(--col-ab)">🫁 Airway & Breathing</div><div class="info-grid">${itemHTML('🗣️', 'Atemwege', item.a_atemwege, true)}${itemHTML('🔊', 'Geräusche', item.b_atemgeraeusche)}${itemHTML('😮', 'Atemnot', item.b_atemnot)}${itemHTML('🔵', 'Zyanose', item.b_zyanose)}${itemHTML('👔', 'Halsvenen', item.b_halsvenen)}</div></div>
+                    <!-- ABCDE SECTIONS (HYBRID) -->
+                    <div class="abc-section sec-ab">
+                        <div class="sec-title" style="color:var(--col-ab)">🫁 Airway & Breathing</div>
+                        ${contentA}
+                        ${contentB}
+                    </div>
                     
-                    <!-- C-SECTION (OHNE ERSTER EINDRUCK) -->
-                    <div class="abc-section sec-c"><div class="sec-title" style="color:var(--col-c)">❤️ Circulation</div><div class="info-grid">${itemHTML('🎨', 'Hautstatus', item.c_haut, true)}</div></div>
+                    <div class="abc-section sec-c">
+                        <div class="sec-title" style="color:var(--col-c)">❤️ Circulation</div>
+                        ${contentC}
+                    </div>
                     
-                    <div class="abc-section sec-d"><div class="sec-title" style="color:#f9a825">🧠 Disability</div><div class="info-grid">${itemHTML('😴', 'Bewusstsein', item.bewusstsein, true)}${itemHTML('📊', 'GCS / AVPU', item.d_avpu)}${itemHTML('🍬', 'Blutzucker', item.d_bz)}${itemHTML('👀', 'Pupillen', item.d_pupillen)}${itemHTML('⚡', 'Krämpfe', item.e_kraempfe)}${itemHTML('💪', 'Lähmung', item.e_laehmung)}${itemHTML('🤖', 'FAST / Neuro', item.d_fast, true)}${itemHTML('📝', 'Sonstiges', item.d_sonstiges, true)}</div></div>
-                    <div class="abc-section sec-e"><div class="sec-title" style="color:var(--col-e)">🔍 Exposure & Symptome</div><div class="info-grid">${itemHTML('🤒', 'Spezifisch', item.e_symptome, true)}${itemHTML('😖', 'Schmerzen', item.e_schmerz)}${itemHTML('🤢', 'Übelkeit', item.e_nausea)}${itemHTML('🌡️', 'Temperatur', item.e_temp)}${itemHTML('🚰', 'Durst', item.e_durst)}${itemHTML('🚽', 'Ausscheidung', item.e_harn_stuhl)}</div></div>
+                    <div class="abc-section sec-d">
+                        <div class="sec-title" style="color:#f9a825">🧠 Disability</div>
+                        ${contentD}
+                    </div>
+                    
+                    <div class="abc-section sec-e">
+                        <div class="sec-title" style="color:var(--col-e)">🔍 Exposure & Symptome</div>
+                        ${contentE}
+                    </div>
+
                     ${(item.einteilung1 || item.einteilung2) ? `<div class="diff-box"><strong>📌 Differenzierung:</strong><br>${item.einteilung1 || ''}<br>${item.einteilung2 || ''}</div>` : ''}
                     
                     <div class="action-bar">
-                        <!-- LAGERUNG IST HIER NOCH DA -->
                         <div class="action-item"><span class="action-icon">🛏️</span> ${item.lagerung || '-'}</div>
                         <div class="action-item"><span class="action-icon">💨</span> ${item.o2 || '-'}</div>
                         ${item.nef ? `<div class="action-item" style="grid-column: 1/-1; background:#c62828;"><span class="action-icon">📞</span> Notarzt indikator!</div>` : ''}
