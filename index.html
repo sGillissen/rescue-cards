@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RescueCards V5.6 (Expanded Cockpit)</title>
+    <title>RescueCards V5.7 (Offline Ready)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -72,7 +72,7 @@
         .box-yellow { background: #fff8e1; color: #f57f17; border-color: #ffe082; }
         .box-blue   { background: #e3f2fd; color: #0277bd; border-color: #90caf9; }
         
-        /* COCKPIT (NEU: 2 Zeilen) */
+        /* COCKPIT */
         .cockpit-container { background: #f5f5f5; border-bottom: 1px solid #e0e0e0; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; }
         .cockpit-row { display: flex; gap: 4px; width: 100%; }
         
@@ -124,7 +124,7 @@
     </div>
 </header>
 
-<div id="status-msg"><h3>Lade Daten...</h3><p>⏳</p></div>
+<div id="status-msg"><h3>Starte App...</h3><p>⏳</p></div>
 
 <div id="learn" class="view-section"><div id="card-container"></div></div>
 <div id="compare" class="view-section">
@@ -153,9 +153,13 @@
 </nav>
 
 <script>
+    const CACHE_KEY = "rescue_cards_data_v1";
     const GOOGLE_CSV_LINK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBMZadFA7O2nMGOeaUcnEZz5MuNW2WeHdmSU_m94SI9VDdUiI8AfsJXJ-KAhtxv0zRZ6pkRIM_jj1X/pub?gid=1914308692&single=true&output=csv";
     const IMAGE_BASE_URL = "https://raw.githubusercontent.com/sGillissen/rescue-cards/main/bilder/";
     const PROXY_URL = "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(GOOGLE_CSV_LINK);
+    
+    // Fallback SVG für fehlende Bilder
+    const FALLBACK_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 800 400'%3E%3Crect fill='%23f0f0f0' width='800' height='400'/%3E%3Ctext fill='%23ccc' x='50%25' y='50%25' text-anchor='middle' font-size='24' font-family='sans-serif'%3EKein Bild verfügbar%3C/text%3E%3C/svg%3E";
     
     let db = [];
     let activeFilters = new Set();
@@ -177,8 +181,79 @@
 
     async function init() {
         renderFilterButtons();
-        try { await loadData(GOOGLE_CSV_LINK); } 
-        catch (e1) { try { await loadData(PROXY_URL); } catch(e2) {} }
+        
+        // 1. OFFLINE FIRST: Cache laden
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+            try {
+                db = JSON.parse(cached);
+                console.log("Daten aus Cache geladen.");
+                startApp(); 
+            } catch (e) {
+                console.warn("Cache korrupt, lösche...", e);
+                localStorage.removeItem(CACHE_KEY);
+            }
+        }
+
+        // 2. NETWORK BACKGROUND: Daten aktualisieren
+        try { 
+            await fetchAndParse(GOOGLE_CSV_LINK); 
+        } catch (e1) { 
+            try { 
+                console.warn("Google direkt fehlgeschlagen, versuche Proxy...");
+                await fetchAndParse(PROXY_URL); 
+            } catch(e2) {
+                // Wenn wir gar keine Daten haben (auch kein Cache)
+                if(db.length === 0) {
+                    document.getElementById('status-msg').innerHTML = "<h3>Fehler</h3><p>Keine Daten & kein Internet.</p>";
+                    document.getElementById('status-msg').style.display = 'block';
+                } else {
+                    console.log("Offline-Modus aktiv, verwende Cache.");
+                }
+            } 
+        }
+    }
+
+    function fetchAndParse(url) {
+        return new Promise((resolve, reject) => {
+            Papa.parse(url, {
+                download: true, header: true, skipEmptyLines: true,
+                complete: function(results) {
+                    const validData = results.data.filter(row => row.id && row.name);
+                    if(validData.length > 0) {
+                        // Prüfen ob sich Daten geändert haben
+                        const isNew = JSON.stringify(validData) !== JSON.stringify(db);
+                        db = validData;
+                        localStorage.setItem(CACHE_KEY, JSON.stringify(db));
+                        
+                        if (isNew) {
+                            console.log("Neue Daten empfangen.");
+                            startApp();
+                        }
+                        resolve();
+                    } else {
+                        reject("Leere Daten");
+                    }
+                },
+                error: (err) => reject(err)
+            });
+        });
+    }
+
+    function startApp() {
+        document.getElementById('status-msg').style.display = 'none';
+        
+        // Navigation initialisieren, falls noch nicht geschehen
+        if(!document.querySelector('.view-section.active')) {
+            nav('learn');
+        }
+        
+        // Ansichten rendern
+        renderCards(); 
+        initCompare();
+        
+        // Quiz initialisieren falls nötig
+        if(!currentQuizItem && db.length > 0) nextQuiz();
     }
 
     function renderFilterButtons() {
@@ -205,26 +280,8 @@
         renderCards();
     }
 
-    function loadData(url) {
-        return new Promise((resolve, reject) => {
-            Papa.parse(url, {
-                download: true, header: true, skipEmptyLines: true,
-                complete: function(results) {
-                    db = results.data.filter(row => row.id && row.name);
-                    if(db.length > 0) {
-                        document.getElementById('status-msg').style.display = 'none';
-                        nav('learn'); renderCards(); initCompare(); nextQuiz(); resolve();
-                    }
-                }
-            });
-        });
-    }
-
     function formatValue(val) {
-        // FALLBACK: Wenn leer, gib "-" zurück, aber nicht bei formatValue Check in anderen Funktionen,
-        // hier primär für die Anzeige wichtig.
         if (!val || val.trim() === "") return "-";
-        
         let style = "";
         if (isHigh(val)) style = "trend-up";
         if (isLow(val)) style = "trend-down";
@@ -239,7 +296,6 @@
     function renderMicro(items) {
         const validItems = items.filter(i => i.v && i.v.trim() !== "");
         if(validItems.length === 0) return "";
-        
         let html = `<div class="micro-grid">`;
         validItems.forEach(i => {
             html += `<div class="micro-tile"><span class="micro-label">${i.l}</span><span class="micro-val">${formatValue(i.v)}</span></div>`;
@@ -251,6 +307,9 @@
     function renderCards() {
         const searchTerm = document.getElementById('search').value.toLowerCase();
         const container = document.getElementById('card-container');
+        
+        // Scrollposition merken bei Re-Render ist schwierig bei Filterung, 
+        // aber wir wollen verhindern, dass alles springt wenn nur ein Bild lädt.
         container.innerHTML = '';
 
         const filtered = db.filter(item => {
@@ -273,7 +332,10 @@
             if(imgSrc && !imgSrc.toLowerCase().startsWith('http')) {
                 imgSrc = IMAGE_BASE_URL + imgSrc;
             }
-            const imageHTML = imgSrc ? `<img src="${imgSrc}" class="card-img" onclick="openCard(this)" onerror="this.style.display='none'" loading="lazy">` : '';
+            // Smart Image Loading mit Fallback
+            const imageHTML = imgSrc 
+                ? `<img src="${imgSrc}" class="card-img" onclick="openCard(this)" onerror="this.onerror=null;this.src='${FALLBACK_IMG}';" loading="lazy">` 
+                : '';
 
             // A & B
             let contentA = renderBlock('Atemwege', item.a_atemwege);
@@ -288,7 +350,7 @@
             // C
             let contentC = renderBlock('Hautzustand', item.c_haut);
 
-            // D (OHNE BZ, da jetzt im Cockpit)
+            // D
             let contentD = renderBlock('Bewusstsein', item.bewusstsein);
             contentD += renderMicro([
                 {l: 'GCS / AVPU', v: item.d_avpu},
@@ -301,7 +363,7 @@
             ]);
             contentD += renderBlock('Sonstiges', item.d_sonstiges);
 
-            // E (OHNE Temp, da jetzt im Cockpit)
+            // E
             let contentE = renderBlock('Spezifische Symptome', item.e_symptome);
             contentE += renderMicro([
                 {l: 'Schmerz', v: item.e_schmerz},
@@ -336,7 +398,7 @@
                     <!-- ERSTER EINDRUCK (BLAU) -->
                     ${item.erster_eindruck ? `<div class="symptom-box box-blue"><span class="icon">👁️</span><span class="text">Eindruck: ${item.erster_eindruck}</span></div>` : ''}
 
-                    <!-- FULL COCKPIT (IMMER SICHTBAR, 2 ZEILEN) -->
+                    <!-- FULL COCKPIT -->
                     <div class="cockpit-container">
                         <div class="cockpit-row">
                             <div class="vital-tile"><div class="vital-label">❤️ Puls</div><div class="vital-val">${formatValue(item.c_herzfrequenz)}</div></div>
@@ -390,15 +452,26 @@
         const card = element.closest('.card');
         const details = card.querySelector('.card-details');
         const arrow = card.querySelector('.toggle-arrow');
+        
+        // Accordion Logik: Optional - Schließt andere Karten
+        // document.querySelectorAll('.card-details.open').forEach(el => { if(el!==details) el.classList.remove('open'); });
+        
         details.classList.toggle('open');
         if(arrow) arrow.innerText = details.classList.contains('open') ? '▲' : '▼';
     }
 
     function initCompare() {
         const s1 = document.getElementById('s1'); const s2 = document.getElementById('s2');
+        
+        // State erhalten falls schon ausgewählt
+        const val1 = s1.value; const val2 = s2.value;
+        
         s1.innerHTML = ''; s2.innerHTML = '';
         db.forEach(d => { const opt = `<option value="${d.id}">${d.name}</option>`; s1.insertAdjacentHTML('beforeend', opt); s2.insertAdjacentHTML('beforeend', opt); });
-        if(db.length > 1) s2.value = db[1].id;
+        
+        if(val1 && db.find(x=>x.id===val1)) s1.value = val1;
+        if(val2 && db.find(x=>x.id===val2)) s2.value = val2;
+        else if(db.length > 1) s2.value = db[1].id;
     }
     function renderCompare() {
         const id1 = document.getElementById('s1').value; const id2 = document.getElementById('s2').value;
@@ -413,12 +486,14 @@
 
     let currentQuizItem = null;
     function nextQuiz() {
+        if(db.length === 0) return;
         document.getElementById('q-sol').style.display = 'none';
         currentQuizItem = db[Math.floor(Math.random() * db.length)];
         const types = [`Leitsymptome:\n"${currentQuizItem.leitsymptome || '?'}"\n\nDiagnose?`, `Haut: ${currentQuizItem.c_haut}\nAtmung: ${currentQuizItem.b_atemgeraeusche}\n\nVerdacht?`];
         document.getElementById('q-text').innerText = types[Math.floor(Math.random() * types.length)];
     }
     function solveQuiz() {
+        if(!currentQuizItem) return;
         document.getElementById('q-sol').style.display = 'block';
         document.getElementById('q-sol-title').innerText = currentQuizItem.name;
         document.getElementById('q-sol-desc').innerText = `Lagerung: ${currentQuizItem.lagerung}`;
@@ -431,6 +506,8 @@
         document.getElementById('btn-' + viewName).classList.add('active');
         window.scrollTo(0,0);
     }
+    
+    // Start
     init();
 </script>
 </body>
