@@ -325,7 +325,7 @@
                 <div class="card-preview" onclick="openCard(this)">
                     ${item.def ? `<div class="def-text">${item.def}</div>` : ''}
                     <div style="display:flex; justify-content: space-between; margin-top:5px; color:#78909c; font-size:0.85rem;">
-                         <span>${item.nef ? '📞 Notarzt-Indikation' : ''}</span>
+                         <span>${item.nef ? '📞 Notarzt' : ''}</span>
                     </div>
                 </div>
 
@@ -376,7 +376,7 @@
                     <div class="action-bar">
                         <div class="action-item"><span class="action-icon">🛏️</span> ${item.lagerung || '-'}</div>
                         <div class="action-item"><span class="action-icon">💨</span> ${item.o2 || '-'}</div>
-                        ${item.nef ? `<div class="action-item" style="grid-column: 1/-1; background:#c62828;"><span class="action-icon">📞</span> Notarzt indikator!</div>` : ''}
+                        ${item.nef ? `<div class="action-item" style="grid-column: 1/-1; background:#c62828;"><span class="action-icon">📞</span> Notarzt</div>` : ''}
                         ${item.absaugen ? `<div class="action-item"><span class="action-icon">🪠</span> Absaugen</div>` : ''}
                         ${item.sonstiges ? `<div class="action-item" style="grid-column: 1/-1; font-style:italic">ℹ️ ${item.sonstiges}</div>` : ''}
                     </div>
