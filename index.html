@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RescueCards V5.5 (Hybrid UI)</title>
+    <title>RescueCards V5.6 (Expanded Cockpit)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -72,14 +72,16 @@
         .box-yellow { background: #fff8e1; color: #f57f17; border-color: #ffe082; }
         .box-blue   { background: #e3f2fd; color: #0277bd; border-color: #90caf9; }
         
-        /* COCKPIT */
-        .cockpit { display: flex; justify-content: space-between; gap: 4px; padding: 8px 10px; background: #f5f5f5; border-bottom: 1px solid #e0e0e0; }
+        /* COCKPIT (NEU: 2 Zeilen) */
+        .cockpit-container { background: #f5f5f5; border-bottom: 1px solid #e0e0e0; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; }
+        .cockpit-row { display: flex; gap: 4px; width: 100%; }
+        
         .vital-tile { flex: 1; background: white; padding: 4px 2px; border-radius: 6px; border: 1px solid #e0e0e0; text-align: center; min-width: 0; }
         .vital-label { font-size: 0.6rem; color: #78909c; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
         .vital-val { font-weight: 800; font-size: 0.9rem; color: #37474f; white-space: nowrap; }
         .trend-up { color: #d32f2f !important; } .trend-down { color: #1976d2 !important; }
 
-        /* --- HYBRID UI STYLES (NEU in V5.5) --- */
+        /* HYBRID UI STYLES */
         .abc-section { padding: 12px 15px; border-bottom: 1px solid #eee; }
         .abc-section.sec-ab { border-left: 5px solid var(--col-ab); }
         .abc-section.sec-c { border-left: 5px solid var(--col-c); }
@@ -88,19 +90,15 @@
         
         .sec-title { font-size: 0.75rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
 
-        /* TEXT BLOCKS (Für lange Texte) */
         .info-block { margin-bottom: 12px; }
         .info-block:last-child { margin-bottom: 0; }
         .info-label-sm { font-size: 0.7rem; font-weight: 700; color: #b0bec5; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
         .info-val-lg { font-size: 1rem; color: #263238; line-height: 1.4; font-weight: 500; }
 
-        /* MICRO GRID (Für kurze Werte) */
         .micro-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
         .micro-tile { flex: 1; min-width: 80px; background: #f5f5f5; border-radius: 8px; padding: 8px 10px; border: 1px solid #eee; }
         .micro-label { font-size: 0.65rem; color: #78909c; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 2px; }
         .micro-val { font-size: 0.95rem; font-weight: 700; color: #37474f; word-break: break-word; }
-
-        /* --- ENDE HYBRID UI --- */
 
         .action-bar { background: #263238; color: white; padding: 10px 15px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
         .action-item { background: rgba(255,255,255,0.1); padding: 6px 8px; border-radius: 4px; display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
@@ -223,21 +221,22 @@
     }
 
     function formatValue(val) {
-        if (!val) return "";
+        // FALLBACK: Wenn leer, gib "-" zurück, aber nicht bei formatValue Check in anderen Funktionen,
+        // hier primär für die Anzeige wichtig.
+        if (!val || val.trim() === "") return "-";
+        
         let style = "";
         if (isHigh(val)) style = "trend-up";
         if (isLow(val)) style = "trend-down";
         return `<span class="${style}">${val}</span>`;
     }
 
-    /* --- UI HELPERS FOR HYBRID DESIGN --- */
     function renderBlock(label, val) {
         if(!val || val.trim() === "") return "";
         return `<div class="info-block"><div class="info-label-sm">${label}</div><div class="info-val-lg">${formatValue(val)}</div></div>`;
     }
 
     function renderMicro(items) {
-        // Filter empty items
         const validItems = items.filter(i => i.v && i.v.trim() !== "");
         if(validItems.length === 0) return "";
         
@@ -276,27 +275,23 @@
             }
             const imageHTML = imgSrc ? `<img src="${imgSrc}" class="card-img" onclick="openCard(this)" onerror="this.style.display='none'" loading="lazy">` : '';
 
-            /* --- CONTENT GENERATION --- */
-            
-            // A - Airway
+            // A & B
             let contentA = renderBlock('Atemwege', item.a_atemwege);
             contentA += renderBlock('Atemgeräusche', item.b_atemgeraeusche);
             
-            // B - Breathing (Mixed)
             let contentB = renderBlock('Atemnot', item.b_atemnot);
             contentB += renderMicro([
                 {l: 'Zyanose', v: item.b_zyanose},
                 {l: 'Halsvenen', v: item.b_halsvenen}
             ]);
 
-            // C - Circulation (Mostly Text)
+            // C
             let contentC = renderBlock('Hautzustand', item.c_haut);
 
-            // D - Disability (Heavy on Micro Tiles)
+            // D (OHNE BZ, da jetzt im Cockpit)
             let contentD = renderBlock('Bewusstsein', item.bewusstsein);
             contentD += renderMicro([
                 {l: 'GCS / AVPU', v: item.d_avpu},
-                {l: 'Blutzucker', v: item.d_bz},
                 {l: 'Pupillen', v: item.d_pupillen}
             ]);
             contentD += renderMicro([
@@ -306,12 +301,11 @@
             ]);
             contentD += renderBlock('Sonstiges', item.d_sonstiges);
 
-            // E - Exposure
+            // E (OHNE Temp, da jetzt im Cockpit)
             let contentE = renderBlock('Spezifische Symptome', item.e_symptome);
             contentE += renderMicro([
                 {l: 'Schmerz', v: item.e_schmerz},
                 {l: 'Nausea', v: item.e_nausea},
-                {l: 'Temperatur', v: item.e_temp},
                 {l: 'Durst', v: item.e_durst}
             ]);
             contentE += renderBlock('Ausscheidung', item.e_harn_stuhl);
@@ -342,16 +336,20 @@
                     <!-- ERSTER EINDRUCK (BLAU) -->
                     ${item.erster_eindruck ? `<div class="symptom-box box-blue"><span class="icon">👁️</span><span class="text">Eindruck: ${item.erster_eindruck}</span></div>` : ''}
 
-                    <!-- COMPACT COCKPIT -->
-                    ${(item.c_herzfrequenz || item.c_blutdruck || item.b_atemfrequenz || item.b_spo2) ? `
-                    <div class="cockpit">
-                        <div class="vital-tile"><div class="vital-label">❤️ Puls</div><div class="vital-val">${formatValue(item.c_herzfrequenz) || '-'}</div></div>
-                        <div class="vital-tile"><div class="vital-label">🩸 RR</div><div class="vital-val">${formatValue(item.c_blutdruck) || '-'}</div></div>
-                        <div class="vital-tile"><div class="vital-label">☁️ SpO2</div><div class="vital-val">${formatValue(item.b_spo2) || '-'}</div></div>
-                        <div class="vital-tile"><div class="vital-label">💨 AF</div><div class="vital-val">${formatValue(item.b_atemfrequenz) || '-'}</div></div>
-                    </div>` : ''}
+                    <!-- FULL COCKPIT (IMMER SICHTBAR, 2 ZEILEN) -->
+                    <div class="cockpit-container">
+                        <div class="cockpit-row">
+                            <div class="vital-tile"><div class="vital-label">❤️ Puls</div><div class="vital-val">${formatValue(item.c_herzfrequenz)}</div></div>
+                            <div class="vital-tile"><div class="vital-label">🩸 RR</div><div class="vital-val">${formatValue(item.c_blutdruck)}</div></div>
+                            <div class="vital-tile"><div class="vital-label">☁️ SpO2</div><div class="vital-val">${formatValue(item.b_spo2)}</div></div>
+                            <div class="vital-tile"><div class="vital-label">💨 AF</div><div class="vital-val">${formatValue(item.b_atemfrequenz)}</div></div>
+                        </div>
+                        <div class="cockpit-row">
+                            <div class="vital-tile"><div class="vital-label">🍬 BZ</div><div class="vital-val">${formatValue(item.d_bz)}</div></div>
+                            <div class="vital-tile"><div class="vital-label">🌡️ Temp</div><div class="vital-val">${formatValue(item.e_temp)}</div></div>
+                        </div>
+                    </div>
 
-                    <!-- ABCDE SECTIONS (HYBRID) -->
                     <div class="abc-section sec-ab">
                         <div class="sec-title" style="color:var(--col-ab)">🫁 Airway & Breathing</div>
                         ${contentA}
