@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RescueCards V5.9</title>
+    <title>RescueCards V6.0</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -136,8 +136,23 @@
         .norm-icon { color: #2e7d32; } .warn-icon { color: #f9a825; }
         .std-val { display: block; font-weight: 500; margin-bottom: 2px; }
 
+        /* QUIZ GAME STYLES */
+        .quiz-box { background: white; padding: 20px; border-radius: 12px; border: 1px solid #ddd; }
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .quiz-score { font-weight: bold; font-size: 1.1rem; color: var(--accent); }
+        .quiz-img { max-height: 200px; max-width: 100%; object-fit: contain; margin-bottom: 15px; border-radius: 8px; border: 1px solid #eee; }
+        .quiz-options { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 15px; }
+        .quiz-btn { 
+            background: white; border: 1px solid #cfd8dc; padding: 15px; border-radius: 8px; 
+            font-size: 1rem; cursor: pointer; text-align: left; font-weight: 600; color: #37474f; 
+            transition: all 0.2s; 
+        }
+        .quiz-btn:hover { background: #eceff1; }
+        .quiz-btn.correct { background: #c8e6c9; border-color: #2e7d32; color: #1b5e20; } /* Grün */
+        .quiz-btn.wrong { background: #ffcdd2; border-color: #c62828; color: #b71c1c; opacity: 0.6; } /* Rot */
+        .quiz-next-area { margin-top: 20px; display: none; text-align: center; }
+
         #status-msg { text-align: center; padding: 40px 20px; color: #666; }
-        .quiz-box { background: white; padding: 20px; border-radius: 12px; text-align: center; border: 1px solid #ddd; }
         .btn { background: var(--col-ab); color: white; padding: 12px 30px; border-radius: 30px; border: none; font-size: 1rem; margin-top: 15px; cursor: pointer; width: 100%; font-weight: bold; }
         .comp-table { width: 100%; border-collapse: collapse; background: white; }
         .comp-table td { border-bottom: 1px solid #eee; padding: 10px; width: 50%; vertical-align: top; font-size: 0.85rem; }
@@ -149,7 +164,7 @@
     <div class="header-top">
         <div class="brand-area">
             <h1>🚑 RescueCards</h1>
-            <span class="version">V5.9</span>
+            <span class="version">V6.0</span>
         </div>
         <button class="menu-btn" onclick="toggleMenu()">☰</button>
     </div>
@@ -173,7 +188,7 @@
     <div class="menu-item" id="nav-standards" onclick="nav('standards')">📏 Standardwerte</div>
     <div class="menu-item" id="nav-quiz" onclick="nav('quiz')">🧠 Quiz</div>
     <div style="margin-top:auto; padding:20px; font-size:0.7rem; color:#999; text-align:center;">
-        RescueCards V5.9<br>Offline-Ready
+        RescueCards V6.0<br>Offline-Ready
     </div>
 </div>
 
@@ -284,12 +299,24 @@
 <!-- VIEW: QUIZ -->
 <div id="quiz" class="view-section">
     <div class="quiz-box">
-        <h3 id="q-text" style="min-height:60px;">Lade Frage...</h3>
-        <button class="btn" onclick="solveQuiz()">Auflösen</button>
-        <div id="q-sol" style="display:none; margin-top:20px; text-align:left; background:#f5f5f5; padding:15px; border-radius:8px;">
-            <h2 id="q-sol-title" style="margin-top:0"></h2>
-            <div id="q-sol-desc"></div>
-            <button class="btn" style="background:transparent; border:2px solid #000; color:#000;" onclick="nextQuiz()">Weiter</button>
+        <div class="quiz-header">
+            <span>🧠 Quiz-Modus</span>
+            <span class="quiz-score" id="quiz-score">Score: 0 / 0</span>
+        </div>
+        
+        <!-- Frage Bereich -->
+        <div id="q-content">
+            <h3 id="q-question" style="min-height:40px; margin-top:0;">Lade Frage...</h3>
+            <div id="q-extra"></div> <!-- Für Bilder oder Zusatzinfos -->
+        </div>
+
+        <!-- Antwort Buttons -->
+        <div class="quiz-options" id="q-options"></div>
+
+        <!-- Weiter Button -->
+        <div class="quiz-next-area" id="q-next-area">
+            <div id="q-explanation" style="margin-bottom:10px; font-style:italic; color:#555;"></div>
+            <button class="btn" onclick="nextQuizRound()">Nächste Frage ➝</button>
         </div>
     </div>
 </div>
@@ -353,7 +380,7 @@
         document.getElementById('status-msg').style.display = 'none';
         if(!document.querySelector('.view-section.active')) nav('learn');
         renderCards(); initCompare();
-        if(!currentQuizItem && db.length > 0) nextQuiz();
+        if(db.length > 0) nextQuiz(); // Quiz Setup
     }
 
     // --- MENU LOGIC ---
@@ -423,7 +450,6 @@
         return `<span class="${style}">${val}</span>`;
     }
 
-    // Helper für Cockpit Kacheln (Check ob Daten da sind für Styling)
     function getTileClass(val) {
         const hasData = (val && val.trim() !== "" && val.trim() !== "-");
         return hasData ? "vital-tile has-data" : "vital-tile";
@@ -503,7 +529,6 @@
             
             // Cockpit Logic
             const zyanoseVal = (item.b_zyanose && item.b_zyanose.toLowerCase().includes('ja')) ? '🔵' : formatValue(item.b_zyanose);
-            // Check ob Zyanose relevanten Inhalt hat für Hervorhebung (nicht nur "-")
             const zyanoseRaw = (item.b_zyanose && item.b_zyanose.toLowerCase().includes('ja')) ? 'ja' : item.b_zyanose;
 
             const html = `
@@ -532,7 +557,7 @@
                     <!-- 2. LEITSYMPTOME -->
                     ${item.leitsymptome ? `<div class="symptom-box box-yellow"><span class="icon">⚠️</span><span class="text">${item.leitsymptome}</span></div>` : ''}
 
-                    <!-- FULL COCKPIT (Styled Tiles) -->
+                    <!-- FULL COCKPIT -->
                     <div class="cockpit-container">
                         <div class="cockpit-row">
                             <div class="${getTileClass(item.c_herzfrequenz)}"><div class="vital-label">❤️ Puls</div><div class="vital-val">${formatValue(item.c_herzfrequenz)}</div></div>
@@ -611,19 +636,95 @@
         document.getElementById('compare-result').innerHTML = html;
     }
 
-    let currentQuizItem = null;
+    // --- QUIZ LOGIC V2.0 ---
+    let quizScore = 0;
+    let quizTotal = 0;
+    let currentCorrectCard = null;
+    let isQuizLocked = false;
+
     function nextQuiz() {
-        if(db.length === 0) return;
-        document.getElementById('q-sol').style.display = 'none';
-        currentQuizItem = db[Math.floor(Math.random() * db.length)];
-        const types = [`Leitsymptome:\n"${currentQuizItem.leitsymptome || '?'}"\n\nDiagnose?`, `Haut: ${currentQuizItem.c_haut}\nAtmung: ${currentQuizItem.b_atemgeraeusche}\n\nVerdacht?`];
-        document.getElementById('q-text').innerText = types[Math.floor(Math.random() * types.length)];
+        if(db.length > 0 && !currentCorrectCard) nextQuizRound();
     }
-    function solveQuiz() {
-        if(!currentQuizItem) return;
-        document.getElementById('q-sol').style.display = 'block';
-        document.getElementById('q-sol-title').innerText = currentQuizItem.name;
-        document.getElementById('q-sol-desc').innerText = `Lagerung: ${currentQuizItem.lagerung}`;
+
+    function nextQuizRound() {
+        if(db.length < 4) return;
+        isQuizLocked = false;
+        document.getElementById('q-next-area').style.display = 'none';
+        document.getElementById('q-options').innerHTML = '';
+        document.getElementById('q-extra').innerHTML = '';
+        
+        currentCorrectCard = db[Math.floor(Math.random() * db.length)];
+        
+        let distractors = [];
+        while(distractors.length < 3) {
+            let r = db[Math.floor(Math.random() * db.length)];
+            if(r.id !== currentCorrectCard.id && !distractors.includes(r)) distractors.push(r);
+        }
+        
+        let options = [currentCorrectCard, ...distractors];
+        options.sort(() => Math.random() - 0.5);
+
+        let qType = Math.floor(Math.random() * 3);
+        let questionText = "";
+        
+        if(qType === 1 && (!currentCorrectCard.picture || currentCorrectCard.picture === "")) qType = 0;
+
+        if (qType === 0) {
+            questionText = `Patient zeigt folgende Leitsymptome:\n"${currentCorrectCard.leitsymptome || 'Unklare Symptomatik'}"`;
+        } 
+        else if (qType === 1) {
+            questionText = "Welches Krankheitsbild sehen Sie hier?";
+            let imgSrc = currentCorrectCard.picture;
+            if(!imgSrc.toLowerCase().startsWith('http')) imgSrc = IMAGE_BASE_URL + imgSrc;
+            document.getElementById('q-extra').innerHTML = `<img src="${imgSrc}" class="quiz-img">`;
+        } 
+        else if (qType === 2) {
+            questionText = "Verdacht basierend auf Vitalwerten:";
+            let vitals = [];
+            if(currentCorrectCard.c_herzfrequenz) vitals.push(`Puls: ${currentCorrectCard.c_herzfrequenz}`);
+            if(currentCorrectCard.c_blutdruck) vitals.push(`RR: ${currentCorrectCard.c_blutdruck}`);
+            if(currentCorrectCard.b_spo2) vitals.push(`SpO2: ${currentCorrectCard.b_spo2}`);
+            if(currentCorrectCard.c_haut) vitals.push(`Haut: ${currentCorrectCard.c_haut}`);
+            
+            if(vitals.length === 0) { questionText = `Symptome: ${currentCorrectCard.leitsymptome}`; }
+            else { 
+                document.getElementById('q-extra').innerHTML = `<div style="background:#f5f5f5; padding:10px; border-radius:6px; font-weight:bold; color:#37474f;">${vitals.join('<br>')}</div>`;
+            }
+        }
+
+        document.getElementById('q-question').innerText = questionText;
+
+        const optContainer = document.getElementById('q-options');
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'quiz-btn';
+            btn.innerText = opt.name;
+            btn.onclick = () => checkAnswer(btn, opt.id === currentCorrectCard.id);
+            optContainer.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(btnElement, isCorrect) {
+        if(isQuizLocked) return;
+        isQuizLocked = true;
+        
+        quizTotal++;
+        if(isCorrect) {
+            quizScore++;
+            btnElement.classList.add('correct');
+        } else {
+            btnElement.classList.add('wrong');
+            document.querySelectorAll('.quiz-btn').forEach(b => {
+                if(b.innerText === currentCorrectCard.name) b.classList.add('correct');
+            });
+        }
+
+        document.getElementById('quiz-score').innerText = `Score: ${quizScore} / ${quizTotal}`;
+        
+        let explanation = "";
+        if(currentCorrectCard.lagerung) explanation = `Lagerung wäre: ${currentCorrectCard.lagerung}`;
+        document.getElementById('q-explanation').innerText = explanation;
+        document.getElementById('q-next-area').style.display = 'block';
     }
 
     init();
