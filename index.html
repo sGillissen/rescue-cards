@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RescueCards V6.3</title>
+    <title>RescueCards V6.4</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -179,7 +179,7 @@
     <div class="header-top">
         <div class="brand-area">
             <h1>🚑 RescueCards</h1>
-            <span class="version">V6.3</span>
+            <span class="version">V6.4</span>
         </div>
         <button class="menu-btn" onclick="toggleMenu()">☰</button>
     </div>
@@ -203,7 +203,7 @@
     <div class="menu-item" id="nav-standards" onclick="nav('standards')">📏 Standardwerte</div>
     <div class="menu-item" id="nav-quiz" onclick="nav('quiz')">🧠 Quiz</div>
     <div style="margin-top:auto; padding:20px; font-size:0.7rem; color:#999; text-align:center;">
-        RescueCards V6.3<br>Offline-Ready
+        RescueCards V6.4<br>Offline-Ready
     </div>
 </div>
 
@@ -465,7 +465,6 @@
     }
     
     // --- SMART COCKPIT LOGIC ---
-    // Returns { text: string, isReduced: boolean }
     function smartCockpitValue(val) {
         if(!val || val.trim() === "") return { text: "-", isReduced: false };
         // Check for arrows
@@ -524,39 +523,36 @@
             if(explSrc && !explSrc.toLowerCase().startsWith('http')) explSrc = IMAGE_BASE_URL + explSrc;
             const explHTML = explSrc ? `<img src="${explSrc}" class="expl-img" onerror="this.style.display='none'" loading="lazy">` : '';
 
-            // Cockpit Values Calculation
+            // Cockpit Values Calculation (NOW WITH BEWUSSTSEIN!)
             const vPuls = smartCockpitValue(item.c_herzfrequenz);
             const vRR   = smartCockpitValue(item.c_blutdruck);
             const vSpO2 = smartCockpitValue(item.b_spo2);
             const vAF   = smartCockpitValue(item.b_atemfrequenz);
             const vBZ   = smartCockpitValue(item.d_bz);
             const vTemp = smartCockpitValue(item.e_temp);
+            const vBew  = smartCockpitValue(item.bewusstsein); // NEW!
 
-            // ABCDE Logic: Force display in section if reduced in cockpit OR standard display logic
-            // Helper to decide if we show it in ABCDE block:
-            // Show if: (Is NOT in cockpit) OR (Is in cockpit but reduced) OR (Has value and we want redundancy)
-            // Strategy: We just force render specific vital signs in their sections now to ensure full detail is always available.
-            
             let contentA = renderBlock('Atemwege', item.a_atemwege) + renderBlock('Atemgeräusche', item.b_atemgeraeusche);
             
-            // B: Add AF and SpO2 details here explicitly
+            // B
             let contentB = renderBlock('Atemnot', item.b_atemnot) + 
                            renderBlock('Atemfrequenz', item.b_atemfrequenz) + 
                            renderBlock('SpO2', item.b_spo2) +
                            renderMicro([{l: 'Halsvenen', v: item.b_halsvenen}]);
             
-            // C: Add Pulse and RR details here explicitly
+            // C
             let contentC = renderBlock('Hautzustand', item.c_haut) + 
                            renderBlock('Puls', item.c_herzfrequenz) + 
                            renderBlock('Blutdruck', item.c_blutdruck);
 
-            // D: Add BZ details here explicitly
+            // D (Bewusstsein here again for safety!)
             let contentD = renderMicro([{l: 'GCS / AVPU', v: item.d_avpu},{l: 'Pupillen', v: item.d_pupillen}]) + 
                            renderMicro([{l: 'Krämpfe', v: item.e_kraempfe},{l: 'Lähmung', v: item.e_laehmung},{l: 'FAST / Neuro', v: item.d_fast}]) + 
+                           renderBlock('Bewusstsein', item.bewusstsein) + 
                            renderBlock('Blutzucker', item.d_bz) +
                            renderBlock('Sonstiges', item.d_sonstiges);
 
-            // E: Add Temp details here explicitly
+            // E
             let contentE = renderBlock('Spezifische Symptome', item.e_symptome) + 
                            renderMicro([{l: 'Schmerz', v: item.e_schmerz},{l: 'Nausea', v: item.e_nausea},{l: 'Durst', v: item.e_durst}]) + 
                            renderBlock('Temperatur', item.e_temp) +
@@ -583,13 +579,9 @@
                 </div>
 
                 <div class="card-details">
-                    <!-- Hauptbild jetzt HIER DRIN (versteckt bis Klick) -->
                     ${imageHTML}
-
                     ${item.erster_eindruck ? `<div class="symptom-box box-blue"><span class="icon">👁️</span><span class="text">${item.erster_eindruck}</span></div>` : ''}
                     ${item.leitsymptome ? `<div class="symptom-box box-yellow"><span class="icon">⚠️</span><span class="text">${item.leitsymptome}</span></div>` : ''}
-                    
-                    <!-- Erklär-Bild (unter Leitsymptome) -->
                     ${explHTML}
 
                     <div class="cockpit-container">
@@ -602,7 +594,7 @@
                         <div class="cockpit-row">
                             <div class="${getTileClass(item.d_bz)}"><div class="vital-label">🍬 BZ</div><div class="vital-val">${vBZ.text}</div></div>
                             <div class="${getTileClass(item.e_temp)}"><div class="vital-label">🌡️ Temp</div><div class="vital-val">${vTemp.text}</div></div>
-                            <div class="${getTileClass(item.bewusstsein)}"><div class="vital-label">🧠 Bewusst.</div><div class="vital-val">${formatValue(item.bewusstsein)}</div></div>
+                            <div class="${getTileClass(item.bewusstsein)}"><div class="vital-label">🧠 Bewusst.</div><div class="vital-val">${vBew.text}</div></div>
                             <div class="${getTileClass(zyanoseRaw)}"><div class="vital-label">🔵 Zyanose</div><div class="vital-val">${zyanoseVal}</div></div>
                         </div>
                     </div>
