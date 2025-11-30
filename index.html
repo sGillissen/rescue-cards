@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RescueCards V6.2</title>
+    <title>RescueCards V6.3</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -74,7 +74,9 @@
         .resp { background: var(--cat-resp); } .cardio { background: var(--cat-cardio); } 
         .trauma { background: var(--cat-trauma); } .other { background: var(--cat-other); }
 
-        .card-img { width: 100%; height: 550px; object-fit: contain; display: block; cursor: pointer; border-bottom: 1px solid #eee; background: #f0f0f0; }
+        /* BILDER */
+        .card-img { width: 100%; height: 550px; object-fit: contain; display: block; border-bottom: 1px solid #eee; background: #f0f0f0; margin-bottom: 10px; }
+        .expl-img { width: 100%; height: auto; max-height: 400px; object-fit: contain; display: block; margin: 10px 0; border: 1px solid #eee; border-radius: 8px; }
 
         .card-preview { padding: 12px 15px; cursor: pointer; }
         .def-text { font-style: italic; color: #546e7a; margin-bottom: 5px; font-size: 0.9rem; }
@@ -100,6 +102,9 @@
 
         .vital-label { font-size: 0.6rem; color: #78909c; font-weight: 700; text-transform: uppercase; white-space: nowrap; margin-bottom: 2px; }
         .vital-val { font-weight: 800; font-size: 0.85rem; color: #37474f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* Größere Emojis im Cockpit wenn Text ausgeblendet wird */
+        .vital-val-large { font-size: 1.4rem; line-height: 1; } 
+
         .trend-up { color: #d32f2f !important; } .trend-down { color: #1976d2 !important; }
 
         /* HYBRID UI */
@@ -155,8 +160,8 @@
             text-align: center; cursor: pointer; user-select: none; transition: all 0.1s;
         }
         .quiz-tile.state-0 { background: #fff; color: #37474f; }
-        .quiz-tile.state-1 { background: #ffcdd2; color: #c62828; border-color: #e57373; } /* Hoch/Rot */
-        .quiz-tile.state-2 { background: #e1f5fe; color: #0277bd; border-color: #4fc3f7; } /* Tief/Blau */
+        .quiz-tile.state-1 { background: #ffcdd2; color: #c62828; border-color: #e57373; }
+        .quiz-tile.state-2 { background: #e1f5fe; color: #0277bd; border-color: #4fc3f7; }
         
         .quiz-tile.resolved-correct { border: 3px solid #43a047; position:relative; }
         .quiz-tile.resolved-correct::after { content: '✅'; position:absolute; top:-8px; right:-8px; background:white; border-radius:50%; font-size:12px; }
@@ -174,7 +179,7 @@
     <div class="header-top">
         <div class="brand-area">
             <h1>🚑 RescueCards</h1>
-            <span class="version">V6.2</span>
+            <span class="version">V6.3</span>
         </div>
         <button class="menu-btn" onclick="toggleMenu()">☰</button>
     </div>
@@ -198,7 +203,7 @@
     <div class="menu-item" id="nav-standards" onclick="nav('standards')">📏 Standardwerte</div>
     <div class="menu-item" id="nav-quiz" onclick="nav('quiz')">🧠 Quiz</div>
     <div style="margin-top:auto; padding:20px; font-size:0.7rem; color:#999; text-align:center;">
-        RescueCards V6.2<br>Offline-Ready
+        RescueCards V6.3<br>Offline-Ready
     </div>
 </div>
 
@@ -345,7 +350,6 @@
         { id: 'pain',    label: '⚡ Schmerz', check: (i) => hasText(i.e_schmerz, 'ja') || hasText(i.e_nausea, 'schmerz') }
     ];
 
-    // Globaler Fehler-Handler (Fängt weiße Bildschirme ab)
     window.onerror = function(msg, url, line) {
         document.getElementById('status-msg').innerHTML = 
             `<h3 style="color:red">Fehler aufgetreten!</h3><p>${msg}</p>
@@ -358,27 +362,19 @@
 
     async function init() {
         renderFilterButtons();
-        
-        // Versuch 1: Cache laden
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
             try { 
                 db = JSON.parse(cached); 
                 startApp(); 
-                // Trotzdem im Hintergrund aktualisieren versuchen
                 fetchAndParse(GOOGLE_CSV_LINK).catch(()=>{}); 
                 return;
             } catch (e) { localStorage.removeItem(CACHE_KEY); }
         }
-
-        // Versuch 2: Netz laden
-        try { 
-            await fetchAndParse(GOOGLE_CSV_LINK); 
-        } catch (e1) { 
+        try { await fetchAndParse(GOOGLE_CSV_LINK); } 
+        catch (e1) { 
             try { await fetchAndParse(PROXY_URL); } 
-            catch(e2) { 
-                if(db.length===0) document.getElementById('status-msg').innerHTML = "<h3>Fehler</h3><p>Keine Internetverbindung und keine gespeicherten Daten.</p>"; 
-            } 
+            catch(e2) { if(db.length===0) document.getElementById('status-msg').innerHTML = "<h3>Fehler</h3><p>Keine Daten.</p>"; } 
         }
     }
 
@@ -459,6 +455,7 @@
         document.querySelector('.filter-reset').classList.remove('visible');
         renderCards();
     }
+    
     function formatValue(val) {
         if (!val || val.trim() === "") return "-";
         let style = "";
@@ -466,6 +463,24 @@
         if (isLow(val)) style = "trend-down";
         return `<span class="${style}">${val}</span>`;
     }
+    
+    // --- SMART COCKPIT LOGIC ---
+    // Returns { text: string, isReduced: boolean }
+    function smartCockpitValue(val) {
+        if(!val || val.trim() === "") return { text: "-", isReduced: false };
+        // Check for arrows
+        const hasArrow = val.match(/[⬆️⬇️↗️↘️]/);
+        // If arrow exists AND text is long, show only arrow
+        if (hasArrow && val.length > 4) {
+             const arrow = val.match(/[⬆️⬇️↗️↘️]/)[0];
+             let colorClass = "";
+             if(arrow === '⬆️' || arrow === '↗️') colorClass = "trend-up vital-val-large";
+             if(arrow === '⬇️' || arrow === '↘️') colorClass = "trend-down vital-val-large";
+             return { text: `<span class="${colorClass}">${arrow}</span>`, isReduced: true };
+        }
+        return { text: formatValue(val), isReduced: false };
+    }
+
     function getTileClass(val) {
         const hasData = (val && val.trim() !== "" && val.trim() !== "-");
         return hasData ? "vital-tile has-data" : "vital-tile";
@@ -499,19 +514,54 @@
         });
         if(filtered.length === 0) { container.innerHTML = '<div style="text-align:center; padding:40px; color:#90a4ae;">Keine Treffer.</div>'; return; }
         filtered.forEach(item => {
+            // Bilder Logik
             let imgSrc = item.picture;
             if(imgSrc && !imgSrc.toLowerCase().startsWith('http')) imgSrc = IMAGE_BASE_URL + imgSrc;
             const imageHTML = imgSrc ? `<img src="${imgSrc}" class="card-img" onclick="openCard(this)" onerror="this.onerror=null;this.src='${FALLBACK_IMG}';" loading="lazy">` : '';
 
+            // Zweites Bild (Erklärung)
+            let explSrc = item.explanation_img;
+            if(explSrc && !explSrc.toLowerCase().startsWith('http')) explSrc = IMAGE_BASE_URL + explSrc;
+            const explHTML = explSrc ? `<img src="${explSrc}" class="expl-img" onerror="this.style.display='none'" loading="lazy">` : '';
+
+            // Cockpit Values Calculation
+            const vPuls = smartCockpitValue(item.c_herzfrequenz);
+            const vRR   = smartCockpitValue(item.c_blutdruck);
+            const vSpO2 = smartCockpitValue(item.b_spo2);
+            const vAF   = smartCockpitValue(item.b_atemfrequenz);
+            const vBZ   = smartCockpitValue(item.d_bz);
+            const vTemp = smartCockpitValue(item.e_temp);
+
+            // ABCDE Logic: Force display in section if reduced in cockpit OR standard display logic
+            // Helper to decide if we show it in ABCDE block:
+            // Show if: (Is NOT in cockpit) OR (Is in cockpit but reduced) OR (Has value and we want redundancy)
+            // Strategy: We just force render specific vital signs in their sections now to ensure full detail is always available.
+            
             let contentA = renderBlock('Atemwege', item.a_atemwege) + renderBlock('Atemgeräusche', item.b_atemgeraeusche);
-            let contentB = renderBlock('Atemnot', item.b_atemnot) + renderMicro([{l: 'Halsvenen', v: item.b_halsvenen}]);
-            let contentC = renderBlock('Hautzustand', item.c_haut);
+            
+            // B: Add AF and SpO2 details here explicitly
+            let contentB = renderBlock('Atemnot', item.b_atemnot) + 
+                           renderBlock('Atemfrequenz', item.b_atemfrequenz) + 
+                           renderBlock('SpO2', item.b_spo2) +
+                           renderMicro([{l: 'Halsvenen', v: item.b_halsvenen}]);
+            
+            // C: Add Pulse and RR details here explicitly
+            let contentC = renderBlock('Hautzustand', item.c_haut) + 
+                           renderBlock('Puls', item.c_herzfrequenz) + 
+                           renderBlock('Blutdruck', item.c_blutdruck);
+
+            // D: Add BZ details here explicitly
             let contentD = renderMicro([{l: 'GCS / AVPU', v: item.d_avpu},{l: 'Pupillen', v: item.d_pupillen}]) + 
                            renderMicro([{l: 'Krämpfe', v: item.e_kraempfe},{l: 'Lähmung', v: item.e_laehmung},{l: 'FAST / Neuro', v: item.d_fast}]) + 
+                           renderBlock('Blutzucker', item.d_bz) +
                            renderBlock('Sonstiges', item.d_sonstiges);
+
+            // E: Add Temp details here explicitly
             let contentE = renderBlock('Spezifische Symptome', item.e_symptome) + 
                            renderMicro([{l: 'Schmerz', v: item.e_schmerz},{l: 'Nausea', v: item.e_nausea},{l: 'Durst', v: item.e_durst}]) + 
+                           renderBlock('Temperatur', item.e_temp) +
                            renderBlock('Ausscheidung', item.e_harn_stuhl);
+            
             const zyanoseVal = (item.b_zyanose && item.b_zyanose.toLowerCase().includes('ja')) ? '🔵' : formatValue(item.b_zyanose);
             const zyanoseRaw = (item.b_zyanose && item.b_zyanose.toLowerCase().includes('ja')) ? 'ja' : item.b_zyanose;
 
@@ -524,26 +574,34 @@
                     </div>
                     <span class="toggle-arrow" style="opacity:0.8">▼</span>
                 </div>
-                ${imageHTML}
+                
                 <div class="card-preview" onclick="openCard(this)">
                     ${item.def ? `<div class="def-text">${item.def}</div>` : ''}
                     <div style="display:flex; justify-content: space-between; margin-top:5px; color:#78909c; font-size:0.85rem;">
                          <span>${item.nef ? '📞 Notarzt' : ''}</span>
                     </div>
                 </div>
+
                 <div class="card-details">
+                    <!-- Hauptbild jetzt HIER DRIN (versteckt bis Klick) -->
+                    ${imageHTML}
+
                     ${item.erster_eindruck ? `<div class="symptom-box box-blue"><span class="icon">👁️</span><span class="text">${item.erster_eindruck}</span></div>` : ''}
                     ${item.leitsymptome ? `<div class="symptom-box box-yellow"><span class="icon">⚠️</span><span class="text">${item.leitsymptome}</span></div>` : ''}
+                    
+                    <!-- Erklär-Bild (unter Leitsymptome) -->
+                    ${explHTML}
+
                     <div class="cockpit-container">
                         <div class="cockpit-row">
-                            <div class="${getTileClass(item.c_herzfrequenz)}"><div class="vital-label">❤️ Puls</div><div class="vital-val">${formatValue(item.c_herzfrequenz)}</div></div>
-                            <div class="${getTileClass(item.c_blutdruck)}"><div class="vital-label">🩸 RR</div><div class="vital-val">${formatValue(item.c_blutdruck)}</div></div>
-                            <div class="${getTileClass(item.b_spo2)}"><div class="vital-label">☁️ SpO2</div><div class="vital-val">${formatValue(item.b_spo2)}</div></div>
-                            <div class="${getTileClass(item.b_atemfrequenz)}"><div class="vital-label">💨 AF</div><div class="vital-val">${formatValue(item.b_atemfrequenz)}</div></div>
+                            <div class="${getTileClass(item.c_herzfrequenz)}"><div class="vital-label">❤️ Puls</div><div class="vital-val">${vPuls.text}</div></div>
+                            <div class="${getTileClass(item.c_blutdruck)}"><div class="vital-label">🩸 RR</div><div class="vital-val">${vRR.text}</div></div>
+                            <div class="${getTileClass(item.b_spo2)}"><div class="vital-label">☁️ SpO2</div><div class="vital-val">${vSpO2.text}</div></div>
+                            <div class="${getTileClass(item.b_atemfrequenz)}"><div class="vital-label">💨 AF</div><div class="vital-val">${vAF.text}</div></div>
                         </div>
                         <div class="cockpit-row">
-                            <div class="${getTileClass(item.d_bz)}"><div class="vital-label">🍬 BZ</div><div class="vital-val">${formatValue(item.d_bz)}</div></div>
-                            <div class="${getTileClass(item.e_temp)}"><div class="vital-label">🌡️ Temp</div><div class="vital-val">${formatValue(item.e_temp)}</div></div>
+                            <div class="${getTileClass(item.d_bz)}"><div class="vital-label">🍬 BZ</div><div class="vital-val">${vBZ.text}</div></div>
+                            <div class="${getTileClass(item.e_temp)}"><div class="vital-label">🌡️ Temp</div><div class="vital-val">${vTemp.text}</div></div>
                             <div class="${getTileClass(item.bewusstsein)}"><div class="vital-label">🧠 Bewusst.</div><div class="vital-val">${formatValue(item.bewusstsein)}</div></div>
                             <div class="${getTileClass(zyanoseRaw)}"><div class="vital-label">🔵 Zyanose</div><div class="vital-val">${zyanoseVal}</div></div>
                         </div>
@@ -593,12 +651,8 @@
         document.getElementById('compare-result').innerHTML = html;
     }
 
-    // --- QUIZ LOGIC V2.1 (MULTI-MODE) ---
-    let quizScore = 0;
-    let quizTotal = 0;
-    let currentCorrectCard = null;
-    let isQuizLocked = false;
-    let quizMode = 'standard'; 
+    // --- QUIZ LOGIC V2.1 ---
+    let quizScore = 0; let quizTotal = 0; let currentCorrectCard = null; let isQuizLocked = false; let quizMode = 'standard'; 
     let cockpitState = { 'c_herzfrequenz': 0, 'c_blutdruck': 0, 'b_spo2': 0, 'b_atemfrequenz': 0, 'd_bz': 0, 'e_temp': 0 };
 
     function nextQuiz() { if(db.length > 0 && !currentCorrectCard) nextQuizRound(); }
@@ -609,12 +663,8 @@
         document.getElementById('q-next-area').style.display = 'none';
         document.getElementById('q-interaction-area').innerHTML = '';
         document.getElementById('q-extra').innerHTML = '';
-        
         currentCorrectCard = db[Math.floor(Math.random() * db.length)];
-        
-        // Entscheide Spielmodus: 70% Standard, 30% Cockpit
-        if(Math.random() > 0.3) setupStandardQuiz(); 
-        else setupCockpitQuiz();
+        if(Math.random() > 0.3) setupStandardQuiz(); else setupCockpitQuiz();
     }
 
     function setupStandardQuiz() {
@@ -626,15 +676,11 @@
         }
         let options = [currentCorrectCard, ...distractors];
         options.sort(() => Math.random() - 0.5);
-
         let qType = Math.floor(Math.random() * 3);
         let questionText = "";
-        
         if(qType === 1 && (!currentCorrectCard.picture || currentCorrectCard.picture === "")) qType = 0;
-
-        if (qType === 0) {
-            questionText = `Patient zeigt folgende Leitsymptome:\n"${currentCorrectCard.leitsymptome || 'Unklare Symptomatik'}"`;
-        } else if (qType === 1) {
+        if (qType === 0) { questionText = `Patient zeigt folgende Leitsymptome:\n"${currentCorrectCard.leitsymptome || 'Unklare Symptomatik'}"`; } 
+        else if (qType === 1) {
             questionText = "Welches Krankheitsbild sehen Sie hier?";
             let imgSrc = currentCorrectCard.picture;
             if(!imgSrc.toLowerCase().startsWith('http')) imgSrc = IMAGE_BASE_URL + imgSrc;
@@ -649,7 +695,6 @@
             if(vitals.length === 0) { questionText = `Symptome: ${currentCorrectCard.leitsymptome}`; }
             else { document.getElementById('q-extra').innerHTML = `<div style="background:#f5f5f5; padding:10px; border-radius:6px; font-weight:bold; color:#37474f;">${vitals.join('<br>')}</div>`; }
         }
-
         document.getElementById('q-question').innerText = questionText;
         const optContainer = document.getElementById('q-interaction-area');
         optContainer.className = "quiz-options"; 
@@ -669,9 +714,7 @@
         if(isCorrect) { quizScore++; btnElement.classList.add('correct'); } 
         else {
             btnElement.classList.add('wrong');
-            document.querySelectorAll('.quiz-btn').forEach(b => {
-                if(b.innerText === currentCorrectCard.name) b.classList.add('correct');
-            });
+            document.querySelectorAll('.quiz-btn').forEach(b => { if(b.innerText === currentCorrectCard.name) b.classList.add('correct'); });
         }
         finalizeRound();
     }
@@ -680,11 +723,9 @@
         quizMode = 'cockpit';
         document.getElementById('q-question').innerText = `Stellen Sie die erwarteten Vitalwerte ein für:\n"${currentCorrectCard.name}"`;
         cockpitState = { 'c_herzfrequenz': 0, 'c_blutdruck': 0, 'b_spo2': 0, 'b_atemfrequenz': 0, 'd_bz': 0, 'e_temp': 0 };
-
         const labels = { 'c_herzfrequenz': '❤️ Puls', 'c_blutdruck': '🩸 RR', 'b_spo2': '☁️ SpO2', 'b_atemfrequenz': '💨 AF', 'd_bz': '🍬 BZ', 'e_temp': '🌡️ Temp' };
         const grid = document.createElement('div');
         grid.className = 'q-cockpit-grid';
-
         for (let key in cockpitState) {
             const tile = document.createElement('div');
             tile.className = 'quiz-tile state-0';
@@ -693,13 +734,11 @@
             tile.onclick = () => cycleTile(key, labels[key]);
             grid.appendChild(tile);
         }
-        
         const btnCheck = document.createElement('button');
         btnCheck.className = 'btn';
         btnCheck.innerText = 'Werte prüfen ✔️';
         btnCheck.style.marginTop = '15px';
         btnCheck.onclick = checkCockpitAnswer;
-
         const area = document.getElementById('q-interaction-area');
         area.className = ''; 
         area.appendChild(grid);
@@ -722,7 +761,6 @@
         isQuizLocked = true;
         quizTotal++;
         let earnedPoints = 0;
-
         for (let key in cockpitState) {
             const dbVal = currentCorrectCard[key];
             let expected = 0; 
