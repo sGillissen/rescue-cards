@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RescueCards V7.0</title>
+    <title>RescueCards V7.1</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -13,7 +13,7 @@
             --cat-neuro: #8e44ad; --cat-meta: #f39c12; --cat-resp: #27ae60; 
             --cat-cardio: #c0392b; --cat-trauma: #2980b9; --cat-other: #78909c;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; color: var(--text); }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 50px; }
         
         /* HEADER */
         header { 
@@ -86,27 +86,68 @@
         .box-yellow { background: #fff8e1; color: #f57f17; border-color: #ffe082; }
         .box-blue   { background: #e3f2fd; color: #0277bd; border-color: #90caf9; }
         
-        /* NEW VITALS GRID (Inside Sections) */
-        .vitals-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
-        .vital-wrapper { display: flex; flex-direction: column; align-items: center; text-align: center; }
-        
-        .vital-tile { 
-            width: 100%; padding: 8px 5px; border-radius: 8px; border: 1px solid #e0e0e0; 
-            background: #fff; opacity: 0.5; /* Leer = Blass/Transparent */
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-height: 50px; box-sizing: border-box;
-        }
-        .vital-tile.has-data { 
-            background: #e1f5fe; border-color: #b3e5fc; opacity: 1; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        /* UNIFIED GRID SYSTEM V7.1 */
+        .section-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; /* Strict 2 columns */
+            gap: 8px; 
+            margin-bottom: 10px;
         }
         
-        .vital-label { font-size: 0.65rem; color: #78909c; font-weight: 700; text-transform: uppercase; margin-bottom: 3px; }
-        .vital-val { font-weight: 800; font-size: 1rem; color: #37474f; line-height: 1.1; }
-        .vital-val-large { font-size: 1.6rem; }
+        .uni-tile { 
+            background: #fff; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 8px; 
+            padding: 10px 6px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center;
+            min-height: 70px; /* Einheitliche Mindesthöhe */
+            height: auto;
+        }
         
-        .vital-subtext { font-size: 0.8rem; color: #455a64; margin-top: 4px; font-weight: 500; min-height: 1em; }
+        .uni-tile.has-data { 
+            background: #fdfdfd; 
+            border-color: #b0bec5;
+        }
+        
+        /* Empty Tiles (Ghost) */
+        .uni-tile.is-empty { 
+            opacity: 0.4; 
+            background: #fafafa; 
+            border-style: dashed;
+        }
 
-        .trend-up { color: #d32f2f !important; } .trend-down { color: #1976d2 !important; }
+        /* Hervorhebung für wichtige Vitalwerte */
+        .uni-tile.vital-highlight {
+            background: #e1f5fe;
+            border-color: #81d4fa;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .tile-label { 
+            font-size: 0.65rem; 
+            color: #78909c; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            margin-bottom: 4px; 
+            letter-spacing: 0.5px;
+        }
+        
+        .tile-content { 
+            font-weight: 700; 
+            font-size: 0.95rem; 
+            color: #37474f; 
+            line-height: 1.3;
+            word-break: break-word; /* Umbruch bei langen Texten */
+        }
+        
+        /* Icons im Text */
+        .trend-icon-lg { font-size: 1.5rem; display: block; line-height: 1.1; margin-bottom: 2px; }
+        .trend-up { color: #d32f2f; } 
+        .trend-down { color: #1976d2; }
 
         /* HYBRID UI */
         .abc-section { padding: 15px; border-bottom: 1px solid #eee; }
@@ -116,16 +157,6 @@
         .abc-section.sec-e { border-left: 5px solid var(--col-e); }
         
         .sec-title { font-size: 0.8rem; font-weight: 900; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
-
-        .info-block { margin-bottom: 12px; }
-        .info-block:last-child { margin-bottom: 0; }
-        .info-label-sm { font-size: 0.7rem; font-weight: 700; color: #b0bec5; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
-        .info-val-lg { font-size: 1rem; color: #263238; line-height: 1.4; font-weight: 500; }
-
-        .micro-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-        .micro-tile { flex: 1; min-width: 80px; background: #f5f5f5; border-radius: 8px; padding: 8px 10px; border: 1px solid #eee; }
-        .micro-label { font-size: 0.65rem; color: #78909c; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 2px; }
-        .micro-val { font-size: 0.95rem; font-weight: 700; color: #37474f; word-break: break-word; }
 
         .action-bar { background: #263238; color: white; padding: 10px 15px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
         .action-item { background: rgba(255,255,255,0.1); padding: 6px 8px; border-radius: 4px; display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
@@ -172,7 +203,7 @@
     <div class="header-top">
         <div class="brand-area">
             <h1>🚑 RescueCards</h1>
-            <span class="version">V7.0</span>
+            <span class="version">V7.1</span>
         </div>
         <button class="menu-btn" onclick="toggleMenu()">☰</button>
     </div>
@@ -191,7 +222,7 @@
     <div class="menu-item" id="nav-compare" onclick="nav('compare')">⚖️ Vergleich</div>
     <div class="menu-item" id="nav-standards" onclick="nav('standards')">📏 Standardwerte</div>
     <div class="menu-item" id="nav-quiz" onclick="nav('quiz')">🧠 Quiz</div>
-    <div style="margin-top:auto; padding:20px; font-size:0.7rem; color:#999; text-align:center;">RescueCards V7.0<br>Offline-Ready</div>
+    <div style="margin-top:auto; padding:20px; font-size:0.7rem; color:#999; text-align:center;">RescueCards V7.1<br>Offline-Ready</div>
 </div>
 
 <div id="status-msg"><h3>Starte App...</h3><p>⏳</p></div>
@@ -322,55 +353,37 @@
         return `<span class="${style}">${val}</span>`;
     }
 
-    function renderBlock(label, val) {
-        if(!val || val.trim() === "") return "";
-        return `<div class="info-block"><div class="info-label-sm">${label}</div><div class="info-val-lg">${formatValue(val)}</div></div>`;
-    }
-    function renderMicro(items) {
-        const validItems = items.filter(i => i.v && i.v.trim() !== "");
-        if(validItems.length === 0) return "";
-        let html = `<div class="micro-grid">`;
-        validItems.forEach(i => { html += `<div class="micro-tile"><span class="micro-label">${i.l}</span><span class="micro-val">${formatValue(i.v)}</span></div>`; });
-        html += `</div>`;
-        return html;
-    }
-
-    // --- NEW VITAL TILE LOGIC (Split content) ---
-    // Returns HTML for the grid cell
-    function renderIntegratedVital(label, val) {
-        // Leere Kachel (Empty)
+    // --- NEW UNIVERSAL TILE RENDERER V7.1 ---
+    function renderTile(label, val, isVital = false) {
+        // Empty Tile Handling
         if(!val || val.trim() === "" || val === "-") {
-            return `<div class="vital-wrapper"><div class="vital-tile"><div class="vital-label">${label}</div></div></div>`;
+            return `<div class="uni-tile is-empty"><div class="tile-label">${label}</div></div>`;
         }
         
-        let tileContent = val;
-        let subText = "";
+        let contentHtml = val;
+        let vitalClass = isVital ? "vital-highlight" : "has-data";
         
-        // Smart split: Check for arrows AND long text
-        const hasArrow = val.match(/[⬆️⬇️↗️↘️]/);
-        if (hasArrow && val.length > 5) {
-             const arrow = val.match(/[⬆️⬇️↗️↘️]/)[0];
+        // Smart Formatting: Check for Arrows
+        const arrowMatch = val.match(/[⬆️⬇️↗️↘️]/);
+        if (arrowMatch) {
+             const arrow = arrowMatch[0];
+             // Remove arrow from text to avoid duplication if we want
+             const cleanText = val.replace(arrow, '').trim();
+             
              let colorClass = "";
-             if(arrow === '⬆️' || arrow === '↗️') colorClass = "trend-up vital-val-large";
-             if(arrow === '⬇️' || arrow === '↘️') colorClass = "trend-down vital-val-large";
-             tileContent = `<span class="${colorClass}">${arrow}</span>`;
-             subText = val.replace(arrow, '').trim(); // Remove arrow from subtext to be clean? Or keep full text? User said "Zusätzlicher Text". Let's show full val excluding arrow for cleanliness or full val.
-             subText = val; // Show full value below for clarity
+             if(arrow === '⬆️' || arrow === '↗️') colorClass = "trend-up";
+             if(arrow === '⬇️' || arrow === '↘️') colorClass = "trend-down";
+             
+             contentHtml = `<span class="trend-icon-lg ${colorClass}">${arrow}</span><span style="font-weight:normal; font-size:0.85rem">${cleanText}</span>`;
         } else {
-            // Check trend for normal short values
-            let style = "";
-            if (isHigh(val)) style = "trend-up";
-            if (isLow(val)) style = "trend-down";
-            tileContent = `<span class="${style}">${val}</span>`;
+            // Standard formatting
+            contentHtml = formatValue(val);
         }
 
         return `
-        <div class="vital-wrapper">
-            <div class="vital-tile has-data">
-                <div class="vital-label">${label}</div>
-                <div class="vital-val">${tileContent}</div>
-            </div>
-            ${subText ? `<div class="vital-subtext">${subText}</div>` : ''}
+        <div class="uni-tile ${vitalClass}">
+            <div class="tile-label">${label}</div>
+            <div class="tile-content">${contentHtml}</div>
         </div>`;
     }
 
@@ -391,21 +404,39 @@
             let explSrc = item.explanation_img; if(explSrc && !explSrc.toLowerCase().startsWith('http')) explSrc = IMAGE_BASE_URL + explSrc;
             const explHTML = explSrc ? `<img src="${explSrc}" class="expl-img" onerror="this.style.display='none'" loading="lazy">` : '';
 
-            // --- VITALS GENERATION ---
-            // B
-            const tileSpO2 = renderIntegratedVital('☁️ SpO2', item.b_spo2);
-            const tileAF = renderIntegratedVital('💨 AF', item.b_atemfrequenz);
-            // C
-            const tilePuls = renderIntegratedVital('❤️ Puls', item.c_herzfrequenz);
-            const tileRR = renderIntegratedVital('🩸 RR', item.c_blutdruck);
-            // D
-            const tileBZ = renderIntegratedVital('🍬 BZ', item.d_bz);
-            const tileBew = renderIntegratedVital('🧠 Bewusst.', item.bewusstsein);
-            // E
-            const tileTemp = renderIntegratedVital('🌡️ Temp', item.e_temp);
-            // Zyanose special logic for text but not strictly a tile anymore? 
-            // We can keep Zyanose as micro-tile or handle it in text.
+            // --- DATA MAPPING FOR GRIDS ---
+            // A & B
+            const fieldsAB = [
+                {l:'☁️ SpO2', v:item.b_spo2, vital:true}, {l:'💨 AF', v:item.b_atemfrequenz, vital:true},
+                {l:'Atemwege', v:item.a_atemwege}, {l:'Geräusche', v:item.b_atemgeraeusche},
+                {l:'Atemnot', v:item.b_atemnot}, {l:'Halsvenen', v:item.b_halsvenen},
+                {l:'Zyanose', v:item.b_zyanose}, {l:'', v:''} // Filler if needed or allow empty
+            ];
             
+            // C
+            const fieldsC = [
+                {l:'❤️ Puls', v:item.c_herzfrequenz, vital:true}, {l:'🩸 RR', v:item.c_blutdruck, vital:true},
+                {l:'Haut', v:item.c_haut}, {l:'Rekap', v:''} // Placeholder if Rekap existed
+            ];
+
+            // D
+            const fieldsD = [
+                {l:'🍬 BZ', v:item.d_bz, vital:true}, {l:'🧠 Bewusst.', v:item.bewusstsein, vital:true},
+                {l:'GCS / AVPU', v:item.d_avpu}, {l:'Pupillen', v:item.d_pupillen},
+                {l:'Krämpfe', v:item.e_kraempfe}, {l:'Lähmung', v:item.e_laehmung},
+                {l:'FAST / Neuro', v:item.d_fast}, {l:'Sonstiges', v:item.d_sonstiges}
+            ];
+
+            // E
+            const fieldsE = [
+                {l:'🌡️ Temp', v:item.e_temp, vital:true}, {l:'Schmerz', v:item.e_schmerz},
+                {l:'Nausea', v:item.e_nausea}, {l:'Durst', v:item.e_durst},
+                {l:'Ausscheidung', v:item.e_harn_stuhl}, {l:'Spezifisches', v:item.e_symptome}
+            ];
+
+            // Helper to render grid
+            const renderGrid = (fields) => `<div class="section-grid">${fields.map(f => renderTile(f.l, f.v, f.vital)).join('')}</div>`;
+
             const html = `
             <div class="card">
                 <div class="card-header ${item.category}" onclick="openCard(this)">
@@ -427,33 +458,22 @@
 
                     <div class="abc-section sec-ab">
                         <div class="sec-title" style="color:var(--col-ab)">🫁 Airway & Breathing</div>
-                        <div class="vitals-grid">${tileSpO2}${tileAF}</div>
-                        ${renderBlock('Atemwege', item.a_atemwege)}
-                        ${renderBlock('Atemgeräusche', item.b_atemgeraeusche)}
-                        ${renderBlock('Atemnot', item.b_atemnot)}
-                        ${renderMicro([{l: 'Halsvenen', v: item.b_halsvenen}, {l: 'Zyanose', v: item.b_zyanose}])}
+                        ${renderGrid(fieldsAB)}
                     </div>
 
                     <div class="abc-section sec-c">
                         <div class="sec-title" style="color:var(--col-c)">❤️ Circulation</div>
-                        <div class="vitals-grid">${tilePuls}${tileRR}</div>
-                        ${renderBlock('Hautzustand', item.c_haut)}
+                        ${renderGrid(fieldsC)}
                     </div>
 
                     <div class="abc-section sec-d">
                         <div class="sec-title" style="color:#f9a825">🧠 Disability</div>
-                        <div class="vitals-grid">${tileBZ}${tileBew}</div>
-                        ${renderMicro([{l: 'GCS / AVPU', v: item.d_avpu},{l: 'Pupillen', v: item.d_pupillen}])}
-                        ${renderMicro([{l: 'Krämpfe', v: item.e_kraempfe},{l: 'Lähmung', v: item.e_laehmung},{l: 'FAST / Neuro', v: item.d_fast}])}
-                        ${renderBlock('Sonstiges', item.d_sonstiges)}
+                        ${renderGrid(fieldsD)}
                     </div>
 
                     <div class="abc-section sec-e">
                         <div class="sec-title" style="color:var(--col-e)">🔍 Exposure & Symptome</div>
-                        <div class="vitals-grid">${tileTemp}</div>
-                        ${renderBlock('Spezifische Symptome', item.e_symptome)}
-                        ${renderMicro([{l: 'Schmerz', v: item.e_schmerz},{l: 'Nausea', v: item.e_nausea},{l: 'Durst', v: item.e_durst}])}
-                        ${renderBlock('Ausscheidung', item.e_harn_stuhl)}
+                        ${renderGrid(fieldsE)}
                     </div>
 
                     ${(item.einteilung1 || item.einteilung2) ? `<div class="diff-box"><strong>📌 Differenzierung:</strong><br>${item.einteilung1 || ''}<br>${item.einteilung2 || ''}</div>` : ''}
