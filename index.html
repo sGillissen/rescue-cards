@@ -75,11 +75,12 @@
             align-items: stretch;
         }
         
-        .uni-tile { 
+       .uni-tile { 
             background: #fff; 
             border: 1px solid #e0e0e0; 
             border-radius: 6px; 
-            padding: 6px 4px; /* Weniger Padding */
+            /* Oben mehr Platz (16px) lassen für das Label */
+            padding: 16px 4px 4px 4px; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
@@ -87,6 +88,7 @@
             text-align: center;
             height: 100%; 
             box-sizing: border-box;
+            position: relative; /* WICHTIG! */
         }
         
         .uni-tile.has-data { 
@@ -107,13 +109,21 @@
             border-color: #81d4fa;
         }
 
+        /* LABEL: Absolut in die Ecke schieben */
         .tile-label { 
-            font-size: 0.6rem; 
-            color: #78909c; 
-            font-weight: 600; 
+            font-size: 0.55rem; /* Etwas kleiner für die Ecke */
+            color: #90a4ae; 
+            font-weight: 700; 
             text-transform: uppercase; 
-            margin-bottom: 2px; 
             line-height: 1;
+            
+            /* HIER POSITIONIEREN */
+            position: absolute;
+            top: 4px;     /* Abstand von oben */
+            left: 5px;    /* Abstand von LINKS (Standard) */
+            
+            /* Falls du es RECHTS willst, ändere 'left: 5px' zu: */
+            /* right: 5px; left: auto; */
         }
         
         .tile-content { 
