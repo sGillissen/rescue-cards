@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RescueCards V7.5</title>
+    <title>RescueCards V7.6</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -67,7 +67,10 @@
         .box-yellow { background: #fff8e1; color: #f57f17; border-color: #ffe082; }
         .box-blue   { background: #e3f2fd; color: #0277bd; border-color: #90caf9; }
         
-        /* GRID SYSTEM (ABSOLUTE LABELS) */
+        /* DD BOX (NEW V7.6) */
+        .dd-box { background: #f3e5f5; color: #4a148c; padding: 8px 12px; border-top: 1px solid #e1bee7; font-size: 0.85rem; }
+
+        /* GRID SYSTEM */
         .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; align-items: stretch; }
         .uni-tile { 
             background: #fff; border: 1px solid #e0e0e0; border-radius: 6px; padding: 16px 4px 4px 4px; 
@@ -128,37 +131,19 @@
         .comp-table { width: 100%; border-collapse: collapse; background: white; }
         .comp-table td { border-bottom: 1px solid #eee; padding: 10px; width: 50%; vertical-align: top; font-size: 0.85rem; }
 
-        /* --- PRINT STYLES V7.5 --- */
+        /* --- PRINT STYLES --- */
         @media print {
             body { background: white; margin: 0; padding: 0; }
             body * { visibility: hidden; }
             #print-container, #print-container * { visibility: visible; }
             #print-container { position: absolute; left: 0; top: 0; width: 100%; }
-            
-            .print-page { 
-                break-after: page; 
-                page-break-after: always; 
-                border: 1px solid #ddd;
-                padding: 15px; 
-                box-sizing: border-box; 
-                display: flex; 
-                flex-direction: column;
-                margin-bottom: 0;
-            }
-            
-            /* Farben erzwingen */
+            .print-page { break-after: page; page-break-after: always; border: 1px solid #ddd; padding: 15px; box-sizing: border-box; display: flex; flex-direction: column; margin-bottom: 0; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            
-            /* Keine Bilder im Druck */
             .card-img, .expl-img, .card-preview, .toggle-arrow { display: none !important; }
-            
-            /* Elemente sichern */
             .card-details { display: block !important; } 
             .card-header { color: white !important; margin-bottom: 15px; } 
             .sec-title { color: black !important; border-bottom: 1px solid #ccc; }
-            
-            /* Grid Anpassung für Druck */
-            .section-grid { grid-template-columns: 1fr 1fr 1fr; gap: 5px; } /* 3 Spalten im Druck sparen Platz */
+            .section-grid { grid-template-columns: 1fr 1fr 1fr; gap: 5px; } 
             .uni-tile { border: 1px solid #ccc; padding: 14px 2px 2px 2px; min-height: 50px; }
         }
     </style>
@@ -169,7 +154,7 @@
     <div class="header-top">
         <div class="brand-area">
             <h1>🚑 RescueCards</h1>
-            <span class="version">V7.5</span>
+            <span class="version">V7.6</span>
         </div>
         <button class="menu-btn" onclick="toggleMenu()">☰</button>
     </div>
@@ -189,7 +174,7 @@
     <div class="menu-item" id="nav-standards" onclick="nav('standards')">📏 Standardwerte</div>
     <div class="menu-item" id="nav-quiz" onclick="nav('quiz')">🧠 Quiz</div>
     <div class="menu-item" onclick="exportPDF()">🖨️ PDF Export</div>
-    <div style="margin-top:auto; padding:20px; font-size:0.7rem; color:#999; text-align:center;">RescueCards V7.5<br>Offline-Ready</div>
+    <div style="margin-top:auto; padding:20px; font-size:0.7rem; color:#999; text-align:center;">RescueCards V7.6<br>Offline-Ready</div>
 </div>
 
 <div id="status-msg"><h3>Starte App...</h3><p>⏳</p></div>
@@ -336,7 +321,7 @@
         return { text: formatValue(val), isReduced: false };
     }
 
-    // --- COMPACT TILE RENDERER ---
+    // --- COMPACT TILE RENDERER (TOP-LEFT LABEL) ---
     function renderTile(label, val, isFixed = false, isVital = false) {
         const isEmpty = !val || val.trim() === "" || val === "-";
         if (isEmpty && !isFixed) return '';
@@ -451,6 +436,8 @@
                         ${renderGrid(fieldsE)}
                     </div>
 
+                    ${item.dd ? `<div class="dd-box"><strong>🔄 Differentialdiagnosen:</strong><br>${item.dd}</div>` : ''}
+
                     ${(item.einteilung1 || item.einteilung2) ? `<div class="diff-box"><strong>📌 Differenzierung:</strong><br>${item.einteilung1 || ''}<br>${item.einteilung2 || ''}</div>` : ''}
                     <div class="action-bar">
                         <div class="action-item"><span class="action-icon">🛏️</span> ${item.lagerung || '-'}</div>
@@ -536,7 +523,7 @@
     }
     function finalizeRound() { document.getElementById('quiz-score').innerText = `Score: ${quizScore} / ${quizTotal}`; let existingExpl = document.getElementById('q-explanation').innerHTML; let details = currentCorrectCard.lagerung ? `<br>Lagerung: ${currentCorrectCard.lagerung}` : ""; document.getElementById('q-explanation').innerHTML = existingExpl + details; document.getElementById('q-next-area').style.display = 'block'; }
 
-    // --- PDF EXPORT FUNCTION V7.5 ---
+    // --- PDF EXPORT FUNCTION V7.6 ---
     function exportPDF() {
         toggleMenu(); 
         const container = document.getElementById('print-container');
@@ -547,7 +534,11 @@
 
         setTimeout(() => {
             db.forEach(item => {
-                // NO IMAGES FOR PDF (V7.5)
+                let imgSrc = item.picture; if(imgSrc && !imgSrc.toLowerCase().startsWith('http')) imgSrc = IMAGE_BASE_URL + imgSrc;
+                const imageHTML = imgSrc ? `<img src="${imgSrc}" class="card-img">` : '';
+                let explSrc = item.explanation_img; if(explSrc && !explSrc.toLowerCase().startsWith('http')) explSrc = IMAGE_BASE_URL + explSrc;
+                const explHTML = explSrc ? `<img src="${explSrc}" class="expl-img" style="max-height:200px">` : '';
+
                 const fieldsAB = [
                     {l:'☁️ SpO2', v:item.b_spo2, fixed:true, vital:true}, {l:'💨 AF', v:item.b_atemfrequenz, fixed:true, vital:true},
                     {l:'Atemwege', v:item.a_atemwege}, {l:'Geräusche', v:item.b_atemgeraeusche},
@@ -590,6 +581,10 @@
                     <div class="abc-section sec-d"><div class="sec-title">🧠 Disability</div>${renderGrid(fieldsD)}</div>
                     <div class="abc-section sec-e"><div class="sec-title">🔍 Exposure</div>${renderGrid(fieldsE)}</div>
                     
+                    ${item.dd ? `<div class="dd-box" style="margin-bottom:10px"><strong>🔄 Differentialdiagnosen:</strong><br>${item.dd}</div>` : ''}
+
+                    ${explHTML}
+
                     <div class="action-bar" style="margin-top:auto;">
                         <div class="action-item">🛏️ ${item.lagerung || '-'}</div>
                         <div class="action-item">💨 ${item.o2 || '-'}</div>
