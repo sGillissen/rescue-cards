@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RescueCards V7.6</title>
+    <title>RescueCards V7.6b</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -452,10 +452,28 @@
         });
     }
 
-    function openCard(element) {
-        const card = element.closest('.card'); const details = card.querySelector('.card-details'); const arrow = card.querySelector('.toggle-arrow');
-        details.classList.toggle('open'); if(arrow) arrow.innerText = details.classList.contains('open') ? '▲' : '▼';
-    }
+   function openCard(element) {
+    const card = element.closest('.card'); 
+    const details = card.querySelector('.card-details'); 
+    const arrow = card.querySelector('.toggle-arrow');
+
+    // NEU: Alle anderen offenen Karten schließen
+    const allOpen = document.querySelectorAll('.card-details.open');
+    allOpen.forEach(openDetail => {
+        // Wenn die gefundene offene Karte NICHT die ist, die wir gerade geklickt haben: schließen
+        if (openDetail !== details) {
+            openDetail.classList.remove('open');
+            // Dazugehörigen Pfeil zurücksetzen
+            const otherCard = openDetail.closest('.card');
+            const otherArrow = otherCard.querySelector('.toggle-arrow');
+            if (otherArrow) otherArrow.innerText = '▼';
+        }
+    });
+
+    // Wie bisher: Die geklickte Karte toggeln (auf oder zu)
+    details.classList.toggle('open'); 
+    if(arrow) arrow.innerText = details.classList.contains('open') ? '▲' : '▼';
+}
 
     function initCompare() {
         const s1 = document.getElementById('s1'); const s2 = document.getElementById('s2');
