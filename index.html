@@ -599,9 +599,11 @@
                     <div class="abc-section sec-d"><div class="sec-title">🧠 Disability</div>${renderGrid(fieldsD)}</div>
                     <div class="abc-section sec-e"><div class="sec-title">🔍 Exposure</div>${renderGrid(fieldsE)}</div>
                     
-                    ${item.dd ? `<div class="dd-box" style="margin-bottom:10px"><strong>🔄 Differentialdiagnosen:</strong><br>${item.dd}</div>` : ''}
+                   ${item.dd ? `<div class="dd-box" style="margin-bottom:10px"><strong>🔄 Differentialdiagnosen:</strong><br>${item.dd}</div>` : ''}
 
-                    ${explHTML}
+${(item.einteilung1 || item.einteilung2) ? `<div class="diff-box" style="margin-bottom:10px"><strong>📌 Differenzierung:</strong><br>${item.einteilung1 || ''}<br>${item.einteilung2 || ''}</div>` : ''}
+
+${explHTML}
 
                     <div class="action-bar" style="margin-top:auto;">
                         <div class="action-item">🛏️ ${item.lagerung || '-'}</div>
