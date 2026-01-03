@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RescueCards V7.7 Stable</title>
+    <title>RescueCards V7.7 Full</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -15,6 +15,7 @@
         }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 50px; }
         
+        /* HEADER */
         header { background: var(--primary); color: white; padding: 8px 12px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
         .brand-area { display: flex; align-items: baseline; gap: 6px; }
@@ -23,6 +24,7 @@
         .header-controls { display: flex; gap: 10px; align-items: center; width: 100%; }
         input[type="text"] { flex: 1; padding: 6px 10px; border-radius: 6px; border: none; font-size: 0.95rem; background: #37474f; color: white; outline: none; }
         
+        /* SIDE MENU */
         .menu-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; padding: 0 5px; }
         .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; opacity: 0; transition: opacity 0.3s; }
         .menu-overlay.visible { display: block; opacity: 1; }
@@ -32,6 +34,7 @@
         .menu-item { padding: 15px 20px; border-bottom: 1px solid #eee; font-size: 1rem; color: #333; cursor: pointer; display: flex; align-items: center; gap: 10px; }
         .menu-item.active { background: #e1f5fe; color: var(--accent); font-weight: bold; }
 
+        /* FILTER CHIPS */
         .filter-container { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding: 4px 0 8px 0; margin-top: 6px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .filter-container::-webkit-scrollbar { display: none; }
         .filter-chip { flex-shrink: 0; background: #455a64; color: #cfd8dc; padding: 5px 12px; border-radius: 16px; font-size: 0.75rem; font-weight: 600; cursor: pointer; border: 1px solid #546e7a; user-select: none; white-space: nowrap; transition: all 0.2s; }
@@ -41,7 +44,9 @@
 
         .view-section { display: none; padding: 8px; max-width: 800px; margin: 0 auto; padding-bottom: 40px; }
         .view-section.active { display: block; animation: fadeIn 0.2s; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
+        /* CARDS */
         .card { background: white; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #cfd8dc; }
         .card-header { padding: 10px 12px; color: white; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .neuro { background: var(--cat-neuro); } .meta { background: var(--cat-meta); } 
@@ -59,8 +64,7 @@
         .box-yellow { background: #fff8e1; color: #f57f17; }
         .box-blue { background: #e3f2fd; color: #0277bd; }
         
-        .dd-box { background: #f3e5f5; color: #4a148c; padding: 8px 12px; border-top: 1px solid #e1bee7; font-size: 0.85rem; }
-
+        /* TILES & GRID */
         .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; align-items: stretch; }
         .uni-tile { 
             background: #fff; border: 1px solid #e0e0e0; border-radius: 6px; padding: 16px 4px 4px 4px; 
@@ -80,36 +84,35 @@
         .abc-section.sec-c { border-left: 4px solid var(--col-c); }
         .abc-section.sec-d { border-left: 4px solid var(--col-d); }
         .abc-section.sec-e { border-left: 4px solid var(--col-e); }
-        .sec-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+        .sec-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
 
         .action-bar { background: #263238; color: white; padding: 8px 12px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
         .action-item { background: rgba(255,255,255,0.1); padding: 5px 8px; border-radius: 4px; display: flex; align-items: center; gap: 6px; font-size: 0.8rem; }
+        .dd-box { background: #f3e5f5; color: #4a148c; padding: 8px 12px; border-top: 1px solid #e1bee7; font-size: 0.85rem; }
         .diff-box { background: #fff3e0; padding: 8px 12px; border-top: 1px solid #ffe0b2; font-size: 0.85rem; color: #e65100; }
 
+        /* STANDARDWERTE TABLE (RESTORED) */
         .std-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; font-size: 0.8rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .std-table th, .std-table td { padding: 8px; text-align: center; border: 1px solid #e0e0e0; }
+        .std-table th, .std-table td { padding: 6px 4px; text-align: center; border: 1px solid #e0e0e0; }
         .std-table th { background: #f5f5f5; font-weight: 600; color: #37474f; }
+        .std-row-header { font-weight: bold; text-align: left; background: #fafafa; padding-left: 8px !important; }
+        .norm-icon { color: #2e7d32; } .warn-icon { color: #f9a825; }
 
         /* QUIZ */
         .quiz-box { background: white; padding: 15px; border-radius: 12px; border: 1px solid #ddd; }
-        .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 8px; }
-        .quiz-score { font-weight: bold; font-size: 1.1rem; color: var(--accent); }
-        .quiz-img { max-height: 200px; max-width: 100%; object-fit: contain; margin-bottom: 15px; border-radius: 8px; }
-        .quiz-options { display: grid; grid-template-columns: 1fr; gap: 8px; }
-        .quiz-btn { background: white; border: 1px solid #cfd8dc; padding: 12px; border-radius: 8px; font-size: 0.95rem; cursor: pointer; text-align: left; transition: all 0.2s; }
-        .quiz-btn.correct { background: #c8e6c9; border-color: #2e7d32; color: #1b5e20; }
-        .quiz-btn.wrong { background: #ffcdd2; border-color: #c62828; color: #b71c1c; opacity: 0.6; }
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 15px; }
+        .quiz-score { font-weight: bold; color: var(--accent); }
+        .quiz-btn { background: white; border: 1px solid #cfd8dc; padding: 12px; border-radius: 8px; margin-bottom: 8px; width: 100%; text-align: left; cursor: pointer; }
+        .quiz-btn.correct { background: #c8e6c9; border-color: #2e7d32; }
+        .quiz-btn.wrong { background: #ffcdd2; border-color: #c62828; }
 
-        #status-msg { text-align: center; padding: 40px 20px; color: #666; }
-        .btn { background: var(--col-ab); color: white; padding: 12px 30px; border-radius: 30px; border: none; font-size: 1rem; margin-top: 15px; cursor: pointer; width: 100%; font-weight: bold; }
-        
+        #status-msg { text-align: center; padding: 40px; color: #666; }
+        .btn { background: var(--col-ab); color: white; padding: 12px; border-radius: 25px; border: none; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
+
         @media print {
             body * { visibility: hidden; }
             #print-container, #print-container * { visibility: visible; }
             #print-container { position: absolute; left: 0; top: 0; width: 100%; }
-            .print-page { break-after: page; page-break-after: always; padding: 15px; }
-            .card-img, .expl-img, .toggle-arrow { display: none !important; }
-            .card-details { display: block !important; }
         }
     </style>
 </head>
@@ -117,10 +120,7 @@
 
 <header>
     <div class="header-top">
-        <div class="brand-area">
-            <h1>🚑 RescueCards</h1>
-            <span class="version">V7.7</span>
-        </div>
+        <div class="brand-area"><h1>🚑 RescueCards</h1><span class="version">V7.7</span></div>
         <button class="menu-btn" onclick="toggleMenu()">☰</button>
     </div>
     <div class="header-controls">
@@ -143,16 +143,26 @@
 
 <div id="learn" class="view-section"><div id="card-container"></div></div>
 
+<!-- RESTORED STANDARDS TABLE -->
 <div id="standards" class="view-section">
-    <h3 style="margin-top:0;">📏 Vitalwerte-Referenz</h3>
+    <h3 style="margin-top:0; margin-bottom:15px; color:#37474f;">📏 Vitalwerte-Referenz</h3>
     <table class="std-table">
-        <thead><tr><th>Wert</th><th>Erwachsen</th><th>Kinder</th><th>Säugling</th></tr></thead>
+        <thead>
+            <tr><th style="width:20%">Wert</th><th style="width:10%"></th><th style="width:23%">Erwachsen</th><th style="width:23%">Kinder</th><th style="width:23%">Säugling</th></tr>
+        </thead>
         <tbody>
-            <tr><td>Atmung (/min)</td><td>12-16</td><td>16-30</td><td>30-40</td></tr>
-            <tr><td>Puls (/min)</td><td>60-80</td><td>80-110</td><td>110-140</td></tr>
-            <tr><td>RR (mmHg)</td><td>120-130 / 80-85</td><td>100-130 / 65-75</td><td>-</td></tr>
-            <tr><td>SpO2 (%)</td><td colspan="3">94+ (COPD 90+)</td></tr>
-            <tr><td>BZ (mg/dl)</td><td colspan="3">60 - 100</td></tr>
+            <tr><td rowspan="2" class="std-row-header">Atmung<br><span style="font-size:0.7rem">/min</span></td><td><span class="norm-icon">✅</span></td><td>12-16</td><td>16-30</td><td>30-40</td></tr>
+            <tr><td><span class="warn-icon">⚠️</span></td><td>&lt;10 / &gt;30</td><td>&lt;15 / &gt;50</td><td>&lt;20 / &gt;60</td></tr>
+            <tr style="border-top:2px solid #ddd"><td rowspan="2" class="std-row-header">Puls<br><span style="font-size:0.7rem">/min</span></td><td><span class="norm-icon">✅</span></td><td>60-80</td><td>80-110</td><td>110-140</td></tr>
+            <tr><td><span class="warn-icon">⚠️</span></td><td>&lt;40 / &gt;140</td><td>-</td><td>&lt;60 / &gt;160</td></tr>
+            <tr style="border-top:2px solid #ddd"><td rowspan="2" class="std-row-header">SpO2<br><span style="font-size:0.7rem">%</span></td><td><span class="norm-icon">✅</span></td><td colspan="3">94+ (COPD 90+)</td></tr>
+            <tr><td><span class="warn-icon">⚠️</span></td><td colspan="3">&lt;94 (90- COPD)</td></tr>
+            <tr style="border-top:2px solid #ddd"><td rowspan="2" class="std-row-header">RR<br><span style="font-size:0.7rem">mmHg</span></td><td><span class="norm-icon">✅</span></td><td>120-130<br>80-85</td><td>100-130<br>65-75</td><td>-</td></tr>
+            <tr><td><span class="warn-icon">⚠️</span></td><td>&lt;90 / &gt;200</td><td>&lt;80</td><td>-</td></tr>
+            <tr style="border-top:2px solid #ddd"><td rowspan="2" class="std-row-header">BZ<br><span style="font-size:0.7rem">mg/dl</span></td><td><span class="norm-icon">✅</span></td><td colspan="3">60 - 100</td></tr>
+            <tr><td><span class="warn-icon">⚠️</span></td><td colspan="3">&lt;40 / &gt;300</td></tr>
+            <tr style="border-top:2px solid #ddd"><td rowspan="2" class="std-row-header">Temp<br><span style="font-size:0.7rem">°C</span></td><td><span class="norm-icon">✅</span></td><td colspan="3">36 - 37</td></tr>
+            <tr><td><span class="warn-icon">⚠️</span></td><td colspan="3">&lt;35 / &gt;39</td></tr>
         </tbody>
     </table>
 </div>
@@ -168,7 +178,7 @@
 <div id="quiz" class="view-section">
     <div class="quiz-box">
         <div class="quiz-header"><span>🧠 Quiz-Modus</span><span class="quiz-score" id="quiz-score">Score: 0 / 0</span></div>
-        <div id="q-content"><h3 id="q-question">Lade Frage...</h3><div id="q-extra"></div></div>
+        <div id="q-content"><h3 id="q-question">Lade...</h3><div id="q-extra"></div></div>
         <div id="q-interaction-area"></div>
         <div class="quiz-next-area" id="q-next-area" style="display:none; text-align:center;">
             <div id="q-explanation" style="margin-bottom:10px; font-style:italic;"></div>
@@ -177,13 +187,10 @@
     </div>
 </div>
 
-<div id="print-container"></div>
-
 <script>
     const CACHE_KEY = "rescue_cards_data_v7_7_stable";
     const GOOGLE_CSV_LINK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBMZadFA7O2nMGOeaUcnEZz5MuNW2WeHdmSU_m94SI9VDdUiI8AfsJXJ-KAhtxv0zRZ6pkRIM_jj1X/pub?gid=1914308692&single=true&output=csv";
     const IMAGE_BASE_URL = "https://raw.githubusercontent.com/sGillissen/rescue-cards/main/bilder/";
-    const FALLBACK_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect fill='%23f0f0f0' width='100%25' height='100%25'/%3E%3Ctext fill='%23ccc' x='50%25' y='50%25' text-anchor='middle'%3EKein Bild%3C/text%3E%3C/svg%3E";
     
     let db = [];
     let activeFilters = new Set();
@@ -204,9 +211,8 @@
         { id: 'dizzy', label: '🌀 Schwindel', check: (i) => hasText(i, ['leitsymptome', 'e_symptome', 'd_sonstiges'], 'schwindel', 'vertigo', 'gangunsicherheit') },
         { id: 'dyspnoe', label: '🫁 Atemnot', check: (i) => hasText(i, ['b_atemnot', 'leitsymptome'], 'ja', 'atemnot', 'dyspnoe', 'orthopnoe', 'lufthunger') },
         { id: 'shock', label: '💦 Schock', check: (i) => hasText(i, ['c_haut', 'leitsymptome'], 'blass', 'kalt', 'schweiß', 'marmorierung', 'feucht') },
-        { id: 'allergy', label: '🐝 Allergie', check: (i) => hasText(i, ['name', 'leitsymptome', 'e_symptome'], 'allergie', 'anaphylaxie', 'nesselsucht') },
-        { id: 'temp', label: '🌡️ Fieber', check: (i) => isHigh(i.e_temp) || hasText(i, ['e_temp', 'leitsymptome'], 'fieber', 'heiß') },
-        { id: 'nef_only', label: '📞 Notarzt', check: (i) => i.nef && i.nef.toLowerCase().includes('ja') }
+        { id: 'allergy', label: '🐝 Allergie', check: (i) => hasText(i, ['name', 'leitsymptome', 'e_symptome'], 'allergie', 'anaphylaxie') },
+        { id: 'nef', label: '📞 Notarzt', check: (i) => i.nef && i.nef.toLowerCase().includes('ja') }
     ];
 
     async function init() {
@@ -260,8 +266,7 @@
         container.innerHTML = '<div class="filter-chip filter-reset" onclick="resetFilters()">✖ Reset</div>';
         filterDefs.forEach(f => {
             const btn = document.createElement('div');
-            btn.className = 'filter-chip';
-            btn.innerText = f.label;
+            btn.className = 'filter-chip'; btn.innerText = f.label;
             btn.onclick = () => {
                 if(activeFilters.has(f.id)) { activeFilters.delete(f.id); btn.classList.remove('active'); }
                 else { activeFilters.add(f.id); btn.classList.add('active'); }
@@ -279,12 +284,6 @@
         renderCards();
     }
 
-    function formatValue(val) {
-        if (!val || val.trim() === "" || val === "-") return "-";
-        let style = ""; if (isHigh(val)) style = "trend-up"; if (isLow(val)) style = "trend-down";
-        return `<span class="${style}">${val}</span>`;
-    }
-
     function renderTile(label, val, isFixed = false, isVital = false) {
         const isEmpty = !val || val.trim() === "" || val === "-";
         if (isEmpty && !isFixed) return '';
@@ -298,7 +297,8 @@
             let colorClass = (arrow === '⬆️' || arrow === '↗️') ? "trend-up" : "trend-down";
             contentHtml = `<span class="trend-icon-lg ${colorClass}">${arrow}</span><span style="font-size:0.85rem">${cleanText}</span>`;
         } else {
-            contentHtml = formatValue(val);
+            let style = ""; if (isHigh(val)) style = "trend-up"; if (isLow(val)) style = "trend-down";
+            contentHtml = `<span class="${style}">${val}</span>`;
         }
         return `<div class="uni-tile ${isVital ? 'vital-highlight' : ''} has-data"><div class="tile-label">${label}</div><div class="tile-content">${contentHtml}</div></div>`;
     }
@@ -325,78 +325,22 @@
             <div class="card">
                 <div class="card-header ${item.category}" onclick="toggleCard(this)">
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <span style="font-size:1.6rem;">${item.icon||'🚑'}</span>
-                        <span style="font-weight:700;">${item.name}</span>
-                    </div>
-                    <span class="toggle-arrow">▼</span>
+                        <span style="font-size:1.6rem;">${item.icon||'🚑'}</span><span style="font-weight:700;">${item.name}</span>
+                    </div><span class="toggle-arrow">▼</span>
                 </div>
-                <div class="card-preview" onclick="toggleCard(this)">
-                    <div class="def-text">${item.def || ''}</div>
-                </div>
+                <div class="card-preview" onclick="toggleCard(this)"><div class="def-text">${item.def || ''}</div></div>
                 <div class="card-details">
                     ${imgSrc ? `<img src="${imgSrc}" class="card-img" onerror="this.style.display='none'">` : ''}
                     ${item.erster_eindruck ? `<div class="symptom-box box-blue">👁️ ${item.erster_eindruck}</div>` : ''}
                     ${item.leitsymptome ? `<div class="symptom-box box-yellow">⚠️ ${item.leitsymptome}</div>` : ''}
                     ${explSrc ? `<img src="${explSrc}" class="expl-img" onerror="this.style.display='none'">` : ''}
-
-                    <div class="abc-section sec-ab">
-                        <div class="sec-title" style="color:var(--col-ab)">🫁 Airway & Breathing</div>
-                        <div class="section-grid">
-                            ${renderTile('☁️ SpO2', item.b_spo2, true, true)}
-                            ${renderTile('💨 AF', item.b_atemfrequenz, true, true)}
-                            ${renderTile('Atemwege', item.a_atemwege)}
-                            ${renderTile('Geräusche', item.b_atemgeraeusche)}
-                            ${renderTile('Atemnot', item.b_atemnot)}
-                            ${renderTile('Halsvenen', item.b_halsvenen)}
-                            ${renderTile('Zyanose', item.b_zyanose)}
-                        </div>
-                    </div>
-
-                    <div class="abc-section sec-c">
-                        <div class="sec-title" style="color:var(--col-c)">❤️ Circulation</div>
-                        <div class="section-grid">
-                            ${renderTile('❤️ Puls', item.c_herzfrequenz, true, true)}
-                            ${renderTile('🩸 RR', item.c_blutdruck, true, true)}
-                            ${renderTile('Haut', item.c_haut)}
-                        </div>
-                    </div>
-
-                    <div class="abc-section sec-d">
-                        <div class="sec-title" style="color:var(--col-d)">🧠 Disability</div>
-                        <div class="section-grid">
-                            ${renderTile('🍬 BZ', item.d_bz, false, true)}
-                            ${renderTile('Bewusst.', item.bewusstsein, false, true)}
-                            ${renderTile('GCS / AVPU', item.d_avpu)}
-                            ${renderTile('Pupillen', item.d_pupillen)}
-                            ${renderTile('Krämpfe', item.e_kraempfe)}
-                            ${renderTile('Lähmung', item.e_laehmung)}
-                            ${renderTile('FAST / Neuro', item.d_fast)}
-                            ${renderTile('Sonstiges', item.d_sonstiges)}
-                        </div>
-                    </div>
-
-                    <div class="abc-section sec-e">
-                        <div class="sec-title" style="color:var(--col-e)">🔍 Exposure & Symptome</div>
-                        <div class="section-grid">
-                            ${renderTile('🌡️ Temp', item.e_temp, false, true)}
-                            ${renderTile('Schmerz', item.e_schmerz)}
-                            ${renderTile('Nausea', item.e_nausea)}
-                            ${renderTile('Durst', item.e_durst)}
-                            ${renderTile('Ausscheidung', item.e_harn_stuhl)}
-                            ${renderTile('Spezifisches', item.e_symptome)}
-                        </div>
-                    </div>
-
+                    <div class="abc-section sec-ab"><div class="sec-title" style="color:var(--col-ab)">🫁 Airway & Breathing</div><div class="section-grid">${renderTile('☁️ SpO2', item.b_spo2, true, true)}${renderTile('💨 AF', item.b_atemfrequenz, true, true)}${renderTile('Atemwege', item.a_atemwege)}${renderTile('Geräusche', item.b_atemgeraeusche)}${renderTile('Atemnot', item.b_atemnot)}${renderTile('Halsvenen', item.b_halsvenen)}${renderTile('Zyanose', item.b_zyanose)}</div></div>
+                    <div class="abc-section sec-c"><div class="sec-title" style="color:var(--col-c)">❤️ Circulation</div><div class="section-grid">${renderTile('❤️ Puls', item.c_herzfrequenz, true, true)}${renderTile('🩸 RR', item.c_blutdruck, true, true)}${renderTile('Haut', item.c_haut)}</div></div>
+                    <div class="abc-section sec-d"><div class="sec-title" style="color:var(--col-d)">🧠 Disability</div><div class="section-grid">${renderTile('🍬 BZ', item.d_bz, false, true)}${renderTile('Bewusst.', item.bewusstsein, false, true)}${renderTile('GCS / AVPU', item.d_avpu)}${renderTile('Pupillen', item.d_pupillen)}${renderTile('Krämpfe', item.e_kraempfe)}${renderTile('Lähmung', item.e_laehmung)}${renderTile('FAST / Neuro', item.d_fast)}${renderTile('Sonstiges', item.d_sonstiges)}</div></div>
+                    <div class="abc-section sec-e"><div class="sec-title" style="color:var(--col-e)">🔍 Exposure & Symptome</div><div class="section-grid">${renderTile('🌡️ Temp', item.e_temp, false, true)}${renderTile('Schmerz', item.e_schmerz)}${renderTile('Nausea', item.e_nausea)}${renderTile('Durst', item.e_durst)}${renderTile('Ausscheidung', item.e_harn_stuhl)}${renderTile('Spezifisches', item.e_symptome)}</div></div>
                     ${item.dd ? `<div class="dd-box"><strong>🔄 Differentialdiagnosen:</strong><br>${item.dd}</div>` : ''}
                     ${(item.einteilung1 || item.einteilung2) ? `<div class="diff-box"><strong>📌 Differenzierung:</strong><br>${item.einteilung1 || ''}<br>${item.einteilung2 || ''}</div>` : ''}
-
-                    <div class="action-bar">
-                        <div class="action-item">🛏️ ${item.lagerung || '-'}</div>
-                        <div class="action-item">💨 ${item.o2 || '-'}</div>
-                        ${item.nef ? `<div class="action-item" style="background:#c62828; grid-column: 1/-1;">📞 Notarzt</div>` : ''}
-                        ${item.absaugen ? `<div class="action-item">🪠 Absaugbereitschaft</div>` : ''}
-                        ${item.sonstiges ? `<div class="action-item" style="grid-column: 1/-1;">ℹ️ ${item.sonstiges}</div>` : ''}
-                    </div>
+                    <div class="action-bar"><div class="action-item">🛏️ ${item.lagerung || '-'}</div><div class="action-item">💨 ${item.o2 || '-'}</div>${item.nef ? `<div class="action-item" style="background:#c62828; grid-column: 1/-1;">📞 Notarzt</div>` : ''}${item.absaugen ? `<div class="action-item">🪠 Absaugbereitschaft</div>` : ''}${item.sonstiges ? `<div class="action-item" style="grid-column: 1/-1;">ℹ️ ${item.sonstiges}</div>` : ''}</div>
                 </div>
             </div>`;
             container.insertAdjacentHTML('beforeend', html);
@@ -404,23 +348,16 @@
     }
 
     function toggleCard(el) {
-        const card = el.closest('.card');
-        const details = card.querySelector('.card-details');
+        const card = el.closest('.card'); const details = card.querySelector('.card-details');
         const arrow = card.querySelector('.toggle-arrow');
         const isOpen = details.classList.contains('open');
-        document.querySelectorAll('.card-details.open').forEach(d => {
-            d.classList.remove('open');
-            d.closest('.card').querySelector('.toggle-arrow').innerText = '▼';
-        });
+        document.querySelectorAll('.card-details.open').forEach(d => { d.classList.remove('open'); d.closest('.card').querySelector('.toggle-arrow').innerText = '▼'; });
         if(!isOpen) { details.classList.add('open'); arrow.innerText = '▲'; }
     }
 
     function initCompare() {
         const s1 = document.getElementById('s1'); const s2 = document.getElementById('s2');
-        db.forEach(d => {
-            const opt = `<option value="${d.id}">${d.name}</option>`;
-            s1.insertAdjacentHTML('beforeend', opt); s2.insertAdjacentHTML('beforeend', opt);
-        });
+        db.forEach(d => { const opt = `<option value="${d.id}">${d.name}</option>`; s1.insertAdjacentHTML('beforeend', opt); s2.insertAdjacentHTML('beforeend', opt); });
         if(db.length > 1) s2.selectedIndex = 1;
         renderCompare();
     }
@@ -429,11 +366,9 @@
         const d1 = db.find(x => x.id === document.getElementById('s1').value);
         const d2 = db.find(x => x.id === document.getElementById('s2').value);
         if(!d1 || !d2) return;
-        const keys = [['Lagerung','lagerung'], ['Leitsymptome','leitsymptome'], ['Atmung','b_atemgeraeusche'], ['Haut','c_haut'], ['Puls/RR','c_blutdruck'], ['Bewusstsein','bewusstsein']];
+        const keys = [['Lagerung','lagerung'], ['Leitsymptome','leitsymptome'], ['Atmung','b_atemgeraeusche'], ['Haut','c_haut'], ['Puls/RR','c_blutdruck']];
         let html = `<table class="std-table" style="width:100%">`;
-        keys.forEach(k => {
-            html += `<tr><th colspan="2">${k[0]}</th></tr><tr><td>${formatValue(d1[k[1]])}</td><td>${formatValue(d2[k[1]])}</td></tr>`;
-        });
+        keys.forEach(k => { html += `<tr><th colspan="2">${k[0]}</th></tr><tr><td>${d1[k[1]]||'-'}</td><td>${d2[k[1]]||'-'}</td></tr>`; });
         html += `</table>`;
         document.getElementById('compare-result').innerHTML = html;
     }
@@ -444,20 +379,12 @@
         qCorrect = db[Math.floor(Math.random()*db.length)];
         document.getElementById('q-next-area').style.display = 'none';
         document.getElementById('q-interaction-area').innerHTML = '';
-        document.getElementById('q-extra').innerHTML = '';
         document.getElementById('q-question').innerText = `Welches Krankheitsbild passt zu:\n"${qCorrect.leitsymptome || qCorrect.def}"`;
         let opts = [qCorrect];
-        while(opts.length < 4) {
-            let r = db[Math.floor(Math.random()*db.length)];
-            if(!opts.includes(r)) opts.push(r);
-        }
+        while(opts.length < 4) { let r = db[Math.floor(Math.random()*db.length)]; if(!opts.includes(r)) opts.push(r); }
         opts.sort(() => Math.random() - 0.5);
-        const area = document.getElementById('q-interaction-area');
-        area.className = 'quiz-options';
         opts.forEach(o => {
-            const btn = document.createElement('button');
-            btn.className = 'quiz-btn';
-            btn.innerText = o.name;
+            const btn = document.createElement('button'); btn.className = 'quiz-btn'; btn.innerText = o.name;
             btn.onclick = () => {
                 if(document.querySelector('.quiz-btn.correct')) return;
                 qTotal++;
@@ -466,12 +393,11 @@
                 document.getElementById('quiz-score').innerText = `Score: ${qScore} / ${qTotal}`;
                 document.getElementById('q-next-area').style.display = 'block';
             };
-            area.appendChild(btn);
+            document.getElementById('q-interaction-area').appendChild(btn);
         });
     }
 
     function exportPDF() { window.print(); }
-
     init();
 </script>
 </body>
