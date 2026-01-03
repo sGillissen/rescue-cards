@@ -204,11 +204,12 @@
         });
     }
 
-    const filterDefs = [
+   const filterDefs = [
         { id: 'rr_high', label: '🩸 RR ⬆️', check: (i) => isHigh(i.c_blutdruck) },
         { id: 'rr_low',  label: '🩸 RR ⬇️', check: (i) => isLow(i.c_blutdruck) },
         { id: 'vigilanz', label: '🧠 Vigilanz ⬇️', check: (i) => hasText(i, ['bewusstsein', 'leitsymptome'], 'bewusstlos', 'koma', 'somnolent', 'eintrübung', 'vigilanz', 'verwirrt', 'desorientiert') },
-        { id: 'dizzy', label: '🌀 Schwindel', check: (i) => hasText(i, ['leitsymptome', 'e_symptome', 'd_sonstiges'], 'schwindel', 'vertigo', 'gangunsicherheit') },
+        // ERWEITERT: d_avpu hinzugefügt
+        { id: 'dizzy', label: '🌀 Schwindel', check: (i) => hasText(i, ['leitsymptome', 'e_symptome', 'd_sonstiges', 'd_avpu'], 'schwindel', 'vertigo', 'gangunsicherheit') },
         { id: 'dyspnoe', label: '🫁 Atemnot', check: (i) => hasText(i, ['b_atemnot', 'leitsymptome'], 'ja', 'atemnot', 'dyspnoe', 'orthopnoe', 'lufthunger') },
         { id: 'shock', label: '💦 Schock', check: (i) => hasText(i, ['c_haut', 'leitsymptome'], 'blass', 'kalt', 'schweiß', 'marmorierung', 'feucht') },
         { id: 'allergy', label: '🐝 Allergie', check: (i) => hasText(i, ['name', 'leitsymptome', 'e_symptome'], 'allergie', 'anaphylaxie') },
