@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RescueCards V7.7 - Advanced Filtering</title>
+    <title>RescueCards V7.7 Stable</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -41,7 +41,6 @@
 
         .view-section { display: none; padding: 8px; max-width: 800px; margin: 0 auto; padding-bottom: 40px; }
         .view-section.active { display: block; animation: fadeIn 0.2s; }
-        @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
         .card { background: white; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #cfd8dc; }
         .card-header { padding: 10px 12px; color: white; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
@@ -62,18 +61,18 @@
         
         .dd-box { background: #f3e5f5; color: #4a148c; padding: 8px 12px; border-top: 1px solid #e1bee7; font-size: 0.85rem; }
 
-        .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+        .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; align-items: stretch; }
         .uni-tile { 
             background: #fff; border: 1px solid #e0e0e0; border-radius: 6px; padding: 16px 4px 4px 4px; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; 
-            min-height: 55px; position: relative; 
+            min-height: 55px; box-sizing: border-box; position: relative; 
         }
         .uni-tile.has-data { background: #fdfdfd; border-color: #b0bec5; }
         .uni-tile.is-ghost { opacity: 0.3; background: #fafafa; border: 1px dashed #cfd8dc; }
         .uni-tile.vital-highlight.has-data { background: #e1f5fe; border-color: #81d4fa; }
         .tile-label { font-size: 0.55rem; color: #90a4ae; font-weight: 700; text-transform: uppercase; position: absolute; top: 4px; left: 5px; }
-        .tile-content { font-weight: 400; font-size: 0.9rem; color: #263238; line-height: 1.2; }
-        .trend-icon-lg { font-size: 1.4rem; display: block; line-height: 1; }
+        .tile-content { font-weight: 400; font-size: 0.9rem; color: #263238; line-height: 1.25; word-break: break-word; }
+        .trend-icon-lg { font-size: 1.4rem; display: block; line-height: 1; margin-bottom: 2px; }
         .trend-up { color: #d32f2f; } .trend-down { color: #1976d2; }
 
         .abc-section { padding: 12px; border-bottom: 1px solid #eee; }
@@ -87,25 +86,19 @@
         .action-item { background: rgba(255,255,255,0.1); padding: 5px 8px; border-radius: 4px; display: flex; align-items: center; gap: 6px; font-size: 0.8rem; }
         .diff-box { background: #fff3e0; padding: 8px 12px; border-top: 1px solid #ffe0b2; font-size: 0.85rem; color: #e65100; }
 
-        .std-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; font-size: 0.8rem; }
-        .std-table th, .std-table td { padding: 6px; text-align: center; border: 1px solid #e0e0e0; }
-        .std-table th { background: #f5f5f5; font-weight: 600; }
+        .std-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; font-size: 0.8rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .std-table th, .std-table td { padding: 8px; text-align: center; border: 1px solid #e0e0e0; }
+        .std-table th { background: #f5f5f5; font-weight: 600; color: #37474f; }
 
+        /* QUIZ */
         .quiz-box { background: white; padding: 15px; border-radius: 12px; border: 1px solid #ddd; }
-        .quiz-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 8px; }
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 8px; }
         .quiz-score { font-weight: bold; font-size: 1.1rem; color: var(--accent); }
         .quiz-img { max-height: 200px; max-width: 100%; object-fit: contain; margin-bottom: 15px; border-radius: 8px; }
         .quiz-options { display: grid; grid-template-columns: 1fr; gap: 8px; }
-        .quiz-btn { background: white; border: 1px solid #cfd8dc; padding: 12px; border-radius: 8px; font-size: 0.95rem; cursor: pointer; text-align: left; }
+        .quiz-btn { background: white; border: 1px solid #cfd8dc; padding: 12px; border-radius: 8px; font-size: 0.95rem; cursor: pointer; text-align: left; transition: all 0.2s; }
         .quiz-btn.correct { background: #c8e6c9; border-color: #2e7d32; color: #1b5e20; }
         .quiz-btn.wrong { background: #ffcdd2; border-color: #c62828; color: #b71c1c; opacity: 0.6; }
-
-        .q-cockpit-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        .quiz-tile { background: #fff; border: 2px solid #cfd8dc; border-radius: 8px; padding: 12px 5px; text-align: center; cursor: pointer; }
-        .quiz-tile.state-1 { background: #ffcdd2; color: #c62828; }
-        .quiz-tile.state-2 { background: #e1f5fe; color: #0277bd; }
-        .quiz-tile.resolved-correct { border-color: #43a047; border-width: 3px; position:relative; }
-        .quiz-tile.resolved-wrong { border-color: #c62828; border-width: 3px; opacity:0.5; }
 
         #status-msg { text-align: center; padding: 40px 20px; color: #666; }
         .btn { background: var(--col-ab); color: white; padding: 12px 30px; border-radius: 30px; border: none; font-size: 1rem; margin-top: 15px; cursor: pointer; width: 100%; font-weight: bold; }
@@ -114,7 +107,7 @@
             body * { visibility: hidden; }
             #print-container, #print-container * { visibility: visible; }
             #print-container { position: absolute; left: 0; top: 0; width: 100%; }
-            .print-page { break-after: page; page-break-after: always; padding: 15px; border: 1px solid #eee; }
+            .print-page { break-after: page; page-break-after: always; padding: 15px; }
             .card-img, .expl-img, .toggle-arrow { display: none !important; }
             .card-details { display: block !important; }
         }
@@ -133,9 +126,7 @@
     <div class="header-controls">
         <input type="text" id="search" placeholder="Suche..." onkeyup="renderCards()">
     </div>
-    <div class="filter-container" id="filter-container">
-        <!-- Filter Chips werden via JS generiert -->
-    </div>
+    <div class="filter-container" id="filter-container"></div>
 </header>
 
 <div class="menu-overlay" id="menu-overlay" onclick="toggleMenu()"></div>
@@ -157,19 +148,19 @@
     <table class="std-table">
         <thead><tr><th>Wert</th><th>Erwachsen</th><th>Kinder</th><th>Säugling</th></tr></thead>
         <tbody>
-            <tr><td>Atmung</td><td>12-16</td><td>16-30</td><td>30-40</td></tr>
-            <tr><td>Puls</td><td>60-80</td><td>80-110</td><td>110-140</td></tr>
-            <tr><td>RR (syst)</td><td>120-130</td><td>100-120</td><td>80-90</td></tr>
-            <tr><td>SpO2</td><td colspan="3">> 94% (COPD 90%)</td></tr>
-            <tr><td>BZ</td><td colspan="3">60 - 100 mg/dl</td></tr>
+            <tr><td>Atmung (/min)</td><td>12-16</td><td>16-30</td><td>30-40</td></tr>
+            <tr><td>Puls (/min)</td><td>60-80</td><td>80-110</td><td>110-140</td></tr>
+            <tr><td>RR (mmHg)</td><td>120-130 / 80-85</td><td>100-130 / 65-75</td><td>-</td></tr>
+            <tr><td>SpO2 (%)</td><td colspan="3">94+ (COPD 90+)</td></tr>
+            <tr><td>BZ (mg/dl)</td><td colspan="3">60 - 100</td></tr>
         </tbody>
     </table>
 </div>
 
 <div id="compare" class="view-section">
     <div style="display:flex; gap:10px; margin-bottom:15px;">
-        <select id="s1" onchange="renderCompare()" style="width:100%; padding:8px;"></select>
-        <select id="s2" onchange="renderCompare()" style="width:100%; padding:8px;"></select>
+        <select id="s1" onchange="renderCompare()" style="width:100%; padding:8px; border-radius:6px;"></select>
+        <select id="s2" onchange="renderCompare()" style="width:100%; padding:8px; border-radius:6px;"></select>
     </div>
     <div id="compare-result"></div>
 </div>
@@ -180,7 +171,7 @@
         <div id="q-content"><h3 id="q-question">Lade Frage...</h3><div id="q-extra"></div></div>
         <div id="q-interaction-area"></div>
         <div class="quiz-next-area" id="q-next-area" style="display:none; text-align:center;">
-            <div id="q-explanation" style="margin: 15px 0; font-style:italic;"></div>
+            <div id="q-explanation" style="margin-bottom:10px; font-style:italic;"></div>
             <button class="btn" onclick="nextQuizRound()">Nächste Frage ➝</button>
         </div>
     </div>
@@ -189,7 +180,7 @@
 <div id="print-container"></div>
 
 <script>
-    const CACHE_KEY = "rescue_cards_data_v7_7";
+    const CACHE_KEY = "rescue_cards_data_v7_7_stable";
     const GOOGLE_CSV_LINK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBMZadFA7O2nMGOeaUcnEZz5MuNW2WeHdmSU_m94SI9VDdUiI8AfsJXJ-KAhtxv0zRZ6pkRIM_jj1X/pub?gid=1914308692&single=true&output=csv";
     const IMAGE_BASE_URL = "https://raw.githubusercontent.com/sGillissen/rescue-cards/main/bilder/";
     const FALLBACK_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect fill='%23f0f0f0' width='100%25' height='100%25'/%3E%3Ctext fill='%23ccc' x='50%25' y='50%25' text-anchor='middle'%3EKein Bild%3C/text%3E%3C/svg%3E";
@@ -197,7 +188,6 @@
     let db = [];
     let activeFilters = new Set();
 
-    // HILFSFUNKTIONEN FÜR FILTER
     function isHigh(val) { if(!val) return false; val = val.toLowerCase(); return val.includes('⬆️') || val.includes('hoch') || val.includes('>') || val.includes('+'); }
     function isLow(val) { if(!val) return false; val = val.toLowerCase(); return val.includes('⬇️') || val.includes('niedrig') || val.includes('<') || val.includes('-'); }
     function hasText(item, fields, ...terms) { 
@@ -212,10 +202,9 @@
         { id: 'rr_low',  label: '🩸 RR ⬇️', check: (i) => isLow(i.c_blutdruck) },
         { id: 'vigilanz', label: '🧠 Vigilanz ⬇️', check: (i) => hasText(i, ['bewusstsein', 'leitsymptome'], 'bewusstlos', 'koma', 'somnolent', 'eintrübung', 'vigilanz', 'verwirrt', 'desorientiert') },
         { id: 'dizzy', label: '🌀 Schwindel', check: (i) => hasText(i, ['leitsymptome', 'e_symptome', 'd_sonstiges'], 'schwindel', 'vertigo', 'gangunsicherheit') },
-        { id: 'dyspnoe', label: '🫁 Atemnot', check: (i) => hasText(i, ['b_atemnot', 'leitsymptome', 'b_spo2'], 'ja', 'atemnot', 'dyspnoe', 'orthopnoe', 'lufthunger', '⬇️') },
+        { id: 'dyspnoe', label: '🫁 Atemnot', check: (i) => hasText(i, ['b_atemnot', 'leitsymptome'], 'ja', 'atemnot', 'dyspnoe', 'orthopnoe', 'lufthunger') },
         { id: 'shock', label: '💦 Schock', check: (i) => hasText(i, ['c_haut', 'leitsymptome'], 'blass', 'kalt', 'schweiß', 'marmorierung', 'feucht') },
-        { id: 'allergy', label: '🐝 Allergie', check: (i) => hasText(i, ['name', 'leitsymptome', 'e_symptome'], 'allergie', 'anaphylaxie', 'nesselsucht', 'urtikaria', 'schwellung') },
-        { id: 'intox', label: '🧪 Intox', check: (i) => hasText(i, ['name', 'leitsymptome', 'd_sonstiges'], 'intox', 'vergiftung', 'drogen', 'alkohol', 'überdosis') },
+        { id: 'allergy', label: '🐝 Allergie', check: (i) => hasText(i, ['name', 'leitsymptome', 'e_symptome'], 'allergie', 'anaphylaxie', 'nesselsucht') },
         { id: 'temp', label: '🌡️ Fieber', check: (i) => isHigh(i.e_temp) || hasText(i, ['e_temp', 'leitsymptome'], 'fieber', 'heiß') },
         { id: 'nef_only', label: '📞 Notarzt', check: (i) => i.nef && i.nef.toLowerCase().includes('ja') }
     ];
@@ -252,8 +241,7 @@
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.getElementById(viewName).classList.add('active');
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-        const navBtn = document.getElementById('nav-' + viewName);
-        if(navBtn) navBtn.classList.add('active');
+        if(document.getElementById('nav-' + viewName)) document.getElementById('nav-' + viewName).classList.add('active');
         if(document.getElementById('side-menu').classList.contains('open')) toggleMenu();
         window.scrollTo(0,0);
     }
@@ -292,15 +280,13 @@
     }
 
     function formatValue(val) {
-        if (!val || val === "-" || val === "") return "-";
-        let style = "";
-        if (isHigh(val)) style = "trend-up";
-        if (isLow(val)) style = "trend-down";
+        if (!val || val.trim() === "" || val === "-") return "-";
+        let style = ""; if (isHigh(val)) style = "trend-up"; if (isLow(val)) style = "trend-down";
         return `<span class="${style}">${val}</span>`;
     }
 
     function renderTile(label, val, isFixed = false, isVital = false) {
-        const isEmpty = !val || val === "-" || val === "";
+        const isEmpty = !val || val.trim() === "" || val === "-";
         if (isEmpty && !isFixed) return '';
         if (isEmpty && isFixed) return `<div class="uni-tile is-ghost"><div class="tile-label">${label}</div></div>`;
         
@@ -309,12 +295,11 @@
         if (arrowMatch) {
             const arrow = arrowMatch[0];
             const cleanText = val.replace(arrow, '').trim();
-            const colorClass = (arrow === '⬆️' || arrow === '↗️') ? "trend-up" : "trend-down";
+            let colorClass = (arrow === '⬆️' || arrow === '↗️') ? "trend-up" : "trend-down";
             contentHtml = `<span class="trend-icon-lg ${colorClass}">${arrow}</span><span style="font-size:0.85rem">${cleanText}</span>`;
         } else {
             contentHtml = formatValue(val);
         }
-
         return `<div class="uni-tile ${isVital ? 'vital-highlight' : ''} has-data"><div class="tile-label">${label}</div><div class="tile-content">${contentHtml}</div></div>`;
     }
 
@@ -322,9 +307,8 @@
         const search = document.getElementById('search').value.toLowerCase();
         const container = document.getElementById('card-container');
         container.innerHTML = '';
-        
         const filtered = db.filter(item => {
-            const textMatch = (item.name + item.def + item.leitsymptome).toLowerCase().includes(search);
+            const textMatch = (item.name + (item.def||"") + (item.leitsymptome||"")).toLowerCase().includes(search);
             if(!textMatch) return false;
             for (let fId of activeFilters) {
                 const def = filterDefs.find(d => d.id === fId);
@@ -335,11 +319,13 @@
 
         filtered.forEach(item => {
             let imgSrc = item.picture; if(imgSrc && !imgSrc.startsWith('http')) imgSrc = IMAGE_BASE_URL + imgSrc;
+            let explSrc = item.explanation_img; if(explSrc && !explSrc.startsWith('http')) explSrc = IMAGE_BASE_URL + explSrc;
+
             const html = `
             <div class="card">
                 <div class="card-header ${item.category}" onclick="toggleCard(this)">
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <span style="font-size:1.5rem;">${item.icon||'🚑'}</span>
+                        <span style="font-size:1.6rem;">${item.icon||'🚑'}</span>
                         <span style="font-weight:700;">${item.name}</span>
                     </div>
                     <span class="toggle-arrow">▼</span>
@@ -349,8 +335,10 @@
                 </div>
                 <div class="card-details">
                     ${imgSrc ? `<img src="${imgSrc}" class="card-img" onerror="this.style.display='none'">` : ''}
+                    ${item.erster_eindruck ? `<div class="symptom-box box-blue">👁️ ${item.erster_eindruck}</div>` : ''}
                     ${item.leitsymptome ? `<div class="symptom-box box-yellow">⚠️ ${item.leitsymptome}</div>` : ''}
-                    
+                    ${explSrc ? `<img src="${explSrc}" class="expl-img" onerror="this.style.display='none'">` : ''}
+
                     <div class="abc-section sec-ab">
                         <div class="sec-title" style="color:var(--col-ab)">🫁 Airway & Breathing</div>
                         <div class="section-grid">
@@ -358,6 +346,9 @@
                             ${renderTile('💨 AF', item.b_atemfrequenz, true, true)}
                             ${renderTile('Atemwege', item.a_atemwege)}
                             ${renderTile('Geräusche', item.b_atemgeraeusche)}
+                            ${renderTile('Atemnot', item.b_atemnot)}
+                            ${renderTile('Halsvenen', item.b_halsvenen)}
+                            ${renderTile('Zyanose', item.b_zyanose)}
                         </div>
                     </div>
 
@@ -375,17 +366,36 @@
                         <div class="section-grid">
                             ${renderTile('🍬 BZ', item.d_bz, false, true)}
                             ${renderTile('Bewusst.', item.bewusstsein, false, true)}
+                            ${renderTile('GCS / AVPU', item.d_avpu)}
                             ${renderTile('Pupillen', item.d_pupillen)}
-                            ${renderTile('FAST', item.d_fast)}
+                            ${renderTile('Krämpfe', item.e_kraempfe)}
+                            ${renderTile('Lähmung', item.e_laehmung)}
+                            ${renderTile('FAST / Neuro', item.d_fast)}
+                            ${renderTile('Sonstiges', item.d_sonstiges)}
+                        </div>
+                    </div>
+
+                    <div class="abc-section sec-e">
+                        <div class="sec-title" style="color:var(--col-e)">🔍 Exposure & Symptome</div>
+                        <div class="section-grid">
+                            ${renderTile('🌡️ Temp', item.e_temp, false, true)}
+                            ${renderTile('Schmerz', item.e_schmerz)}
+                            ${renderTile('Nausea', item.e_nausea)}
+                            ${renderTile('Durst', item.e_durst)}
+                            ${renderTile('Ausscheidung', item.e_harn_stuhl)}
+                            ${renderTile('Spezifisches', item.e_symptome)}
                         </div>
                     </div>
 
                     ${item.dd ? `<div class="dd-box"><strong>🔄 Differentialdiagnosen:</strong><br>${item.dd}</div>` : ''}
+                    ${(item.einteilung1 || item.einteilung2) ? `<div class="diff-box"><strong>📌 Differenzierung:</strong><br>${item.einteilung1 || ''}<br>${item.einteilung2 || ''}</div>` : ''}
 
                     <div class="action-bar">
                         <div class="action-item">🛏️ ${item.lagerung || '-'}</div>
                         <div class="action-item">💨 ${item.o2 || '-'}</div>
-                        ${item.nef ? `<div class="action-item" style="background:#c62828; grid-column: 1/-1;">📞 Notarzt Indikation</div>` : ''}
+                        ${item.nef ? `<div class="action-item" style="background:#c62828; grid-column: 1/-1;">📞 Notarzt</div>` : ''}
+                        ${item.absaugen ? `<div class="action-item">🪠 Absaugbereitschaft</div>` : ''}
+                        ${item.sonstiges ? `<div class="action-item" style="grid-column: 1/-1;">ℹ️ ${item.sonstiges}</div>` : ''}
                     </div>
                 </div>
             </div>`;
@@ -398,16 +408,11 @@
         const details = card.querySelector('.card-details');
         const arrow = card.querySelector('.toggle-arrow');
         const isOpen = details.classList.contains('open');
-        
         document.querySelectorAll('.card-details.open').forEach(d => {
             d.classList.remove('open');
             d.closest('.card').querySelector('.toggle-arrow').innerText = '▼';
         });
-
-        if(!isOpen) {
-            details.classList.add('open');
-            arrow.innerText = '▲';
-        }
+        if(!isOpen) { details.classList.add('open'); arrow.innerText = '▲'; }
     }
 
     function initCompare() {
@@ -424,29 +429,22 @@
         const d1 = db.find(x => x.id === document.getElementById('s1').value);
         const d2 = db.find(x => x.id === document.getElementById('s2').value);
         if(!d1 || !d2) return;
-        const keys = [['Lagerung','lagerung'], ['Leitsymptome','leitsymptome'], ['Haut','c_haut'], ['Atmung','b_atemgeraeusche']];
+        const keys = [['Lagerung','lagerung'], ['Leitsymptome','leitsymptome'], ['Atmung','b_atemgeraeusche'], ['Haut','c_haut'], ['Puls/RR','c_blutdruck'], ['Bewusstsein','bewusstsein']];
         let html = `<table class="std-table" style="width:100%">`;
         keys.forEach(k => {
-            html += `<tr><th colspan="2">${k[0]}</th></tr><tr><td>${d1[k[1]]||'-'}</td><td>${d2[k[1]]||'-'}</td></tr>`;
+            html += `<tr><th colspan="2">${k[0]}</th></tr><tr><td>${formatValue(d1[k[1]])}</td><td>${formatValue(d2[k[1]])}</td></tr>`;
         });
         html += `</table>`;
         document.getElementById('compare-result').innerHTML = html;
     }
 
-    // QUIZ LOGIC
     let qCorrect = null; let qScore = 0; let qTotal = 0;
     function nextQuizRound() {
         if(db.length < 4) return;
         qCorrect = db[Math.floor(Math.random()*db.length)];
-        const isCockpit = Math.random() > 0.7;
         document.getElementById('q-next-area').style.display = 'none';
         document.getElementById('q-interaction-area').innerHTML = '';
         document.getElementById('q-extra').innerHTML = '';
-
-        if(isCockpit) setupCockpit(); else setupStandard();
-    }
-
-    function setupStandard() {
         document.getElementById('q-question').innerText = `Welches Krankheitsbild passt zu:\n"${qCorrect.leitsymptome || qCorrect.def}"`;
         let opts = [qCorrect];
         while(opts.length < 4) {
@@ -461,59 +459,18 @@
             btn.className = 'quiz-btn';
             btn.innerText = o.name;
             btn.onclick = () => {
+                if(document.querySelector('.quiz-btn.correct')) return;
                 qTotal++;
                 if(o.id === qCorrect.id) { btn.classList.add('correct'); qScore++; }
-                else { btn.classList.add('wrong'); }
-                finishRound();
+                else { btn.classList.add('wrong'); document.querySelectorAll('.quiz-btn').forEach(b => { if(b.innerText === qCorrect.name) b.classList.add('correct'); }); }
+                document.getElementById('quiz-score').innerText = `Score: ${qScore} / ${qTotal}`;
+                document.getElementById('q-next-area').style.display = 'block';
             };
             area.appendChild(btn);
         });
     }
 
-    function setupCockpit() {
-        document.getElementById('q-question').innerText = `Erwartete Vitalwerte bei: ${qCorrect.name}`;
-        const area = document.getElementById('q-interaction-area');
-        area.className = 'q-cockpit-grid';
-        const states = {c_herzfrequenz:'❤️ Puls', c_blutdruck:'🩸 RR', b_spo2:'☁️ SpO2', b_atemfrequenz:'💨 AF'};
-        const userState = {};
-        for(let k in states) {
-            userState[k] = 0;
-            const tile = document.createElement('div');
-            tile.className = 'quiz-tile';
-            tile.innerHTML = `<strong>${states[k]}</strong><br>Normal`;
-            tile.onclick = () => {
-                userState[k] = (userState[k]+1)%3;
-                tile.className = 'quiz-tile state-' + userState[k];
-                tile.innerHTML = `<strong>${states[k]}</strong><br>${userState[k]===0?'Normal':userState[k]===1?'⬆️ Hoch':'⬇️ Tief'}`;
-            };
-            area.appendChild(tile);
-        }
-        const checkBtn = document.createElement('button');
-        checkBtn.className = 'btn'; checkBtn.innerText = 'Prüfen';
-        checkBtn.onclick = () => {
-            qTotal++;
-            let correctCount = 0;
-            for(let k in userState) {
-                let target = 0;
-                if(isHigh(qCorrect[k])) target = 1; else if(isLow(qCorrect[k])) target = 2;
-                if(userState[k] === target) correctCount++;
-            }
-            if(correctCount >= 3) qScore++;
-            finishRound();
-        };
-        area.after(checkBtn);
-    }
-
-    function finishRound() {
-        document.getElementById('quiz-score').innerText = `Score: ${qScore} / ${qTotal}`;
-        document.getElementById('q-next-area').style.display = 'block';
-        document.querySelectorAll('.quiz-btn, .quiz-tile').forEach(el => el.style.pointerEvents = 'none');
-        if(document.querySelector('#quiz .btn')) document.querySelector('#quiz .btn').remove();
-    }
-
-    function exportPDF() {
-        window.print();
-    }
+    function exportPDF() { window.print(); }
 
     init();
 </script>
