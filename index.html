@@ -215,7 +215,7 @@
         { id: 'cyan',    label: '🔵 Zyanose', check: (i) => hasText(i, ['b_zyanose', 'c_haut', 'leitsymptome'], 'zyanose', 'blau', 'lila') },
         { id: 'vigilanz', label: '🧠 Vigilanz ⬇️', check: (i) => hasText(i, ['bewusstsein', 'leitsymptome'], 'bewusstlos', 'koma', 'somnolent', 'eintrübung', 'vigilanz', 'verwirrt', 'desorientiert') },
         { id: 'dizzy', label: '🌀 Schwindel', check: (i) => hasText(i, ['leitsymptome', 'e_symptome', 'd_sonstiges', 'd_avpu'], 'schwindel', 'vertigo', 'gangunsicherheit') },
-        { id: 'dyspnoe', label: '🫁 Atemnot', check: (i) => hasText(i, ['b_atemwege', 'leitsymptome'], 'ja', 'atemnot', 'dyspnoe', 'orthopnoe', 'lufthunger') },
+        { id: 'dyspnoe', label: '🫁 Atemnot', check: (i) => hasText(i, ['a_atemwege', 'leitsymptome'], 'ja', 'atemnot', 'dyspnoe', 'orthopnoe', 'lufthunger') },
         { id: 'shock', label: '💦 Schock', check: (i) => hasText(i, ['c_haut', 'leitsymptome'], 'blass', 'kalt', 'schweiß', 'marmorierung', 'feucht') },
         { id: 'allergy', label: '🐝 Allergie', check: (i) => hasText(i, ['name', 'leitsymptome', 'e_symptome'], 'allergie', 'anaphylaxie') },
         { id: 'nef', label: '📞 Notarzt', check: (i) => i.nef && i.nef.toLowerCase().includes('ja') }
