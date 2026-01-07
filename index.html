@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RescueCards V7.7 Full</title>
+    <title>RescueCards V7.7 Full Stable</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
@@ -15,7 +15,6 @@
         }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 50px; }
         
-        /* HEADER */
         header { background: var(--primary); color: white; padding: 8px 12px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
         .brand-area { display: flex; align-items: baseline; gap: 6px; }
@@ -24,7 +23,6 @@
         .header-controls { display: flex; gap: 10px; align-items: center; width: 100%; }
         input[type="text"] { flex: 1; padding: 6px 10px; border-radius: 6px; border: none; font-size: 0.95rem; background: #37474f; color: white; outline: none; }
         
-        /* SIDE MENU */
         .menu-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; padding: 0 5px; }
         .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; opacity: 0; transition: opacity 0.3s; }
         .menu-overlay.visible { display: block; opacity: 1; }
@@ -34,7 +32,6 @@
         .menu-item { padding: 15px 20px; border-bottom: 1px solid #eee; font-size: 1rem; color: #333; cursor: pointer; display: flex; align-items: center; gap: 10px; }
         .menu-item.active { background: #e1f5fe; color: var(--accent); font-weight: bold; }
 
-        /* FILTER CHIPS */
         .filter-container { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding: 4px 0 8px 0; margin-top: 6px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .filter-container::-webkit-scrollbar { display: none; }
         .filter-chip { flex-shrink: 0; background: #455a64; color: #cfd8dc; padding: 5px 12px; border-radius: 16px; font-size: 0.75rem; font-weight: 600; cursor: pointer; border: 1px solid #546e7a; user-select: none; white-space: nowrap; transition: all 0.2s; }
@@ -46,7 +43,6 @@
         .view-section.active { display: block; animation: fadeIn 0.2s; }
         @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
-        /* CARDS */
         .card { background: white; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #cfd8dc; }
         .card-header { padding: 10px 12px; color: white; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .neuro { background: var(--cat-neuro); } .meta { background: var(--cat-meta); } 
@@ -64,7 +60,6 @@
         .box-yellow { background: #fff8e1; color: #f57f17; }
         .box-blue { background: #e3f2fd; color: #0277bd; }
         
-        /* TILES & GRID */
         .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; align-items: stretch; }
         .uni-tile { 
             background: #fff; border: 1px solid #e0e0e0; border-radius: 6px; padding: 16px 4px 4px 4px; 
@@ -91,18 +86,16 @@
         .dd-box { background: #f3e5f5; color: #4a148c; padding: 8px 12px; border-top: 1px solid #e1bee7; font-size: 0.85rem; }
         .diff-box { background: #fff3e0; padding: 8px 12px; border-top: 1px solid #ffe0b2; font-size: 0.85rem; color: #e65100; }
 
-        /* STANDARDWERTE TABLE (RESTORED) */
         .std-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; font-size: 0.8rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .std-table th, .std-table td { padding: 6px 4px; text-align: center; border: 1px solid #e0e0e0; }
         .std-table th { background: #f5f5f5; font-weight: 600; color: #37474f; }
         .std-row-header { font-weight: bold; text-align: left; background: #fafafa; padding-left: 8px !important; }
         .norm-icon { color: #2e7d32; } .warn-icon { color: #f9a825; }
 
-        /* QUIZ */
         .quiz-box { background: white; padding: 15px; border-radius: 12px; border: 1px solid #ddd; }
         .quiz-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 15px; }
         .quiz-score { font-weight: bold; color: var(--accent); }
-        .quiz-btn { background: white; border: 1px solid #cfd8dc; padding: 12px; border-radius: 8px; margin-bottom: 8px; width: 100%; text-align: left; cursor: pointer; }
+        .quiz-btn { background: white; border: 1px solid #cfd8dc; padding: 12px; border-radius: 8px; margin-bottom: 8px; width: 100%; text-align: left; cursor: pointer; transition: all 0.2s; }
         .quiz-btn.correct { background: #c8e6c9; border-color: #2e7d32; }
         .quiz-btn.wrong { background: #ffcdd2; border-color: #c62828; }
 
@@ -143,7 +136,6 @@
 
 <div id="learn" class="view-section"><div id="card-container"></div></div>
 
-<!-- RESTORED STANDARDS TABLE -->
 <div id="standards" class="view-section">
     <h3 style="margin-top:0; margin-bottom:15px; color:#37474f;">📏 Vitalwerte-Referenz</h3>
     <table class="std-table">
@@ -188,7 +180,7 @@
 </div>
 
 <script>
-    const CACHE_KEY = "rescue_cards_data_v7_7_stable";
+    const CACHE_KEY = "rescue_cards_data_v7_7_full";
     const GOOGLE_CSV_LINK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBMZadFA7O2nMGOeaUcnEZz5MuNW2WeHdmSU_m94SI9VDdUiI8AfsJXJ-KAhtxv0zRZ6pkRIM_jj1X/pub?gid=1914308692&single=true&output=csv";
     const IMAGE_BASE_URL = "https://raw.githubusercontent.com/sGillissen/rescue-cards/main/bilder/";
     
@@ -204,18 +196,18 @@
         });
     }
 
-   const filterDefs = [
+    const filterDefs = [
         { id: 'rr_high', label: '🩸 RR ⬆️', check: (i) => isHigh(i.c_blutdruck) },
         { id: 'rr_low',  label: '🩸 RR ⬇️', check: (i) => isLow(i.c_blutdruck) },
         { id: 'hr_high', label: '❤️ Puls ⬆️', check: (i) => isHigh(i.c_herzfrequenz) },
         { id: 'hr_low',  label: '❤️ Puls ⬇️', check: (i) => isLow(i.c_herzfrequenz) },
         { id: 'af_high', label: '💨 AF ⬆️', check: (i) => isHigh(i.b_atemfrequenz) },
         { id: 'af_low',  label: '💨 AF ⬇️', check: (i) => isLow(i.b_atemfrequenz) },
-        { id: 'sp_low',  label: '☁️ SpO2 ⬇️', check: (i) => isLow(i.b_spo2) || hasText(i, ['b_zyanose'], 'ja', 'zyanose')) },
-        { id: 'cyan',    label: '🔵 Zyanose', check: (i) => hasText(i, ['b_zyanose', 'c_haut', 'leitsymptome'], 'zyanose', 'blau', 'lila','🔵') },
+        { id: 'sp_low',  label: '☁️ SpO2 ⬇️', check: (i) => isLow(i.b_spo2) || hasText(i, ['b_zyanose'], 'ja', 'zyanose', '🔵') },
+        { id: 'cyan',    label: '🔵 Zyanose', check: (i) => hasText(i, ['b_zyanose', 'c_haut', 'leitsymptome'], 'zyanose', 'blau', 'lila', '🔵') },
         { id: 'vigilanz', label: '🧠 Vigilanz ⬇️', check: (i) => hasText(i, ['bewusstsein', 'leitsymptome'], 'bewusstlos', 'koma', 'somnolent', 'eintrübung', 'vigilanz', 'verwirrt', 'desorientiert') },
         { id: 'dizzy', label: '🌀 Schwindel', check: (i) => hasText(i, ['leitsymptome', 'e_symptome', 'd_sonstiges', 'd_avpu'], 'schwindel', 'vertigo', 'gangunsicherheit') },
-        { id: 'dyspnoe', label: '🫁 Atemnot', check: (i) => hasText(i, ['a_atemwege', 'leitsymptome'], 'ja', 'atemnot', 'dyspnoe', 'orthopnoe', 'lufthunger') },
+        { id: 'dyspnoe', label: '🫁 Atemnot', check: (i) => hasText(i, ['b_atemnot', 'leitsymptome', 'a_atemwege'], 'ja', 'atemnot', 'dyspnoe', 'orthopnoe', 'lufthunger', 'stridor', 'verlegt') },
         { id: 'shock', label: '💦 Schock', check: (i) => hasText(i, ['c_haut', 'leitsymptome'], 'blass', 'kalt', 'schweiß', 'marmorierung', 'feucht') },
         { id: 'allergy', label: '🐝 Allergie', check: (i) => hasText(i, ['name', 'leitsymptome', 'e_symptome'], 'allergie', 'anaphylaxie') },
         { id: 'nef', label: '📞 Notarzt', check: (i) => i.nef && i.nef.toLowerCase().includes('ja') }
@@ -261,8 +253,7 @@
     function toggleMenu() {
         const menu = document.getElementById('side-menu');
         const overlay = document.getElementById('menu-overlay');
-        menu.classList.toggle('open');
-        overlay.classList.toggle('visible');
+        menu.classList.toggle('open'); overlay.classList.toggle('visible');
         if(overlay.classList.contains('visible')) overlay.style.display = 'block';
         else setTimeout(() => overlay.style.display = 'none', 300);
     }
@@ -271,8 +262,7 @@
         const container = document.getElementById('filter-container');
         container.innerHTML = '<div class="filter-chip filter-reset" onclick="resetFilters()">✖ Reset</div>';
         filterDefs.forEach(f => {
-            const btn = document.createElement('div');
-            btn.className = 'filter-chip'; btn.innerText = f.label;
+            const btn = document.createElement('div'); btn.className = 'filter-chip'; btn.innerText = f.label;
             btn.onclick = () => {
                 if(activeFilters.has(f.id)) { activeFilters.delete(f.id); btn.classList.remove('active'); }
                 else { activeFilters.add(f.id); btn.classList.add('active'); }
@@ -364,8 +354,7 @@
     function initCompare() {
         const s1 = document.getElementById('s1'); const s2 = document.getElementById('s2');
         db.forEach(d => { const opt = `<option value="${d.id}">${d.name}</option>`; s1.insertAdjacentHTML('beforeend', opt); s2.insertAdjacentHTML('beforeend', opt); });
-        if(db.length > 1) s2.selectedIndex = 1;
-        renderCompare();
+        if(db.length > 1) s2.selectedIndex = 1; renderCompare();
     }
 
     function renderCompare() {
