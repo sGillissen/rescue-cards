@@ -5,7 +5,7 @@
 ## Aktueller Stand
 - Repo geklont nach `Code/rescue-cards/`
 - V7.7 Full Stable in `index.html`
-- ✅ Cloudflare Workers Static Assets Deployment: **https://rescue-cards.sven-gillissen.workers.dev**
+- ✅ Cloudflare Pages Deployment: **https://rescue-cards.pages.dev**
 - Auto-Deploy bei Push auf `main`
 
 ## Offene Punkte

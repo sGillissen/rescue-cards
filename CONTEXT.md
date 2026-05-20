@@ -28,6 +28,6 @@ Bisher direkt auf GitHub editiert (`Update index.html` Commits). Lokale Entwickl
 - Lokal: `/Users/sven/Desktop/Claude-Workspace/Code/rescue-cards/`
 
 ## Deployment
-Cloudflare Workers Static Assets via `wrangler.jsonc`. URL: **rescue-cards.sven-gillissen.workers.dev**. Auto-Deploy bei Push auf `main` (Workers Builds, kein GitHub Actions nötig).
+Cloudflare Pages (Git-Connect). URL: **rescue-cards.pages.dev**. Auto-Deploy bei Push auf `main`. Framework: None, Build-Command leer, Output `/`.
 
-`.assetsignore` schließt Meta-Dateien (CLAUDE/CONTEXT/STATUS/README, .git, wrangler.jsonc) vom Public-Upload aus.
+⚠️ Output ist Root → CONTEXT.md, STATUS.md, README.md sind öffentlich erreichbar (z.B. `rescue-cards.pages.dev/STATUS.md`). Nicht sicherheitskritisch, aber bei Bedarf Site in `public/`-Ordner verschieben und das als Output setzen.
