@@ -478,11 +478,6 @@ main {
 <header>
   <div class="header-row">
     <h1 class="brand">Rescue Cards <span class="version">V8</span></h1>
-    <div class="aml-toggle" id="amlToggle">
-      <button data-aml="1">AML 1</button>
-      <button data-aml="2" class="active">AML 2</button>
-      <button data-aml="all">Alle</button>
-    </div>
   </div>
   <div class="search-wrap">
     <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -666,7 +661,6 @@ const ALGORITHMS = [
 
 // ===== State =====
 const state = {
-  aml: '2',      // '1' | '2' | 'all'
   search: '',
   filters: new Set(),
   open: new Set(),
@@ -688,7 +682,6 @@ function renderFilters() {
 }
 
 function matchesFilter(algo) {
-  if (state.aml !== 'all' && String(algo.aml) !== state.aml) return false;
   if (state.filters.size) {
     const has = [...state.filters].some(f => algo.categories.includes(f));
     if (!has) return false;
@@ -794,7 +787,6 @@ function renderCard(algo) {
   return `<div class="card ${open ? 'open' : ''}" data-id="${algo.id}">
     <div class="card-header">
       <div class="title">${escapeHtml(algo.title)}</div>
-      <span class="aml-badge aml${algo.aml}">AML ${algo.aml}</span>
       <span class="chevron">${iconSvg('chevron')}</span>
     </div>
     ${renderCardBody(algo)}
@@ -807,27 +799,13 @@ function renderList() {
   $('#emptyState').style.display = filtered.length ? 'none' : 'block';
 }
 
-function renderAmlToggle() {
-  document.querySelectorAll('#amlToggle button').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.aml === state.aml);
-  });
-}
-
 function render() {
-  renderAmlToggle();
   renderFilters();
   renderList();
 }
 
 // ===== Events =====
 document.addEventListener('click', e => {
-  // AML toggle
-  const amlBtn = e.target.closest('#amlToggle button');
-  if (amlBtn) {
-    state.aml = amlBtn.dataset.aml;
-    render();
-    return;
-  }
   // Filter chip
   const chip = e.target.closest('.filter-chip[data-cat]');
   if (chip) {
