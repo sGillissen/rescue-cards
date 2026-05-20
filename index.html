@@ -209,7 +209,6 @@ main {
 .card-body {
   display: none;
   padding: 4px 10px 14px;
-  background: linear-gradient(to right, transparent 0, transparent calc(100% - 24px), var(--grey-bar) calc(100% - 24px), var(--grey-bar) 100%);
   position: relative;
 }
 .card.open .card-body { display: block; }
@@ -237,7 +236,6 @@ main {
 .block {
   display: flex;
   margin-bottom: 8px;
-  margin-right: 28px;
   border-radius: 10px;
   overflow: hidden;
   background: white;
@@ -313,7 +311,7 @@ main {
 .venenzugang {
   display: flex;
   align-items: center;
-  margin: 6px 28px 6px 0;
+  margin: 6px 0;
   border-radius: 10px;
   overflow: hidden;
   background: white;
@@ -330,7 +328,7 @@ main {
 /* ===== Medikament-Box ===== */
 .med {
   display: flex;
-  margin: 6px 28px 6px 0;
+  margin: 6px 0;
   border-radius: 10px;
   overflow: hidden;
   background: white;
@@ -414,7 +412,7 @@ main {
 
 /* ===== Reevaluation ===== */
 .reeval {
-  margin: 6px 28px 6px 0;
+  margin: 6px 0;
   border-radius: 10px;
   overflow: hidden;
   background: white;
@@ -466,7 +464,7 @@ main {
 
 /* ===== Bilder-Section (Platzhalter für später) ===== */
 .bilder-section {
-  margin: 8px 28px 6px 0;
+  margin: 8px 0 6px 0;
   padding: 8px 12px;
   background: #fffbe6;
   border: 1px dashed #e0c860;
@@ -477,7 +475,7 @@ main {
 
 /* ===== und/oder Separator ===== */
 .und-oder {
-  margin: 4px 28px 4px 0;
+  margin: 4px 0;
   text-align: center;
   position: relative;
   font-size: .78rem;
@@ -512,7 +510,7 @@ main {
 
 /* ===== Bilder ===== */
 .karten-bilder {
-  margin: 8px 28px 8px 0;
+  margin: 8px 0;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -527,7 +525,7 @@ main {
 
 /* ===== Collapsible-Blöcke (Maßnahmen / Einteilung / DD) ===== */
 .collapse-block {
-  margin: 4px 28px 4px 0;
+  margin: 4px 0;
   background: white;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -1797,7 +1795,6 @@ function renderCardBody(algo) {
   }
 
   return `<div class="card-body">
-    <div class="monitoring-strip"><span>MONITORING</span></div>
     ${parts.join('')}
   </div>`;
 }
