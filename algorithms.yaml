@@ -180,6 +180,7 @@
   - cardio
   bilder:
   - 60C4C2FC-5EB5-4535-BC3C-2DC134123088.PNG
+  - acs_brustschmerz.png
   definition: 'Herzkranzgefäß verengt / verschlossen. Erster Eindruck: unruhig, Todesangst.'
   massnahmen:
   - Oberkörper hoch
@@ -382,6 +383,7 @@
   - neuro
   bilder:
   - Krampfanfall.png
+  - krampfanfall_postiktal.png
   definition: 'Störung ZNS → Spontanentladung. Erster Eindruck: krampfend oder Nachschlafphase.'
   massnahmen:
   - Seitenlage, 30°
@@ -512,6 +514,7 @@
   - neuro
   bilder:
   - fe342e98-c3e3-4eff-9a26-2e0087122d30.png
+  - schlaganfall_fast.png
   definition: 'Plötzliche neurologische Ausfälle durch ischämische oder hämorrhagische Ursache. Erster Eindruck: Sprechstörung.'
   abcde:
     A: Schluckbeeinträchtigung
@@ -586,7 +589,8 @@
   title: Vergiftung
   categories:
   - sonstiges
-  bilder: []
+  bilder:
+  - vergiftung_intox.png
   definition: 'Aufnahme schädlicher Substanzen. Erster Eindruck: erregt — Anamnese W-Fragen.'
   abcde:
     D: |-
