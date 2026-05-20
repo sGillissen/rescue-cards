@@ -1238,13 +1238,20 @@ document.addEventListener('click', e => {
     render();
     return;
   }
-  // Card toggle
+  // Card toggle (Akkordeon: nur eine Karte offen)
   const cardHeader = e.target.closest('.card-header');
   if (cardHeader) {
-    const id = cardHeader.parentElement.dataset.id;
-    if (state.open.has(id)) state.open.delete(id);
-    else state.open.add(id);
-    cardHeader.parentElement.classList.toggle('open');
+    const card = cardHeader.parentElement;
+    const id = card.dataset.id;
+    const wasOpen = state.open.has(id);
+    document.querySelectorAll('.card.open').forEach(c => c.classList.remove('open'));
+    state.open.clear();
+    if (!wasOpen) {
+      state.open.add(id);
+      card.classList.add('open');
+      // smooth scroll header to top so user sees content
+      setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    }
     return;
   }
 });
