@@ -582,6 +582,11 @@ main {
   color: var(--navy);
   font-size: .78rem;
 }
+.block-text {
+  font-size: .85rem;
+  color: var(--text);
+  line-height: 1.5;
+}
 
 /* ===== Reeval Notes ===== */
 .reeval-note {
@@ -675,6 +680,18 @@ main {
       <circle cx="12" cy="12" r="9.5" stroke="currentColor" stroke-width="1.8" fill="none"/>
       <path d="M9 9.5a3 3 0 1 1 4 2.83c-.8.4-1 1-1 1.67v.5" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
       <circle cx="12" cy="17.3" r="1" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-cross" viewBox="0 0 24 24">
+      <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.8" fill="none"/>
+      <path d="M12 7v10M7 12h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24">
+      <path d="M12 3l9 5-9 5-9-5 9-5z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>
+      <path d="M3 13l9 5 9-5M3 17l9 5 9-5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24">
+      <path d="M12 3v18M5 21h14" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M5 7h14M6 7l-3 6a3 3 0 0 0 6 0L6 7zM18 7l-3 6a3 3 0 0 0 6 0L18 7z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
   </defs>
 </svg>
@@ -1766,17 +1783,17 @@ function renderCardBody(algo) {
     parts.push(`<div class="karten-bilder">${imgs}</div>`);
   }
 
-  // Collapsibles unten
+  // Maßnahmen / Einteilung / DD als normale Blöcke (eigene Icons)
   if (algo.massnahmen && algo.massnahmen.length) {
-    parts.push(renderCollapsible('Maßnahmen',
+    parts.push(renderBlock('cross', '',
       `<ul class="massnahmen-list">${algo.massnahmen.map(m => `<li>${escapeHtml(m)}</li>`).join('')}</ul>`
     ));
   }
   if (algo.einteilung) {
-    parts.push(renderCollapsible('Einteilung', `<div>${escapeHtml(algo.einteilung)}</div>`));
+    parts.push(renderBlock('layers', '', `<div class="block-text">${escapeHtml(algo.einteilung)}</div>`));
   }
   if (algo.dd) {
-    parts.push(renderCollapsible('Differentialdiagnose', `<div>${escapeHtml(algo.dd)}</div>`));
+    parts.push(renderBlock('scale', '', `<div class="block-text">${escapeHtml(algo.dd)}</div>`));
   }
 
   return `<div class="card-body">
