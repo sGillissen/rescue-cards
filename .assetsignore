@@ -1,0 +1,11 @@
+wrangler.jsonc
+.assetsignore
+.gitignore
+.DS_Store
+.claude/
+.git/
+.github/
+.wrangler/
+CLAUDE.md
+CONTEXT.md
+STATUS.md
