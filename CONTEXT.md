@@ -28,4 +28,6 @@ Bisher direkt auf GitHub editiert (`Update index.html` Commits). Lokale Entwickl
 - Lokal: `/Users/sven/Desktop/Claude-Workspace/Code/rescue-cards/`
 
 ## Deployment
-Noch keins. Vorgesehen: Cloudflare Pages (Static Site, Build-Command leer, Output `/`).
+Cloudflare Workers Static Assets via `wrangler.jsonc`. URL: **rescue-cards.sven-gillissen.workers.dev**. Auto-Deploy bei Push auf `main` (Workers Builds, kein GitHub Actions nötig).
+
+`.assetsignore` schließt Meta-Dateien (CLAUDE/CONTEXT/STATUS/README, .git, wrangler.jsonc) vom Public-Upload aus.

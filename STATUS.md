@@ -5,10 +5,10 @@
 ## Aktueller Stand
 - Repo geklont nach `Code/rescue-cards/`
 - V7.7 Full Stable in `index.html`
-- Kein Deployment, kein Build-Step
+- ✅ Cloudflare Workers Static Assets Deployment: **https://rescue-cards.sven-gillissen.workers.dev**
+- Auto-Deploy bei Push auf `main`
 
 ## Offene Punkte
-- [ ] Cloudflare Pages Deployment einrichten (`rescue-cards.pages.dev`)
 - [ ] README.md mit Kurzbeschreibung füllen (aktuell nur Titel)
 - [ ] Daten-Quelle dokumentieren: woher kommt die CSV, die PapaParse einliest?
 
