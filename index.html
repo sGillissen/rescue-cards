@@ -498,89 +498,90 @@ main {
   background: var(--green-border);
 }
 
-/* ===== Klinik-Section ===== */
-.section-label {
-  font-size: .68rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: var(--navy);
-  background: #e0e7f1;
-  padding: 4px 10px;
-  border-radius: 4px;
-  display: inline-block;
-  margin: 6px 0 8px;
-  text-transform: uppercase;
-}
-.klinik {
-  margin-right: 28px;
-  padding: 4px 0;
-}
-.klinik-row {
-  display: grid;
-  grid-template-columns: 86px 1fr;
-  gap: 4px 10px;
-  margin-bottom: 8px;
-  font-size: .85rem;
-}
-.klinik-lbl {
-  font-weight: 700;
-  color: var(--navy);
-  font-size: .75rem;
-  padding-top: 2px;
-}
-.klinik-symptoms {
-  list-style: disc;
-  padding: 0 0 0 18px;
-  margin: 0;
-}
-.klinik-symptoms li { padding: 1px 0; }
-.klinik-abcde-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.klinik-abcde-list li {
-  padding: 1px 0;
-  position: relative;
-  padding-left: 10px;
-}
-.klinik-abcde-list li::before {
-  content: '·';
-  position: absolute;
-  left: 0;
-  font-weight: 700;
-}
-.klinik-massnahmen {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 2px 8px;
-  margin: 0;
-}
-.klinik-massnahmen dt {
-  font-weight: 600;
+/* ===== Definition (Fließtext-Block) ===== */
+.definition-text {
+  font-size: .87rem;
   color: var(--text);
+  padding: 2px 0;
 }
-.klinik-massnahmen dd { margin: 0; }
-.klinik-dd {
-  font-style: italic;
-  color: var(--muted);
-  font-size: .82rem;
+
+/* ABCDE: mehrere Zeilen pro Letter */
+.abcde dd > div {
+  padding: 1px 0;
 }
-.klinik-imgs {
+
+/* ===== Bilder ===== */
+.karten-bilder {
+  margin: 8px 28px 8px 0;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 10px;
 }
-.klinik-imgs img {
+.karten-bilder img {
   max-width: 100%;
-  max-height: 240px;
-  border-radius: 6px;
+  max-height: 280px;
+  border-radius: 8px;
   border: 1px solid var(--border);
   cursor: zoom-in;
 }
-.algo { margin-top: 10px; }
-.algo .section-label { background: #d8eed8; color: var(--green); }
+
+/* ===== Collapsible-Blöcke (Maßnahmen / Einteilung / DD) ===== */
+.collapse-block {
+  margin: 4px 28px 4px 0;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.collapse-block summary {
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  list-style: none;
+  font-size: .82rem;
+  user-select: none;
+}
+.collapse-block summary::-webkit-details-marker { display: none; }
+.collapse-label {
+  flex: 1;
+  font-weight: 600;
+  color: var(--navy);
+}
+.collapse-icon {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--navy);
+  width: 22px; height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e0e7f1;
+  border-radius: 50%;
+  transition: transform .15s;
+}
+.collapse-block[open] .collapse-icon { transform: rotate(45deg); }
+.collapse-body {
+  padding: 4px 14px 12px;
+  font-size: .85rem;
+  color: var(--text);
+}
+.massnahmen-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.massnahmen-list li {
+  background: #e0e7f1;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-weight: 600;
+  color: var(--navy);
+  font-size: .78rem;
+}
 
 /* ===== Reeval Notes ===== */
 .reeval-note {
@@ -659,6 +660,10 @@ main {
     <symbol id="i-chevron" viewBox="0 0 24 24">
       <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
+    <symbol id="i-info" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" fill="none"/>
+      <path d="M12 8h.01M11 11h2v6h-2v-6z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
   </defs>
 </svg>
 
@@ -681,32 +686,23 @@ const ALGORITHMS = [
     title: 'Schwere anaphylaktische Reaktion',
     categories: ['allergie', 'resp', 'cardio'],
     bilder: ['Anaphylaxie.PNG'],
-    klinik: {
-      def: 'Schwere systemische Allergie-Reaktion vom Soforttyp.',
-      ersterEindruck: 'Rötung, Schwellung, Atemnot, Schock',
-      leitsymptome: ['Atemnot', 'Hautrötung / Quaddeln', 'Kreislaufzeichen (Hypotonie, Tachykardie)'],
-      bewusstsein: '⬇️',
-      abcde: {
-        A: 'Atemnot',
-        C: '⬆️ Blutdruck (initial), spätestens ⬇️ Schock',
-        E: 'Rötung, Schwellung, Nesselausschlag\n⬆️ Hauttemperatur'
-      },
-      lagerung: 'Beine hoch',
-      dd: 'Asthma / COPD, Angioödem, septischer / kardiogener Schock, Panikattacke, Epiglottitis'
-    },
+    definition: 'Schwere systemische Allergie-Reaktion vom Soforttyp. Erster Eindruck: Rötung, Schwellung, Atemnot, Schock.',
     abcde: {
-      A: 'Stridor, Schwellung der Atemwege',
+      A: 'Atemnot\nStridor, Schwellung der Atemwege',
       B: 'Tachypnoe, SpO₂-Abfall',
-      C: 'Schwitzen, Blässe, Rekap > 4 Sek, Hypotonie',
-      D: 'Somnolenz, Schwindel',
-      E: 'Rötung der Haut, Quaddeln'
+      C: '⬆️ Blutdruck (initial), spätestens ⬇️ Schock\nSchwitzen, Blässe, Rekap > 4 Sek, Hypotonie',
+      D: '⬇️ Bewusstsein\nSomnolenz, Schwindel',
+      E: 'Rötung, Schwellung, Nesselausschlag\n⬆️ Hauttemperatur\nQuaddeln'
     },
     diagnose: [
+      'Leitsymptome: Atemnot · Hautrötung / Quaddeln · Kreislaufzeichen (Hypotonie, Tachykardie)',
       'Ereignisbezogener Zusammenhang (Insektenstich, Medikamente, Nahrungsmittel, etc.)',
       'Schwere Atemnot, Stridor, Bronchospasmus',
       'Schocksymptome',
       'Eventuell Rötung der Haut, Quaddeln'
     ],
+    massnahmen: ['Beine hoch'],
+    dd: 'Asthma / COPD, Angioödem, septischer / kardiogener Schock, Panikattacke, Epiglottitis',
     keypoints: [
       'Maßnahmen nach ABCDE setzen',
       'Auslöser entfernen',
@@ -1171,22 +1167,18 @@ const ALGORITHMS = [
     title: 'Schlaganfall',
     categories: ['neuro'],
     bilder: ['fe342e98-c3e3-4eff-9a26-2e0087122d30.png'],
-    klinik: {
-      def: 'Plötzliche neurologische Ausfälle durch ischämische oder hämorrhagische Ursache.',
-      ersterEindruck: 'Sprechstörung',
-      leitsymptome: ['FAST > 0', 'Herdblick', 'Anisokorie', 'Einseitige Symptomatik!'],
-      bewusstsein: '⬇️ verwirrt',
-      abcde: {
-        A: 'Schluckbeeinträchtigung',
-        D: 'AVPU: Schwindel\nZOPS: vermindert\nFAST > 0\nPupillen: Herdblick, anisokor',
-        E: 'Sprache beeinträchtigt\nLähmung\n💩 Harn-/Stuhlabgang'
-      },
-      lagerung: 'Seitenlage, Oberkörper 30°',
-      o2: '15 l',
-      absaugen: 'ja',
-      einteilung: 'ischämisch / hämorrhagisch',
-      dd: 'Hypo-/Hyperglykämie, postiktaler Zustand, Migräne, Intoxikation, SHT, Meningitis / Enzephalitis, Synkope'
-    }
+    definition: 'Plötzliche neurologische Ausfälle durch ischämische oder hämorrhagische Ursache. Erster Eindruck: Sprechstörung.',
+    abcde: {
+      A: 'Schluckbeeinträchtigung',
+      D: '⬇️ Bewusstsein, verwirrt\nAVPU: Schwindel\nZOPS: vermindert\nFAST > 0\nPupillen: Herdblick, anisokor',
+      E: 'Sprache beeinträchtigt\nLähmung\n💩 Harn-/Stuhlabgang'
+    },
+    diagnose: [
+      'Leitsymptome: FAST > 0 · Herdblick · Anisokorie · Einseitige Symptomatik'
+    ],
+    massnahmen: ['Seitenlage, Oberkörper 30°', '15 l O₂', 'Absaugen'],
+    einteilung: 'ischämisch / hämorrhagisch',
+    dd: 'Hypo-/Hyperglykämie, postiktaler Zustand, Migräne, Intoxikation, SHT, Meningitis / Enzephalitis, Synkope'
   }
 ];
 
@@ -1226,11 +1218,16 @@ function matchesFilter(algo) {
 }
 
 function renderAbcde(abcde) {
-  return `<dl class="abcde">${
-    Object.entries(abcde).map(([k,v]) =>
-      `<dt>${k}</dt><dd>${escapeHtml(v)}</dd>`
-    ).join('')
-  }</dl>`;
+  const items = Object.entries(abcde).map(([k, v]) => {
+    const txt = String(v || '').trim();
+    if (!txt) return `<dt>${k}</dt><dd></dd>`;
+    const lines = txt.split('\n').map(l => escapeHtml(l.trim())).filter(Boolean);
+    const body = lines.length > 1
+      ? lines.map(l => `<div>${l}</div>`).join('')
+      : lines[0];
+    return `<dt>${k}</dt><dd>${body}</dd>`;
+  });
+  return `<dl class="abcde">${items.join('')}</dl>`;
 }
 
 function renderBlock(iconName, label, contentHtml, opts = {}) {
@@ -1296,72 +1293,71 @@ function renderReeval(r) {
   </div>`;
 }
 
-function renderKlinikAbcde(abcde) {
-  const items = Object.entries(abcde).filter(([_, v]) => v && v.trim()).map(([k, v]) => {
-    const lines = String(v).split('\n').map(l => escapeHtml(l.trim())).filter(Boolean);
-    const body = lines.length > 1
-      ? `<ul class="klinik-abcde-list">${lines.map(l => `<li>${l}</li>`).join('')}</ul>`
-      : lines[0] || '';
-    return `<dt>${k}</dt><dd>${body}</dd>`;
-  });
-  return `<dl class="abcde">${items.join('')}</dl>`;
-}
-
-function renderKlinik(k, bilder) {
-  if (!k && (!bilder || !bilder.length)) return '';
-  const parts = [];
-  if (k.def) parts.push(`<div class="klinik-row"><span class="klinik-lbl">Definition</span><div>${escapeHtml(k.def)}</div></div>`);
-  if (k.ersterEindruck) parts.push(`<div class="klinik-row"><span class="klinik-lbl">Erster Eindruck</span><div>${escapeHtml(k.ersterEindruck)}</div></div>`);
-  if (k.leitsymptome && k.leitsymptome.length) {
-    parts.push(`<div class="klinik-row"><span class="klinik-lbl">Leitsymptome</span><ul class="klinik-symptoms">${k.leitsymptome.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ul></div>`);
-  }
-  if (k.bewusstsein) parts.push(`<div class="klinik-row"><span class="klinik-lbl">Bewusstsein</span><div>${escapeHtml(k.bewusstsein)}</div></div>`);
-  if (k.abcde && Object.keys(k.abcde).length) {
-    parts.push(`<div class="klinik-row"><span class="klinik-lbl">ABCDE</span>${renderKlinikAbcde(k.abcde)}</div>`);
-  }
-  const massnahmen = [];
-  if (k.lagerung) massnahmen.push(['Lagerung', k.lagerung]);
-  if (k.o2) massnahmen.push(['O₂', k.o2]);
-  if (k.absaugen) massnahmen.push(['Absaugen', k.absaugen]);
-  if (k.sonstiges) massnahmen.push(['Sonstiges', k.sonstiges]);
-  if (k.nef) massnahmen.push(['NEF', k.nef]);
-  if (massnahmen.length) {
-    parts.push(`<div class="klinik-row"><span class="klinik-lbl">Maßnahmen</span><dl class="klinik-massnahmen">${massnahmen.map(([l, v]) => `<dt>${l}:</dt><dd>${escapeHtml(v)}</dd>`).join('')}</dl></div>`);
-  }
-  if (k.einteilung) parts.push(`<div class="klinik-row"><span class="klinik-lbl">Einteilung</span><div>${escapeHtml(k.einteilung)}</div></div>`);
-  if (k.dd) parts.push(`<div class="klinik-row"><span class="klinik-lbl">DD</span><div class="klinik-dd">${escapeHtml(k.dd)}</div></div>`);
-  const imgs = (bilder || []).map(b => `<img src="bilder/${encodeURIComponent(b)}" alt="" loading="lazy">`).join('');
-  if (imgs) parts.push(`<div class="klinik-imgs">${imgs}</div>`);
-  return `<section class="klinik">
-    <div class="section-label">Klinik</div>
-    ${parts.join('')}
-  </section>`;
+function renderCollapsible(label, contentHtml) {
+  return `<details class="collapse-block">
+    <summary><span class="collapse-label">${escapeHtml(label)}</span><span class="collapse-icon">+</span></summary>
+    <div class="collapse-body">${contentHtml}</div>
+  </details>`;
 }
 
 function renderCardBody(algo) {
-  const klinik = renderKlinik(algo.klinik, algo.bilder);
-  const blocks = [];
-  if (algo.abcde) blocks.push(renderBlock('lungs', '', renderAbcde(algo.abcde)));
-  if (algo.diagnose) blocks.push(renderBlock('arrows', 'Diagnose',
-    `<ul class="diagnose-list">${algo.diagnose.map(d => `<li>${escapeHtml(d)}</li>`).join('')}</ul>`,
-    { iconRight: 'heart-warn' }
-  ));
-  if (algo.keypoints) blocks.push(renderBlock('checklist', 'Keypoints',
-    `<ul class="keypoints">${algo.keypoints.map(k => `<li>${escapeHtml(k)}</li>`).join('')}</ul>`
-  ));
+  const parts = [];
+
+  // Definition oben
+  if (algo.definition) {
+    parts.push(renderBlock('info', '', `<div class="definition-text">${escapeHtml(algo.definition)}</div>`));
+  }
+
+  // ABCDE
+  if (algo.abcde && Object.keys(algo.abcde).length) {
+    parts.push(renderBlock('lungs', '', renderAbcde(algo.abcde)));
+  }
+
+  // Diagnose
+  if (algo.diagnose && algo.diagnose.length) {
+    parts.push(renderBlock('arrows', 'Diagnose',
+      `<ul class="diagnose-list">${algo.diagnose.map(d => `<li>${escapeHtml(d)}</li>`).join('')}</ul>`,
+      { iconRight: 'heart-warn' }
+    ));
+  }
+
+  // Keypoints
+  if (algo.keypoints && algo.keypoints.length) {
+    parts.push(renderBlock('checklist', 'Keypoints',
+      `<ul class="keypoints">${algo.keypoints.map(k => `<li>${escapeHtml(k)}</li>`).join('')}</ul>`
+    ));
+  }
+
+  // Medikamente
   const meds = (algo.medikamente || []).map(renderMedikament).join('');
+  if (meds) parts.push(meds);
+
+  // Reevaluation
   const reev = renderReeval(algo.reevaluation);
-  const hasAlgo = blocks.length || meds || reev;
-  const algoSection = hasAlgo ? `<section class="algo">
-    <div class="section-label">Algorithmus</div>
-    ${blocks.join('')}
-    ${meds}
-    ${reev}
-  </section>` : '';
+  if (reev) parts.push(reev);
+
+  // Bilder
+  if (algo.bilder && algo.bilder.length) {
+    const imgs = algo.bilder.map(b => `<img src="bilder/${encodeURIComponent(b)}" alt="" loading="lazy">`).join('');
+    parts.push(`<div class="karten-bilder">${imgs}</div>`);
+  }
+
+  // Collapsibles unten
+  if (algo.massnahmen && algo.massnahmen.length) {
+    parts.push(renderCollapsible('Maßnahmen',
+      `<ul class="massnahmen-list">${algo.massnahmen.map(m => `<li>${escapeHtml(m)}</li>`).join('')}</ul>`
+    ));
+  }
+  if (algo.einteilung) {
+    parts.push(renderCollapsible('Einteilung', `<div>${escapeHtml(algo.einteilung)}</div>`));
+  }
+  if (algo.dd) {
+    parts.push(renderCollapsible('Differentialdiagnose', `<div>${escapeHtml(algo.dd)}</div>`));
+  }
+
   return `<div class="card-body">
     <div class="monitoring-strip"><span>MONITORING</span></div>
-    ${klinik}
-    ${algoSection}
+    ${parts.join('')}
   </div>`;
 }
 
