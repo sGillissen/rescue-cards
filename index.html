@@ -498,6 +498,90 @@ main {
   background: var(--green-border);
 }
 
+/* ===== Klinik-Section ===== */
+.section-label {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--navy);
+  background: #e0e7f1;
+  padding: 4px 10px;
+  border-radius: 4px;
+  display: inline-block;
+  margin: 6px 0 8px;
+  text-transform: uppercase;
+}
+.klinik {
+  margin-right: 28px;
+  padding: 4px 0;
+}
+.klinik-row {
+  display: grid;
+  grid-template-columns: 86px 1fr;
+  gap: 4px 10px;
+  margin-bottom: 8px;
+  font-size: .85rem;
+}
+.klinik-lbl {
+  font-weight: 700;
+  color: var(--navy);
+  font-size: .75rem;
+  padding-top: 2px;
+}
+.klinik-symptoms {
+  list-style: disc;
+  padding: 0 0 0 18px;
+  margin: 0;
+}
+.klinik-symptoms li { padding: 1px 0; }
+.klinik-abcde-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.klinik-abcde-list li {
+  padding: 1px 0;
+  position: relative;
+  padding-left: 10px;
+}
+.klinik-abcde-list li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  font-weight: 700;
+}
+.klinik-massnahmen {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 2px 8px;
+  margin: 0;
+}
+.klinik-massnahmen dt {
+  font-weight: 600;
+  color: var(--text);
+}
+.klinik-massnahmen dd { margin: 0; }
+.klinik-dd {
+  font-style: italic;
+  color: var(--muted);
+  font-size: .82rem;
+}
+.klinik-imgs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.klinik-imgs img {
+  max-width: 100%;
+  max-height: 240px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  cursor: zoom-in;
+}
+.algo { margin-top: 10px; }
+.algo .section-label { background: #d8eed8; color: var(--green); }
+
 /* ===== Reeval Notes ===== */
 .reeval-note {
   display: flex;
@@ -596,7 +680,20 @@ const ALGORITHMS = [
     id: 'anaphylaxie',
     title: 'Schwere anaphylaktische Reaktion',
     categories: ['allergie', 'resp', 'cardio'],
-    bilder: [],
+    bilder: ['Anaphylaxie.PNG'],
+    klinik: {
+      def: 'Schwere systemische Allergie-Reaktion vom Soforttyp.',
+      ersterEindruck: 'Rötung, Schwellung, Atemnot, Schock',
+      leitsymptome: ['Atemnot', 'Hautrötung / Quaddeln', 'Kreislaufzeichen (Hypotonie, Tachykardie)'],
+      bewusstsein: '⬇️',
+      abcde: {
+        A: 'Atemnot',
+        C: '⬆️ Blutdruck (initial), spätestens ⬇️ Schock',
+        E: 'Rötung, Schwellung, Nesselausschlag\n⬆️ Hauttemperatur'
+      },
+      lagerung: 'Beine hoch',
+      dd: 'Asthma / COPD, Angioödem, septischer / kardiogener Schock, Panikattacke, Epiglottitis'
+    },
     abcde: {
       A: 'Stridor, Schwellung der Atemwege',
       B: 'Tachypnoe, SpO₂-Abfall',
@@ -1066,6 +1163,30 @@ const ALGORITHMS = [
         { icon: 'syringe', text: 'Paracetamol: nicht wiederholbar' }
       ]
     }
+  },
+
+  // ===== rein klinische Karten (nur CSV) =====
+  {
+    id: 'schlaganfall',
+    title: 'Schlaganfall',
+    categories: ['neuro'],
+    bilder: ['fe342e98-c3e3-4eff-9a26-2e0087122d30.png'],
+    klinik: {
+      def: 'Plötzliche neurologische Ausfälle durch ischämische oder hämorrhagische Ursache.',
+      ersterEindruck: 'Sprechstörung',
+      leitsymptome: ['FAST > 0', 'Herdblick', 'Anisokorie', 'Einseitige Symptomatik!'],
+      bewusstsein: '⬇️ verwirrt',
+      abcde: {
+        A: 'Schluckbeeinträchtigung',
+        D: 'AVPU: Schwindel\nZOPS: vermindert\nFAST > 0\nPupillen: Herdblick, anisokor',
+        E: 'Sprache beeinträchtigt\nLähmung\n💩 Harn-/Stuhlabgang'
+      },
+      lagerung: 'Seitenlage, Oberkörper 30°',
+      o2: '15 l',
+      absaugen: 'ja',
+      einteilung: 'ischämisch / hämorrhagisch',
+      dd: 'Hypo-/Hyperglykämie, postiktaler Zustand, Migräne, Intoxikation, SHT, Meningitis / Enzephalitis, Synkope'
+    }
   }
 ];
 
@@ -1175,27 +1296,72 @@ function renderReeval(r) {
   </div>`;
 }
 
+function renderKlinikAbcde(abcde) {
+  const items = Object.entries(abcde).filter(([_, v]) => v && v.trim()).map(([k, v]) => {
+    const lines = String(v).split('\n').map(l => escapeHtml(l.trim())).filter(Boolean);
+    const body = lines.length > 1
+      ? `<ul class="klinik-abcde-list">${lines.map(l => `<li>${l}</li>`).join('')}</ul>`
+      : lines[0] || '';
+    return `<dt>${k}</dt><dd>${body}</dd>`;
+  });
+  return `<dl class="abcde">${items.join('')}</dl>`;
+}
+
+function renderKlinik(k, bilder) {
+  if (!k && (!bilder || !bilder.length)) return '';
+  const parts = [];
+  if (k.def) parts.push(`<div class="klinik-row"><span class="klinik-lbl">Definition</span><div>${escapeHtml(k.def)}</div></div>`);
+  if (k.ersterEindruck) parts.push(`<div class="klinik-row"><span class="klinik-lbl">Erster Eindruck</span><div>${escapeHtml(k.ersterEindruck)}</div></div>`);
+  if (k.leitsymptome && k.leitsymptome.length) {
+    parts.push(`<div class="klinik-row"><span class="klinik-lbl">Leitsymptome</span><ul class="klinik-symptoms">${k.leitsymptome.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ul></div>`);
+  }
+  if (k.bewusstsein) parts.push(`<div class="klinik-row"><span class="klinik-lbl">Bewusstsein</span><div>${escapeHtml(k.bewusstsein)}</div></div>`);
+  if (k.abcde && Object.keys(k.abcde).length) {
+    parts.push(`<div class="klinik-row"><span class="klinik-lbl">ABCDE</span>${renderKlinikAbcde(k.abcde)}</div>`);
+  }
+  const massnahmen = [];
+  if (k.lagerung) massnahmen.push(['Lagerung', k.lagerung]);
+  if (k.o2) massnahmen.push(['O₂', k.o2]);
+  if (k.absaugen) massnahmen.push(['Absaugen', k.absaugen]);
+  if (k.sonstiges) massnahmen.push(['Sonstiges', k.sonstiges]);
+  if (k.nef) massnahmen.push(['NEF', k.nef]);
+  if (massnahmen.length) {
+    parts.push(`<div class="klinik-row"><span class="klinik-lbl">Maßnahmen</span><dl class="klinik-massnahmen">${massnahmen.map(([l, v]) => `<dt>${l}:</dt><dd>${escapeHtml(v)}</dd>`).join('')}</dl></div>`);
+  }
+  if (k.einteilung) parts.push(`<div class="klinik-row"><span class="klinik-lbl">Einteilung</span><div>${escapeHtml(k.einteilung)}</div></div>`);
+  if (k.dd) parts.push(`<div class="klinik-row"><span class="klinik-lbl">DD</span><div class="klinik-dd">${escapeHtml(k.dd)}</div></div>`);
+  const imgs = (bilder || []).map(b => `<img src="bilder/${encodeURIComponent(b)}" alt="" loading="lazy">`).join('');
+  if (imgs) parts.push(`<div class="klinik-imgs">${imgs}</div>`);
+  return `<section class="klinik">
+    <div class="section-label">Klinik</div>
+    ${parts.join('')}
+  </section>`;
+}
+
 function renderCardBody(algo) {
+  const klinik = renderKlinik(algo.klinik, algo.bilder);
   const blocks = [];
-  blocks.push(renderBlock('lungs', '', renderAbcde(algo.abcde)));
-  blocks.push(renderBlock('arrows', 'Diagnose',
+  if (algo.abcde) blocks.push(renderBlock('lungs', '', renderAbcde(algo.abcde)));
+  if (algo.diagnose) blocks.push(renderBlock('arrows', 'Diagnose',
     `<ul class="diagnose-list">${algo.diagnose.map(d => `<li>${escapeHtml(d)}</li>`).join('')}</ul>`,
     { iconRight: 'heart-warn' }
   ));
-  blocks.push(renderBlock('checklist', 'Keypoints',
+  if (algo.keypoints) blocks.push(renderBlock('checklist', 'Keypoints',
     `<ul class="keypoints">${algo.keypoints.map(k => `<li>${escapeHtml(k)}</li>`).join('')}</ul>`
   ));
   const meds = (algo.medikamente || []).map(renderMedikament).join('');
   const reev = renderReeval(algo.reevaluation);
-  const bilder = (algo.bilder && algo.bilder.length === 0)
-    ? `<div class="bilder-section">📷 Bilder folgen später</div>`
-    : '';
-  return `<div class="card-body">
-    <div class="monitoring-strip"><span>MONITORING</span></div>
+  const hasAlgo = blocks.length || meds || reev;
+  const algoSection = hasAlgo ? `<section class="algo">
+    <div class="section-label">Algorithmus</div>
     ${blocks.join('')}
     ${meds}
     ${reev}
-    ${bilder}
+  </section>` : '';
+  return `<div class="card-body">
+    <div class="monitoring-strip"><span>MONITORING</span></div>
+    ${klinik}
+    ${algoSection}
   </div>`;
 }
 
