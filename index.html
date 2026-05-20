@@ -474,6 +474,44 @@ main {
   font-size: .8rem;
   color: #8a6d1f;
 }
+
+/* ===== und/oder Separator ===== */
+.und-oder {
+  margin: 4px 28px 4px 0;
+  text-align: center;
+  position: relative;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--green);
+}
+.und-oder span {
+  background: var(--bg);
+  padding: 0 10px;
+  position: relative;
+  z-index: 1;
+}
+.und-oder::before {
+  content: '';
+  position: absolute;
+  left: 56px; right: 0; top: 50%;
+  height: 1px;
+  background: var(--green-border);
+}
+
+/* ===== Reeval Notes ===== */
+.reeval-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: .82rem;
+}
+.reeval-note-icon {
+  width: 18px; height: 18px;
+  color: var(--green);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
 </style>
 </head>
 <body>
@@ -555,9 +593,8 @@ const CATEGORIES = [
 
 const ALGORITHMS = [
   {
-    id: 'anaphylaxie-aml2',
+    id: 'anaphylaxie',
     title: 'Schwere anaphylaktische Reaktion',
-    aml: 2,
     categories: ['allergie', 'resp', 'cardio'],
     bilder: [],
     abcde: {
@@ -580,8 +617,7 @@ const ALGORITHMS = [
     ],
     medikamente: [
       {
-        name: 'Adrenalin (Autoinjektor)', route: 'i.m.',
-        icon: 'syringe',
+        name: 'Adrenalin (Autoinjektor)', route: 'i.m.', icon: 'syringe',
         dosierung: [
           { label: '3.–6. vLJ', value: '0,15 mg i.m.' },
           { label: '6.–12. vLJ', value: '0,3 mg i.m.' },
@@ -592,8 +628,7 @@ const ALGORITHMS = [
       },
       { type: 'venenzugang' },
       {
-        name: 'Isotone Elektrolytlösung', route: 'i.v.',
-        icon: 'drop',
+        name: 'Isotone Elektrolytlösung', route: 'i.v.', icon: 'drop',
         dosierung: [
           { label: 'Erwachsene', value: '500 ml i.v.' },
           { label: 'Kinder', value: '10 ml / kg KG i.v.' }
@@ -602,8 +637,7 @@ const ALGORITHMS = [
         nw: 'Keine'
       },
       {
-        name: 'Diphenhydramin', route: 'i.v.', note: '(Keine Wiederholung)',
-        icon: 'syringe',
+        name: 'Diphenhydramin', route: 'i.v.', note: '(Keine Wiederholung)', icon: 'syringe',
         dosierung: [
           { label: 'einmalig ab 18 kg KG', value: '30 mg i.v. (1 Ampulle)' }
         ],
@@ -613,7 +647,7 @@ const ALGORITHMS = [
     ],
     reevaluation: {
       heading: 'Keine Besserung nach 5 Minuten?',
-      text: 'Einmalige Wiederholung von Adrenalin (Suprarenin ® 1:1000) i.m. in folgenden Dosierungen erlaubt:',
+      text: 'Einmalige Wiederholung von Adrenalin (Suprarenin® 1:1000) i.m. in folgenden Dosierungen erlaubt:',
       doses: [
         '3. bis 6. vLJ: 0,15 mg i.m. = 0,15 ml',
         '6. bis 12. vLJ: 0,3 mg i.m. = 0,3 ml',
@@ -621,10 +655,190 @@ const ALGORITHMS = [
       ]
     }
   },
+
   {
-    id: 'hypoglykaemie-aml2',
+    id: 'allergische-reaktion',
+    title: 'Allergische Reaktion',
+    categories: ['allergie'],
+    bilder: [],
+    abcde: {
+      A: 'KEINE Atemwegsproblematik',
+      B: 'KEINE Atemnot',
+      C: 'KEINE Kreislaufproblematik',
+      D: 'KEINE neurologische Symptomatik',
+      E: 'Hautreaktion, anamnestisch Allergie bekannt?'
+    },
+    diagnose: [
+      'Generalisierte Hautreaktion (Rötung, Quaddeln)',
+      'Juckreiz, Schwellung',
+      'Anzeichen einer schweren Anaphylaxie? Wechsel zu Algorithmus „Schwere anaphylaktische Reaktion"!'
+    ],
+    keypoints: ['Maßnahmen nach ABCDE setzen'],
+    medikamente: [
+      { type: 'venenzugang' },
+      {
+        name: 'Diphenhydramin', route: 'i.v.', icon: 'syringe',
+        dosierung: [
+          { label: 'einmalig ab 18 kg KG', value: '30 mg i.v. (2 ml = 1 Ampulle Dibondrin®)' }
+        ],
+        ki: '< 18 kg KG',
+        nw: 'Müdigkeit'
+      }
+    ],
+    reevaluation: { text: 'KEINE Wiederholung der Medikamente' }
+  },
+
+  {
+    id: 'schwellung-atemwege',
+    title: 'Schwellung der oberen Atemwege',
+    categories: ['resp', 'allergie'],
+    bilder: [],
+    abcde: {
+      A: 'Stridor, Schwellung der Atemwege',
+      B: 'Tachypnoe, SpO₂-Abfall',
+      C: 'Schwitzen, Blässe, Rekap > 4 Sek, Hypotonie',
+      D: '',
+      E: ''
+    },
+    diagnose: [
+      'Inspiratorischer Stridor',
+      'A+B Problem',
+      'z.B. bei Epiglottitis, Inhalationstrauma'
+    ],
+    keypoints: ['Maßnahmen nach ABCDE setzen'],
+    medikamente: [
+      {
+        name: 'Adrenalin (1:1000)', route: 'via Verneblermaske', icon: 'syringe',
+        dosierung: [
+          { label: 'Dosis', value: '1 mg (1 ml) unverdünnt mit 8 l/Min. Sauerstoff vernebeln' }
+        ],
+        ki: 'keine',
+        nw: 'Zittern/Unruhe, Herzfrequenzanstieg/Blutdruckanstieg'
+      }
+    ],
+    reevaluation: {
+      heading: 'Keine Besserung nach 5 Minuten?',
+      text: 'Bei Patienten > 3. vLJ einmalige Wiederholung der Inhalation in gleicher Dosierung (1 mg bzw. 1 ml Suprarenin® 1:1000) möglich. Evtl. kann es nötig sein, den Algorithmus „schwere Anaphylaktische Reaktion" parallel anzuwenden.'
+    }
+  },
+
+  {
+    id: 'bronchospasmus',
+    title: 'Akuter Bronchospasmus / Asthma / COPD',
+    categories: ['resp'],
+    bilder: [],
+    abcde: {
+      A: 'Stridor, Verlegung der Atemwege',
+      B: 'Tachypnoe, SpO₂-Abfall',
+      C: 'Tachykardie',
+      D: 'Angst, Agitiertheit, Somnolenz',
+      E: 'Patientengeschichte: COPD? Asthma bronchiale?'
+    },
+    diagnose: [
+      'Akute Atemnot',
+      'Erhöhte Atemfrequenz',
+      'Atemgeräusche (Giemen, Brummen, Pfeifen)',
+      'Verlängertes Exspirium'
+    ],
+    keypoints: ['Maßnahmen nach ABCDE setzen'],
+    medikamente: [
+      {
+        name: 'Fenoterol / Ipratropium', route: 'inhal.', icon: 'syringe',
+        dosierung: [
+          { label: '6.–12. vLJ', value: '0,6 ml mit 2 ml NaCl verdünnt' },
+          { label: 'ab 12. vLJ', value: '1,8 ml mit 2 ml NaCl verdünnt' }
+        ],
+        ki: '< 6. vLJ, Kinder: HF > 180',
+        nw: 'Zittern/Unruhe, Herzfrequenzanstieg/Blutdruckanstieg'
+      }
+    ],
+    reevaluation: {
+      notes: [
+        { strong: 'Berodual LS®:', text: 'ab dem 6. vLJ (bis zum 12.) 6 Hübe + 2 ml NaCl; ab dem 12. vLJ 18 Hübe + 2 ml NaCl' },
+        { strong: 'Berodualin®:', text: 'ab dem 6. vLJ (bis zum 12.) 12 Tropfen + 2 ml NaCl; ab dem 12. vLJ 36 Tropfen + 2 ml NaCl' }
+      ],
+      text: 'Weitere Möglichkeiten, sollte die Inhalation keine Wirkung zeigen:',
+      doses: ['CPAP nach Boussignac', 'Assistierte Beatmung']
+    }
+  },
+
+  {
+    id: 'acs',
+    title: 'Akutes Koronarsyndrom (ACS)',
+    categories: ['cardio'],
+    bilder: [],
+    abcde: {
+      A: 'je nach Bewusstseinszustand frei, gefährdet, verlegt',
+      B: 'AF? SpO₂? Lungenödem?',
+      C: 'Puls peripher tastbar? Haut kaltschweißig? RR? Recap?',
+      D: 'Bewusstseinseintrübung? Synkope?',
+      E: 'Anamnese nach SAMPLER'
+    },
+    diagnose: ['ischämietypischer Thoraxschmerz'],
+    keypoints: [
+      'Maßnahmen nach ABCDE setzen',
+      '12-Kanal-EKG innerhalb von 10 Minuten',
+      'Aufkleben der DefiPads bei STEMI bzw. bei kritischem Patient',
+      'Wenn orale Gabe nicht möglich ist (Bsp. Schluckstörung, Erbrechen…) → i.v. Gabe'
+    ],
+    medikamente: [
+      {
+        name: 'Acetylsalicylsäure', route: 'oral', icon: 'syringe',
+        dosierung: [{ label: 'Erwachsene', value: '250 mg p.o.' }],
+        ki: 'Kinder',
+        nw: 'keine Relevanten'
+      },
+      {
+        name: 'Acetylsalicylsäure', route: 'i.v.', note: '(falls oral nicht möglich)', icon: 'syringe',
+        dosierung: [{ label: 'Erwachsene', value: '250 mg i.v. (2,5 ml)' }],
+        ki: 'Kinder',
+        nw: 'keine Relevanten'
+      }
+    ],
+    reevaluation: { text: 'KEINE Wiederholung der Acetylsalicylsäure' }
+  },
+
+  {
+    id: 'hypertensiver-notfall',
+    title: 'Hypertensiver Notfall',
+    categories: ['cardio'],
+    bilder: [],
+    abcde: {
+      A: 'je nach Bewusstseinszustand frei, gefährdet, verlegt',
+      B: 'AF? SpO₂? Lungenödem?',
+      C: 'Angina Pectoris? Aortensyndrom?',
+      D: 'neurologisches Defizit (siehe unten)',
+      E: 'Hypertensive urgency ≠ emergency'
+    },
+    diagnose: [
+      'RR über 200 mmHg (systolisch) mit Symptomatik:',
+      '– Angina Pectoris',
+      '– Lungenödem',
+      '– neurolog. Defizit',
+      '– Kopfschmerz',
+      '– Sehstörung'
+    ],
+    keypoints: ['Maßnahmen nach ABCDE setzen'],
+    medikamente: [
+      { type: 'venenzugang' },
+      {
+        name: 'Urapidil', route: 'i.v.', icon: 'syringe',
+        dosierung: [
+          { label: 'Erwachsene', value: '5 mg i.v.' },
+          { label: 'Ziel', value: 'RR-Senkung max. 25% des Ausgangswertes UND nicht unter 160 mmHg (systolisch)' }
+        ],
+        ki: 'Kinder',
+        nw: 'übermäßiger Blutdruckabfall'
+      }
+    ],
+    reevaluation: {
+      text: 'Wiederholung alle 5 Minuten nach Blutdruckkontrolle bis Ziel erreicht: Senkung des Blutdrucks um max. 25% des Ausgangswertes UND nicht unter 160 mmHg (systolisch). NICHT mehr als 25 mg Urapidil verabreichen!'
+    }
+  },
+
+  {
+    id: 'hypoglykaemie',
     title: 'Hypoglykämie',
-    aml: 2,
     categories: ['meta', 'neuro'],
     bilder: [],
     abcde: {
@@ -634,11 +848,7 @@ const ALGORITHMS = [
       D: 'Bewusstseinsstörung – neurologische Differentialdiagnose?',
       E: 'Typ I Diabetes? Insulinpumpe?'
     },
-    diagnose: [
-      'Bewusstseinsstörung',
-      'UND',
-      'Blutzucker unter 50 mg/dL'
-    ],
+    diagnose: ['Bewusstseinsstörung', 'UND', 'Blutzucker unter 50 mg/dL'],
     keypoints: [
       'Maßnahmen nach ABCDE setzen',
       'ggf. Insulinpumpe diskonnektieren'
@@ -646,8 +856,7 @@ const ALGORITHMS = [
     medikamente: [
       { type: 'venenzugang' },
       {
-        name: 'Glucose 33%', route: 'i.v.',
-        icon: 'syringe',
+        name: 'Glucose 33%', route: 'i.v.', icon: 'syringe',
         dosierung: [
           { label: 'Erwachsene', value: '13,2 g rasch i.v. (40 ml)' },
           { label: 'Kinder', value: '6,6 g rasch i.v. (20 ml)' }
@@ -658,6 +867,204 @@ const ALGORITHMS = [
     ],
     reevaluation: {
       text: 'Mit 20 ml isotoner Elektrolytlösung i.v. nachspülen. Wiederholung der Glucose-Boli bis der Normwert erreicht ist.'
+    }
+  },
+
+  {
+    id: 'hypovolaemie',
+    title: 'Hypovolämie / Schock',
+    categories: ['cardio'],
+    bilder: [],
+    abcde: {
+      A: 'je nach Bewusstseinszustand frei, gefährdet, verlegt',
+      B: 'AF? SpO₂? Lungenödem?',
+      C: 'Puls peripher tastbar? Blässe, Kaltschweißigkeit, Tachykardie',
+      D: 'Neurologische Symptome? Stroke?',
+      E: 'richtungsweisende Anamnese (siehe unten)'
+    },
+    diagnose: [
+      'Hinweise auf einen Flüssigkeitsverlust in der Anamnese (z.B. Blutverlust, Verbrennung, Schwitzen, Diarrhoe)',
+      'Rekap-Zeit über 2 s',
+      'klinisches Bild einer schweren Beeinträchtigung (Blässe, Kaltschweißigkeit, Tachykardie, Bewusstseinsstörung)'
+    ],
+    keypoints: ['Maßnahmen nach ABCDE setzen'],
+    medikamente: [
+      { type: 'venenzugang' },
+      {
+        name: 'Isotone Elektrolytlösung', route: 'i.v.', icon: 'drop',
+        dosierung: [
+          { label: 'Erwachsene', value: '500 ml i.v.' },
+          { label: 'Kinder', value: '10 ml / kg KG i.v.' }
+        ],
+        ki: 'Lungenödem, Kinder < 6 vLJ',
+        nw: 'keine Nebenwirkungen zu erwarten'
+      }
+    ],
+    reevaluation: {
+      heading: 'Keine Besserung nach Infusionsende? Wiederholung:',
+      doses: [
+        'Erwachsene max. 1000 ml',
+        'Kinder bis max. 40 ml / kg KG in 10 ml / kg KG Schritten und dazwischen reevaluieren'
+      ]
+    }
+  },
+
+  {
+    id: 'uebelkeit-erbrechen',
+    title: 'Übelkeit und Erbrechen',
+    categories: ['sonstiges'],
+    bilder: [],
+    abcde: {
+      A: 'je nach Bewusstseinszustand frei, gefährdet, verlegt',
+      B: 'Tachypnoe?',
+      C: 'Tachykardie?, Blässe?',
+      D: 'Schmerzen, Schwindel?, Unruhe?',
+      E: 'Massive Übelkeit, bereits Erbrochen?'
+    },
+    diagnose: [
+      'Ausgeprägte Übelkeit und/oder Erbrechen jeglicher Herkunft',
+      'Längere Transportwege'
+    ],
+    keypoints: [
+      'Maßnahmen nach ABCDE setzen',
+      'Nicht mit anderen Medikamenten in einer Infusion mischen'
+    ],
+    medikamente: [
+      { type: 'venenzugang' },
+      {
+        name: 'Granisetron', route: 'i.v.', icon: 'syringe',
+        dosierung: [{ label: 'ab 12. vLJ', value: '3 mg langsam i.v.' }],
+        ki: '< 12. vLJ, Schwangerschaft',
+        nw: 'Kopfschmerzen, Wärmegefühl, Flush, QT-Verlängerung'
+      }
+    ],
+    reevaluation: { text: 'KEINE Wiederholung' }
+  },
+
+  {
+    id: 'krampfanfall',
+    title: 'Bestehender zerebraler Krampfanfall',
+    categories: ['neuro'],
+    bilder: [],
+    abcde: {
+      A: 'bedroht, verlegt, Aspiration',
+      B: 'Abnorme Atmung',
+      C: 'Kreislauf vorhanden?',
+      D: 'Pupillengröße & -reaktion?',
+      E: 'Stuhl- bzw. Harnverlust? Zungenbiss?'
+    },
+    diagnose: [
+      'Plötzliche Bewusstlosigkeit',
+      'Tonisch-klonische Krämpfe',
+      'Passagerer Atemstillstand'
+    ],
+    keypoints: [
+      'Maßnahmen nach ABCDE setzen',
+      'CAVE: Atem-Kreislaufstillstand → Wechsel zu ALS Algorithmus',
+      'Eigen- und Fremdschutz'
+    ],
+    medikamente: [
+      {
+        name: 'Diazepam', route: 'rektal', icon: 'syringe',
+        dosierung: [
+          { label: '1.–3. vLJ / 10–15 kg', value: '5 mg rektal' },
+          { label: '3.–7. vLJ', value: '10 mg rektal' }
+        ],
+        ki: '< 1. vLJ',
+        nw: 'Müdigkeit, Atemdepression'
+      },
+      {
+        name: 'Midazolam', route: 'nasal über MAD', icon: 'syringe',
+        dosierung: [
+          { label: 'ab dem 8. vLJ', value: 'Gesamt 10 mg nasal' },
+          { label: 'Midazolam® 3 ml / 15 mg', value: '1 ml (5 mg) pro Naseloch' }
+        ],
+        ki: '< 8. vLJ',
+        nw: 'Müdigkeit, Atemdepression'
+      }
+    ],
+    reevaluation: { text: 'KEINE Wiederholung der Benzodiazepine' }
+  },
+
+  {
+    id: 'fieberkrampf',
+    title: 'Fieber mit Krampfanfall bei Kindern',
+    categories: ['neuro', 'meta'],
+    bilder: [],
+    abcde: {
+      A: 'In der Regel keine Beeinträchtigung zu erwarten',
+      B: 'Tachypnoe? Zyanose? Einziehungen? Nasenflügeln?',
+      C: 'Tachykardie? Bradykardie?',
+      D: 'Altersentsprechende Reaktion?',
+      E: 'Anamnestisch Fieberkrämpfe bekannt? Aktueller Infekt?'
+    },
+    diagnose: [
+      'Fieber > 38,5 °C UND Krampfanamnese (aktuell oder anamnestisch)',
+      'Kind krampft noch? Wechsel zu Algorithmus „Bestehender zerebraler Krampfanfall"!'
+    ],
+    keypoints: [
+      'Maßnahmen nach ABCDE setzen',
+      'Kind krampft noch? → Wechsel zu Algorithmus Bestehender Zerebraler Krampfanfall',
+      'Temperatur nachmessen',
+      'Medikation durch Eltern?'
+    ],
+    medikamente: [
+      {
+        name: 'Paracetamol Supp.', route: 'rektal', icon: 'syringe',
+        dosierung: [
+          { label: '6. LM – 2. vLJ', value: '125 mg rektal' },
+          { label: '2. – 8. vLJ', value: '250 mg rektal' }
+        ],
+        ki: '< 6. LM, Paracetamolgabe in den letzten 6h',
+        nw: 'keine Nebenwirkungen zu erwarten'
+      }
+    ],
+    reevaluation: { text: 'KEINE Wiederholung des Paracetamols' }
+  },
+
+  {
+    id: 'schmerzen',
+    title: 'Starke Schmerzen',
+    categories: ['schmerz'],
+    bilder: [],
+    abcde: {
+      A: 'je nach Bewusstseinszustand frei, gefährdet, verlegt',
+      B: 'Tachypnoe?',
+      C: 'Tachykardie?, Blässe?',
+      D: 'Schmerzen, Schwindel?, Unruhe?',
+      E: 'Ereignisbezogener Zusammenhang (Trauma, ..)? Schonhaltung, Mimik, Gestik'
+    },
+    diagnose: [
+      'allgemeine atraumatische Schmerzen ab NRS > 3',
+      'Viszeralschmerz ab NRS > 3',
+      'Traumatisch bedingter Schmerz'
+    ],
+    keypoints: ['Maßnahmen nach ABCDE setzen'],
+    medikamente: [
+      { type: 'venenzugang' },
+      {
+        name: 'Methoxyfluran', route: 'inhal.', icon: 'syringe',
+        dosierung: [{ label: 'ab 18. vLJ', value: '1 E' }],
+        ki: 'Kinder, Kopfverletzung, kardiovaskuläre Instabilität, resp. Insuffizienz, Niereninsuffizienz, Bewusstlosigkeit, maligne Hyperthermie',
+        nw: 'keine Nebenwirkungen zu erwarten'
+      },
+      { type: 'und-oder' },
+      {
+        name: 'Paracetamol', route: 'i.v.', icon: 'syringe',
+        dosierung: [
+          { label: 'ab Pubertät', value: '1000 mg i.v.' },
+          { label: '12. vLJ – Pubertät', value: '15 mg / kg KG i.v. (1,5 ml)' }
+        ],
+        ki: '< 12. vLJ, schwere Leberschädigung, chron. Alkoholismus, Einnahme innerhalb der letzten 6h',
+        nw: 'keine Nebenwirkungen zu erwarten'
+      }
+    ],
+    reevaluation: {
+      heading: 'Reevaluation (ABCDE, NRS)',
+      notes: [
+        { icon: 'syringe', text: 'Methoxyfluran: 1× wiederholbar' },
+        { icon: 'syringe', text: 'Paracetamol: nicht wiederholbar' }
+      ]
     }
   }
 ];
@@ -723,6 +1130,9 @@ function renderMedikament(m) {
       <div class="v-label">Venenzugang (i.v.)</div>
     </div>`;
   }
+  if (m.type === 'und-oder') {
+    return `<div class="und-oder"><span>und / oder</span></div>`;
+  }
   const doses = (m.dosierung || []).map(d =>
     `<div class="dose-row"><span class="label">${escapeHtml(d.label)}:</span><span class="value">${escapeHtml(d.value)}</span></div>`
   ).join('');
@@ -748,6 +1158,9 @@ function renderMedikament(m) {
 
 function renderReeval(r) {
   if (!r) return '';
+  const notes = r.notes ? r.notes.map(n =>
+    `<div class="reeval-note">${iconSvg(n.icon || 'syringe', 'reeval-note-icon')}<div>${n.strong ? `<b>${escapeHtml(n.strong)}</b> ` : ''}${escapeHtml(n.text)}</div></div>`
+  ).join('') : '';
   return `<div class="reeval">
     <div class="reeval-head">
       <div class="reeval-icon">${iconSvg('clock')}</div>
@@ -756,6 +1169,7 @@ function renderReeval(r) {
         ${r.heading ? `<div style="font-weight:600;color:var(--navy);margin-top:4px;">${escapeHtml(r.heading)}</div>` : ''}
         ${r.text ? `<div style="margin-top:4px;">${escapeHtml(r.text)}</div>` : ''}
         ${r.doses ? `<ul class="reeval-doses">${r.doses.map(d => `<li>${escapeHtml(d)}</li>`).join('')}</ul>` : ''}
+        ${notes}
       </div>
     </div>
   </div>`;
