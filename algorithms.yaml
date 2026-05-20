@@ -229,6 +229,7 @@
   - cardio
   bilder:
   - Hypertension.jpg
+  - hypertensiver_notfall.png
   definition: 'Akuter bedrohlicher RR ⬆. Erster Eindruck: unruhig, hochroter Kopf.'
   massnahmen:
   - Oberkörper ⬆ / Beine ⬇
@@ -274,6 +275,7 @@
   bilder:
   - Hypoglykämie.png
   - Hypoglykämie_info.jpg
+  - hypoglykaemie_2.png
   definition: 'Insulin ⬆ / Blutzucker ⬇. Erster Eindruck: schlechter Gesamtzustand.'
   massnahmen:
   - Beine hoch
@@ -314,6 +316,7 @@
   - cardio
   bilder:
   - Schock.png
+  - hypovolämie_schock.png
   definition: 'O₂-Angebot < O₂-Bedarf. Erster Eindruck: unruhig, Blutung?'
   einteilung: kompensiert / beginnend / manifest — Hypovolämisch · Distributiv (anaphylakt., septisch, neurogen) · Kardiogen
     (ACS, Lungenödem) · Obstruktiv (Lungenembolie, Spannungspneu, Tamponade)
@@ -352,7 +355,8 @@
   title: Übelkeit und Erbrechen
   categories:
   - sonstiges
-  bilder: []
+  bilder:
+  - übelkeit_erbrechen.png
   abcde:
     A: je nach Bewusstseinszustand frei, gefährdet, verlegt
     B: Tachypnoe?
@@ -466,7 +470,8 @@
   title: Starke Schmerzen
   categories:
   - schmerz
-  bilder: []
+  bilder:
+  - starke_schmerzen.png
   abcde:
     A: je nach Bewusstseinszustand frei, gefährdet, verlegt
     B: Tachypnoe?
