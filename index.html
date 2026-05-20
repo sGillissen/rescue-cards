@@ -1315,15 +1315,14 @@ function renderCardBody(algo) {
 
   // Diagnose
   if (algo.diagnose && algo.diagnose.length) {
-    parts.push(renderBlock('arrows', 'Diagnose',
-      `<ul class="diagnose-list">${algo.diagnose.map(d => `<li>${escapeHtml(d)}</li>`).join('')}</ul>`,
-      { iconRight: 'heart-warn' }
+    parts.push(renderBlock('arrows', '',
+      `<ul class="diagnose-list">${algo.diagnose.map(d => `<li>${escapeHtml(d)}</li>`).join('')}</ul>`
     ));
   }
 
   // Keypoints
   if (algo.keypoints && algo.keypoints.length) {
-    parts.push(renderBlock('checklist', 'Keypoints',
+    parts.push(renderBlock('checklist', '',
       `<ul class="keypoints">${algo.keypoints.map(k => `<li>${escapeHtml(k)}</li>`).join('')}</ul>`
     ));
   }
