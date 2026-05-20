@@ -690,6 +690,7 @@ const CATEGORIES = [
   { id: 'schmerz', label: 'Schmerz' },
   { id: 'trauma', label: 'Trauma' },
   { id: 'reanimation', label: 'Reanimation' },
+  { id: 'sonstiges', label: 'Sonstiges' },
 ];
 
 const ALGORITHMS = [
@@ -871,7 +872,11 @@ const ALGORITHMS = [
     id: 'acs',
     title: 'Akutes Koronarsyndrom (ACS)',
     categories: ['cardio'],
-    bilder: [],
+    bilder: ['60C4C2FC-5EB5-4535-BC3C-2DC134123088.PNG'],
+    definition: 'Herzkranzgefäß verengt / verschlossen. Erster Eindruck: unruhig, Todesangst.',
+    massnahmen: ['Oberkörper hoch', '15 l O₂', 'keine Anstrengung', 'NEF'],
+    einteilung: 'Angina Pectoris / Myokardinfarkt — Verschluss → Ischämie → O₂ ⬇ → Absterben Herzmuskelzelle',
+    dd: 'Lungenembolie, Aortendissektion, Pneumothorax, Reflux, Pankreatitis, Angststörung',
     abcde: {
       A: 'je nach Bewusstseinszustand frei, gefährdet, verlegt',
       B: 'AF? SpO₂? Lungenödem?',
@@ -879,7 +884,10 @@ const ALGORITHMS = [
       D: 'Bewusstseinseintrübung? Synkope?',
       E: 'Anamnese nach SAMPLER'
     },
-    diagnose: ['ischämietypischer Thoraxschmerz'],
+    diagnose: [
+      'Leitsymptome: retrosternaler Schmerz · Ausstrahlung · kaltschweißig · Zyanose',
+      'ischämietypischer Thoraxschmerz'
+    ],
     keypoints: [
       'Maßnahmen nach ABCDE setzen',
       '12-Kanal-EKG innerhalb von 10 Minuten',
@@ -907,7 +915,11 @@ const ALGORITHMS = [
     id: 'hypertensiver-notfall',
     title: 'Hypertensiver Notfall',
     categories: ['cardio'],
-    bilder: [],
+    bilder: ['Hypertension.jpg'],
+    definition: 'Akuter bedrohlicher RR ⬆. Erster Eindruck: unruhig, hochroter Kopf.',
+    massnahmen: ['Oberkörper ⬆ / Beine ⬇', 'Nitrospray'],
+    einteilung: 'Medikamente · Hormone · Vergiftung · Tumor · Drogen',
+    dd: 'Schlaganfall, Aortendissektion, Präeklampsie / Eklampsie, Intoxikation (Kokain, Amphetamine)',
     abcde: {
       A: 'je nach Bewusstseinszustand frei, gefährdet, verlegt',
       B: 'AF? SpO₂? Lungenödem?',
@@ -916,6 +928,7 @@ const ALGORITHMS = [
       E: 'Hypertensive urgency ≠ emergency'
     },
     diagnose: [
+      'Leitsymptome: Kopfschmerzen · Ohrensausen · Nasenbluten',
       'RR über 200 mmHg (systolisch) mit Symptomatik:',
       '– Angina Pectoris',
       '– Lungenödem',
@@ -945,7 +958,10 @@ const ALGORITHMS = [
     id: 'hypoglykaemie',
     title: 'Hypoglykämie',
     categories: ['meta', 'neuro'],
-    bilder: [],
+    bilder: ['Hypoglykämie.png', 'Hypoglykämie_info.jpg'],
+    definition: 'Insulin ⬆ / Blutzucker ⬇. Erster Eindruck: schlechter Gesamtzustand.',
+    massnahmen: ['Beine hoch', 'Glucose oral wenn wach'],
+    dd: 'Stroke / TIA, Krampfanfall, Intoxikation, Sepsis, psychiatrische Störungen',
     abcde: {
       A: 'je nach Bewusstseinszustand frei, gefährdet, verlegt',
       B: 'Zyanose? AF? SpO₂? Auskultation: bds. belüftet?',
@@ -953,7 +969,12 @@ const ALGORITHMS = [
       D: 'Bewusstseinsstörung – neurologische Differentialdiagnose?',
       E: 'Typ I Diabetes? Insulinpumpe?'
     },
-    diagnose: ['Bewusstseinsstörung', 'UND', 'Blutzucker unter 50 mg/dL'],
+    diagnose: [
+      'Leitsymptome: Zittern · Schwitzen · Palpitationen · Tachykardie · Heißhunger · Blässe · Benommenheit · Verwirrtheit · Sprachstörung · Sehstörung · Parästhesien · ggf. Krampfanfall, Bewusstlosigkeit',
+      'Bewusstseinsstörung',
+      'UND',
+      'Blutzucker unter 50 mg/dL'
+    ],
     keypoints: [
       'Maßnahmen nach ABCDE setzen',
       'ggf. Insulinpumpe diskonnektieren'
@@ -979,7 +1000,10 @@ const ALGORITHMS = [
     id: 'hypovolaemie',
     title: 'Hypovolämie / Schock',
     categories: ['cardio'],
-    bilder: [],
+    bilder: ['Schock.png'],
+    definition: 'O₂-Angebot < O₂-Bedarf. Erster Eindruck: unruhig, Blutung?',
+    einteilung: 'kompensiert / beginnend / manifest — Hypovolämisch · Distributiv (anaphylakt., septisch, neurogen) · Kardiogen (ACS, Lungenödem) · Obstruktiv (Lungenembolie, Spannungspneu, Tamponade)',
+    dd: 'Kardiogener Schock, distributiver Schock, obstruktiver Schock (Lungenembolie, Tamponade, Spannungspneumothorax)',
     abcde: {
       A: 'je nach Bewusstseinszustand frei, gefährdet, verlegt',
       B: 'AF? SpO₂? Lungenödem?',
@@ -988,6 +1012,7 @@ const ALGORITHMS = [
       E: 'richtungsweisende Anamnese (siehe unten)'
     },
     diagnose: [
+      'Leitsymptome: Puls n/⬆/⬆⬆ · AF n/⬆/⬆⬆ · RR n/⬇/⬇⬇',
       'Hinweise auf einen Flüssigkeitsverlust in der Anamnese (z.B. Blutverlust, Verbrennung, Schwitzen, Diarrhoe)',
       'Rekap-Zeit über 2 s',
       'klinisches Bild einer schweren Beeinträchtigung (Blässe, Kaltschweißigkeit, Tachykardie, Bewusstseinsstörung)'
@@ -1050,7 +1075,11 @@ const ALGORITHMS = [
     id: 'krampfanfall',
     title: 'Bestehender zerebraler Krampfanfall',
     categories: ['neuro'],
-    bilder: [],
+    bilder: ['Krampfanfall.png'],
+    definition: 'Störung ZNS → Spontanentladung. Erster Eindruck: krampfend oder Nachschlafphase.',
+    massnahmen: ['Seitenlage, 30°', '6–8 l O₂', 'NEF'],
+    einteilung: 'fokal / generalisiert',
+    dd: 'Synkope, Hypoglykämie, Intoxikation, SHT, Fieberkrampf, Stroke/TIA, psychogener Anfall',
     abcde: {
       A: 'bedroht, verlegt, Aspiration',
       B: 'Abnorme Atmung',
@@ -1059,6 +1088,7 @@ const ALGORITHMS = [
       E: 'Stuhl- bzw. Harnverlust? Zungenbiss?'
     },
     diagnose: [
+      'Leitsymptome: Amnesie · Zungenbiss · RR ⬆ · Zyanose',
       'Plötzliche Bewusstlosigkeit',
       'Tonisch-klonische Krämpfe',
       'Passagerer Atemstillstand'
@@ -1191,6 +1221,389 @@ const ALGORITHMS = [
     massnahmen: ['Seitenlage, Oberkörper 30°', '15 l O₂', 'Absaugen'],
     einteilung: 'ischämisch / hämorrhagisch',
     dd: 'Hypo-/Hyperglykämie, postiktaler Zustand, Migräne, Intoxikation, SHT, Meningitis / Enzephalitis, Synkope'
+  },
+
+  // ===== Weitere klinische Karten aus CSV =====
+
+  {
+    id: 'exsikkose',
+    title: 'Exsikkose',
+    categories: ['meta'],
+    bilder: ['Exsikkose.png'],
+    definition: 'Flüssigkeit ⬇ im Extrazellularraum.',
+    abcde: {
+      A: 'trockene Schleimhaut',
+      C: 'HF: ⬆\nRR: ⬇\nHaut: exsikkotisch',
+      D: 'Bewusstsein: ⬇',
+      E: 'Übelkeit / Erbrechen\nstarker Durst'
+    },
+    einteilung: 'Ursachen: Durchfall, Erbrechen, Fieber, Flüssigkeitszufuhr ⬇, Schwitzen, Verbrennung, Diabetes',
+    dd: 'Infektion, Hyperglykämie, Elektrolytstörung, Sepsis'
+  },
+
+  {
+    id: 'hyperglykaemie',
+    title: 'Diabetes Hyperglykämie',
+    categories: ['meta'],
+    bilder: ['Hyperglykämie.JPG', 'Hyperglykämie_Kussmaul.jpg'],
+    definition: 'Insulin ⬇ / Blutzucker ⬆. Erster Eindruck: schlechter Gesamtzustand.',
+    abcde: {
+      A: 'Typ 1: Azetongeruch',
+      B: 'AF: ⬆ vertieft\nKußmaul-Atmung',
+      D: 'Bewusstsein: ⬇ verwirrt\nAVPU: ⬇ Schwindel\nZOPS: vermindert\nExsikkose\nBZ: ⬆',
+      E: 'Krämpfe\nÜbelkeit / Erbrechen\nPolyurie\nstarker Durst'
+    },
+    diagnose: ['Leitsymptome: Kußmaul-Atmung · Azetongeruch · Polyurie · Polydipsie'],
+    massnahmen: ['Beine hoch'],
+    einteilung: 'Typ 1: kein Insulin · Typ 2: Resistenz / Therapiefehler · Blutzucker ⬆',
+    dd: 'Sepsis, Stroke, Hypovolämie, Intoxikation, Elektrolytstörungen, Pankreatitis'
+  },
+
+  {
+    id: 'vergiftung',
+    title: 'Vergiftung',
+    categories: ['sonstiges'],
+    bilder: [],
+    definition: 'Aufnahme schädlicher Substanzen. Erster Eindruck: erregt — Anamnese W-Fragen.',
+    abcde: {
+      D: 'Bewusstsein: gestört\nAVPU: ⬇ Schwindel\nZOPS: vermindert',
+      E: 'Krämpfe, Bauch — Einstichstellen?\nÜbelkeit / Erbrechen\nHarn-/Stuhlabgang'
+    },
+    diagnose: ['Leitsymptome: Pupillenveränderungen'],
+    massnahmen: ['Seitenlage'],
+    einteilung: 'oral / Inhalation / transdermal / intravenös',
+    dd: 'Hypo-/Hyperglykämie, Sepsis, Stroke, Krampfanfall, Hypoxie, Delir'
+  },
+
+  {
+    id: 'sht',
+    title: 'Schädel-Hirn-Trauma (SHT)',
+    categories: ['trauma'],
+    bilder: ['SHT.JPG', 'SHT_info.jpg'],
+    definition: 'Gewalteinwirkung auf Schädel / Gehirn. Erster Eindruck: Verletzung Kopf, Unfallkinetik.',
+    abcde: {
+      C: 'HF: ⬇ — kräftiger Puls',
+      D: 'Bewusstsein: ⬇ (I < 15 min · II < 24 h · III > 24 h)\nAVPU: ⬇ Schwindel\nZOPS: vermindert\nPupillendifferenz\nFlüssigkeit aus Nase / Ohr (Blut, Liquor)',
+      E: 'Lähmung, Krämpfe, ev. Stufenbildung Schädel\nÜbelkeit / Erbrechen'
+    },
+    diagnose: ['Leitsymptome: kräftiger Puls · Anisokorie · Amnesie · Brillenhämatom · Flüssigkeit aus Nase/Ohr · Übelkeit'],
+    massnahmen: ['Oberkörper 30°', '15 l O₂', 'Absaugen', 'Schaufeltrage / Vakuummatratze, KEINE HWS-Schiene!'],
+    einteilung: 'offen / geschlossen · primär / sekundär · I Gehirnerschütterung · II Gehirnprellung · III Gehirnquetschung · epi-/subdurale / intrazerebrale Blutung · Kalottenfraktur · Schädelbasisbruch',
+    dd: 'Stroke, Intoxikation, Hypoglykämie, Synkope, postiktaler Zustand, Meningitis'
+  },
+
+  {
+    id: 'wirbelsaeulen-trauma',
+    title: 'Wirbelsäulentrauma',
+    categories: ['trauma'],
+    bilder: ['Wirbelsäulentrauma.PNG'],
+    definition: 'Gewalteinwirkung Wirbelsäule. Erster Eindruck: Unfallkinetik beachten.',
+    abcde: {
+      E: 'Schmerzen spontan / beim Abtasten WS, Prellmarken, bds. Gefühlsstörung bis Lähmung der Extremitäten'
+    },
+    diagnose: ['Leitsymptome: bds. Gefühlsstörung bis Lähmung Extremitäten'],
+    dd: 'Aortendissektion, retroperitoneale Blutung, Nierenkolik, Meningitis, Bandscheibenproblem'
+  },
+
+  {
+    id: 'bauchtrauma',
+    title: 'Bauchtrauma',
+    categories: ['trauma'],
+    bilder: ['Bauchtrauma.png'],
+    definition: 'Gewalteinwirkung Bauchraum. Erster Eindruck: Verletzung Bauch, Unfallkinetik, Beine angezogen.',
+    abcde: {
+      C: 'HF: ⬆\nHaut: kaltschweißig',
+      E: 'Schmerzen Bauch, brettharter Bauch, Hämatome, offene Wunden\nÜbelkeit / Erbrechen'
+    },
+    diagnose: ['Leitsymptome: kaltschweißig · brettharter Bauch · Bauchschmerz'],
+    massnahmen: ['flach, Beine angezogen', 'Schaufeltrage / Vakuummatratze'],
+    einteilung: 'Milzruptur · Leber · Magen-Darm · Pankreas',
+    dd: 'Milz-/Leberruptur, Darmperforation, retroperitoneale Blutung, Beckenfraktur, akutes Abdomen'
+  },
+
+  {
+    id: 'brustkorb-verletzung',
+    title: 'Brustkorbverletzung',
+    categories: ['trauma'],
+    bilder: [],
+    definition: 'Gewalteinwirkung Brustkorb. Erster Eindruck: Unfallkinetik beachten.',
+    abcde: {
+      A: 'Atemnot',
+      B: 'AF: ⬆\nparadoxe / einseitige Atmung?\nZyanose\nSpO₂: ⬇\nHalsvenen gestaut',
+      C: 'HF: ⬆\nRR: ⬇',
+      D: 'ev. schaumiges Blut aus Wunden'
+    },
+    diagnose: ['Leitsymptome: paradoxe Atmung · schaumiges Blut aus Wunde · gestaute Halsvenen · Zyanose'],
+    massnahmen: ['Oberkörper 30° auf verletzte Seite', '15 l O₂', 'Absaugen', 'Schaufeltrage / Vakuummatratze'],
+    dd: 'Pneumothorax, Herzbeuteltamponade, Lungenkontusion, Rippenfraktur, Zwerchfellruptur'
+  },
+
+  {
+    id: 'asthma-bronchiale',
+    title: 'Asthma bronchiale',
+    categories: ['resp'],
+    bilder: ['Asthma.JPG'],
+    definition: 'Chronisch entzündliche Erkrankung der Atemwege. Erster Eindruck: unruhig, agitiert, Atemhilfsmuskulatur, Angst.',
+    abcde: {
+      A: 'frei (Bronchien verengt), verlängerte Ausatmung',
+      B: 'exspiratorischer Stridor\nZyanose\nSpO₂: ⬇',
+      C: 'HF: ⬆',
+      D: 'Sprechdyspnoe'
+    },
+    diagnose: ['Leitsymptome: verlängerte Ausatmung · exspiratorischer Stridor · Zyanose'],
+    massnahmen: ['Oberkörper 90°', '15 l O₂', 'Asthmaspray (Patient)'],
+    einteilung: 'allergisch / nicht-allergisch · anfallsweise Atemwegsverengung durch Reize',
+    dd: 'COPD, Pneumonie, Lungenembolie, Anaphylaxie, Fremdkörper, Herzinsuffizienz'
+  },
+
+  {
+    id: 'copd',
+    title: 'COPD',
+    categories: ['resp'],
+    bilder: ['COPD.png'],
+    definition: 'Zunehmende, irreversible Atemwegsverengung. Erster Eindruck: unruhig, agitiert, Atemhilfsmuskulatur.',
+    abcde: {
+      A: 'durch Schleim beeinträchtigt, verlängerte Ausatmung',
+      B: 'exspiratorischer Stridor, Husten, Auswurf\nZyanose\nSpO₂: ⬇',
+      C: 'HF: ⬆'
+    },
+    diagnose: ['Leitsymptome: verlängerte Ausatmung · exsp. Stridor · Husten / Auswurf · Zyanose'],
+    massnahmen: ['Oberkörper 90°', '15 l O₂', 'CPAP, Lippenbremse'],
+    dd: 'Pneumonie, Asthma, Lungenembolie, Herzinsuffizienz, Pneumothorax'
+  },
+
+  {
+    id: 'atemnot-dyspnoe',
+    title: 'Atemnot (Dyspnoe) — Schwellung / Verlegung',
+    categories: ['resp'],
+    bilder: ['Dyspnoe.JPG'],
+    definition: 'Subjektiv erschwerte Atmung, ggf. Aspiration. Erster Eindruck: unruhig, agitiert.',
+    abcde: {
+      A: 'Atemnot — zugeschwollen? verlegt? Speise / Blut / Erbrochenes',
+      B: 'AF: ⬆\ninspiratorischer Stridor (Schwellung)\nZyanose\nSpO₂: ⬇',
+      C: 'HF: ⬆',
+      E: 'ev. Gesicht angeschwollen, Einstichstelle Insekt, Sprachverlust'
+    },
+    diagnose: ['Leitsymptome: Atemwege zugeschwollen · Gesicht angeschwollen'],
+    massnahmen: ['Oberkörper hoch', 'Einstichstelle kühlen'],
+    einteilung: 'akut / chronisch · Belastung / Ruhe · obere Atemwege (Fremdkörper, Schleimhautschwellung, Tumor, Verletzung) · untere Atemwege (Ventilation, Diffusion, Perfusion)',
+    dd: 'Anaphylaxie, Epiglottitis, Pseudokrupp, Fremdkörper, Angioödem'
+  },
+
+  {
+    id: 'pneumonie',
+    title: 'Pneumonie (Lungenentzündung)',
+    categories: ['resp'],
+    bilder: [],
+    definition: 'Infektiöse Erkrankung der Lunge. Erster Eindruck: schlechter Gesamtzustand.',
+    abcde: {
+      A: 'Atemnot',
+      B: 'AF: ⬆\nZyanose\nSpO₂: ⬇',
+      C: 'HF: ⬆',
+      E: 'Temp: ⬆'
+    },
+    diagnose: ['Leitsymptome: ev. Husten · Fieber'],
+    massnahmen: ['Oberkörper hoch'],
+    einteilung: 'bakteriell (plötzliches hohes Fieber, Husten) · viral (milder, schleichend) · Pilze · Aspiration',
+    dd: 'Lungenembolie, COPD / Asthma, Lungenödem, Pleuritis, Sepsis'
+  },
+
+  {
+    id: 'lungenoedem',
+    title: 'Lungenödem',
+    categories: ['resp', 'cardio'],
+    bilder: ['Lungenödem.JPG', 'Lungenödem_info.jpg'],
+    definition: 'Flüssigkeit zwischen oder in Lungenbläschen. Erster Eindruck: schlechter Gesamtzustand.',
+    abcde: {
+      A: 'Atemnot, fleischwasserfarbener Schaum',
+      B: 'AF: ⬆\nrasselnd / brodelnd, Husten\nZyanose\nSpO₂: ⬇',
+      C: 'HF: ⬆\nblass, kaltschweißig',
+      E: 'Beinödeme'
+    },
+    diagnose: ['Leitsymptome: fleischwasserfarbener Schaum · rasselnd/brodelnd · Beinödeme · Zyanose'],
+    massnahmen: ['Oberkörper ⬆ / Beine ⬇', '15 l O₂', 'Absaugen', 'CPAP'],
+    einteilung: 'kardial (Linksherzinsuffizienz) · renal (Niereninsuffizienz) · toxisch (Atemgifte / Brand / Höhe)',
+    dd: 'COPD / Asthma, Pneumonie, Lungenembolie, Anaphylaxie, Nierenversagen'
+  },
+
+  {
+    id: 'lungenembolie',
+    title: 'Lungenembolie',
+    categories: ['resp', 'cardio'],
+    bilder: ['Lungenembolie.JPG', 'Lungenembolie_info.jpg'],
+    definition: 'Verschluss einer Lungenarterie.',
+    abcde: {
+      A: 'Atemnot, ev. Hämoptyse',
+      B: 'AF: ⬆\nZyanose\nSpO₂: ⬇\nHalsvenen gestaut',
+      C: 'HF: ⬆, schwer tastbar\nRR: ⬇',
+      E: 'Schmerzen Brust, gestaute Halsvenen → Stillstand!'
+    },
+    diagnose: ['Leitsymptome: obstr. Schock · gestaute Halsvenen · Puls kaum tastbar · Zyanose'],
+    massnahmen: ['Oberkörper hoch', '15 l O₂', 'Absaugen', 'keine Anstrengung'],
+    einteilung: 'Thrombus aus Beinvene · Fettembolie · Luftembolie · Fruchtwasserembolie',
+    dd: 'Pneumonie, Aortendissektion, ACS, Pneumothorax, Herzinsuffizienz, Panikattacke'
+  },
+
+  {
+    id: 'hyperventilation',
+    title: 'Hyperventilation / Tetanie',
+    categories: ['resp'],
+    bilder: ['Hyperventilation.PNG', 'Hyperventilation_info.jpg'],
+    definition: 'Schnelle tiefe Atmung → Abatmung von CO₂. Erster Eindruck: erregt.',
+    abcde: {
+      B: 'AF: ⬆\ntiefe Atemzüge\nKEINE Zyanose\nSpO₂: normal',
+      C: 'HF: ⬆',
+      E: 'Pfötchenstellung, Kribbeln'
+    },
+    diagnose: ['Leitsymptome: Pfötchenstellung · Kribbeln'],
+    massnahmen: ['Oberkörper hoch', 'CO₂-Rückatmung'],
+    einteilung: 'respiratorische Alkalose (pH ⬆)',
+    dd: 'Lungenembolie, metabolische Azidose, Angst / Panik, Intoxikation, Sepsis, Hypokalzämie'
+  },
+
+  {
+    id: 'spannungspneumothorax',
+    title: 'Spannungspneumothorax',
+    categories: ['resp', 'trauma'],
+    bilder: ['Spannungspneumothorax.JPG', 'Spannungspneu_info.jpg'],
+    definition: 'Luft im Pleuraspalt → Lunge fällt zusammen. Erster Eindruck: Unfallkinetik?',
+    abcde: {
+      A: 'asymmetrische Atmung',
+      B: 'AF: ⬆\nAtemgeräusch einseitig abgeschwächt\nZyanose\nSpO₂: ⬇',
+      C: 'HF: ⬆\nRR: ⬇⬇ (massiv — mechanische Behinderung venöser Rückstrom → Schock)',
+      E: 'Schmerzen Brust, gestaute Halsvenen'
+    },
+    diagnose: ['Leitsymptome: Hypotonie · Dyspnoe · gestaute Halsvenen · Tachykardie'],
+    einteilung: 'offen / geschlossen · spontan / traumatisch',
+    dd: 'Lungenembolie, Asthma / COPD, Herzbeuteltamponade, Rippenfraktur, Panikattacke'
+  },
+
+  {
+    id: 'pseudokrupp',
+    title: 'Pseudokrupp',
+    categories: ['resp'],
+    bilder: ['Pseudokrupp.JPG'],
+    definition: 'Subglottische Atemwegsverengung bei Kindern.',
+    abcde: {
+      A: 'flatternde Nasenflügel',
+      B: 'bellender Husten, inspiratorisch ziehend\nZyanose',
+      C: 'RR: ⬇'
+    },
+    diagnose: ['Leitsymptome: bellender Husten · Nasenflügelatmen · inspiratorisch ziehend · Zyanose'],
+    dd: 'Epiglottitis, Anaphylaxie, Fremdkörper, virale Atemwegsinfekte'
+  },
+
+  {
+    id: 'kollaps',
+    title: 'Kollaps / Synkope',
+    categories: ['cardio', 'neuro'],
+    bilder: [],
+    definition: 'Kurzfristiger Bewusstseinsverlust durch Minderperfusion.',
+    abcde: {
+      C: 'RR: ⬇',
+      D: 'AVPU: Schwindel',
+      E: 'kurze Bewusstlosigkeit'
+    },
+    massnahmen: ['Beine hoch'],
+    dd: 'Arrhythmien, Hypoglykämie, Lungenembolie, Aortendissektion, SHT, Intoxikation, Volumenmangel'
+  },
+
+  {
+    id: 'akutes-abdomen',
+    title: 'Akutes Abdomen',
+    categories: ['sonstiges'],
+    bilder: ['akutes_Abdomen.png'],
+    definition: 'Akute, plötzliche Bauchschmerzen.',
+    abcde: {
+      C: 'HF: ⬆\nRR: ⬇\nblass, kaltschweißig',
+      E: 'Schmerzen Bauch, Abwehrspannung, Durchfall / Obstipation, Bluterbrechen ❗, Blut im Stuhl\nÜbelkeit / Erbrechen'
+    },
+    diagnose: ['Leitsymptome: Bauchschmerzen · Beine angezogen'],
+    dd: 'Appendizitis, Cholezystitis, Pankreatitis, Ileus, Aortenaneurysma / -dissektion, Ureterkolik, EUG'
+  },
+
+  {
+    id: 'hitze',
+    title: 'Hitzenotfall',
+    categories: ['sonstiges'],
+    bilder: [],
+    definition: 'Hyperthermie durch Hitzeexposition. Erster Eindruck: hochroter Kopf oder Blässe.',
+    abcde: {
+      C: 'HF: ⬆\nRR: ⬇\nblass, kaltschweißig',
+      D: 'Bewusstsein: ⬇\nAVPU: Schwindel\nNackensteifigkeit',
+      E: 'Kopfschmerzen, Schüttelfrost, Krämpfe\nÜbelkeit / Erbrechen\nTemp: ⬆'
+    },
+    massnahmen: ['Oberkörper hoch', 'kühlen'],
+    einteilung: 'Hitzekrampf · Hitzeerschöpfung · Hitzschlag · Sonnenstich',
+    dd: 'Sepsis, Exsikkose, Hypoglykämie, Intoxikation, Hitzschlag vs. Kollaps'
+  },
+
+  {
+    id: 'unterkuehlung',
+    title: 'Unterkühlung (Hypothermie)',
+    categories: ['sonstiges'],
+    bilder: ['Hypothermie.PNG'],
+    definition: 'Körperkerntemperatur < 35 °C → Störung der Organfunktion.',
+    abcde: {
+      E: 'Temp: ⬇'
+    },
+    diagnose: ['Leitsymptome: AF / HF / RR variabel je nach Stadium'],
+    massnahmen: ['! vorsichtig bewegen (Afterdrop-Gefahr)'],
+    einteilung: 'Abwehr → Erschöpfung → Lähmung → (Schein-)Tod',
+    dd: 'Hypoglykämie, Intoxikation, Hypothyreose, Sepsis'
+  },
+
+  {
+    id: 'verbrennung',
+    title: 'Verbrennung',
+    categories: ['trauma'],
+    bilder: [],
+    definition: 'Thermische Hautschädigung.',
+    massnahmen: ['Beine hoch', 'Wunden steril abdecken', 'NICHT großflächig kühlen'],
+    dd: 'Inhalationstrauma, CO-Intoxikation, Trauma allgemein, Infektion'
+  },
+
+  {
+    id: 'ertrinken',
+    title: 'Ertrinken',
+    categories: ['resp'],
+    bilder: [],
+    definition: 'Asphyxie durch Submersion / Immersion.',
+    diagnose: ['Leitsymptome: brodelnd · Zyanose'],
+    dd: 'Hypoxie anderer Genese, Arrhythmien, Trauma, Hypoglykämie'
+  },
+
+  {
+    id: 'extrauteringraviditaet',
+    title: 'Extrauteringravidität',
+    categories: ['sonstiges'],
+    bilder: ['Extrauteringravidität.png'],
+    definition: 'Eizelle außerhalb der Gebärmutter. Erster Eindruck: starke Bauchschmerzen, Beine angezogen.',
+    abcde: {
+      C: 'HF: ⬆\nRR: ⬇\nblass, kaltschweißig',
+      E: 'Schwangerschaft möglich\nÜbelkeit / Erbrechen'
+    },
+    diagnose: ['Leitsymptome: brettharter Bauch · Blässe · Kaltschweißigkeit'],
+    massnahmen: ['Lagerung nach Fritsch'],
+    dd: 'rupturierte Zyste, Appendizitis, Kolik, Adnexitis, Abort, anderes akutes Abdomen'
+  },
+
+  {
+    id: 'eklampsie',
+    title: 'Schwangerschaftshypertonie / Eklampsie',
+    categories: ['sonstiges', 'neuro'],
+    bilder: [],
+    definition: 'Hypertonie → Eiweißausscheidung ⬆ → Krämpfe. Erster Eindruck: Schwangere mit Krampfanfall.',
+    abcde: {
+      A: 'blutiger Schaum, Zungenbiss?',
+      B: 'Zyanose',
+      C: 'RR: ⬆',
+      D: 'Bewusstsein: ⬇',
+      E: 'Hinweis im Mutter-Kind-Pass!\nHarn-/Stuhlabgang'
+    },
+    diagnose: ['Leitsymptome: Amnesie · Zungenbiss · RR ⬆ · Zyanose'],
+    massnahmen: ['NEF'],
+    dd: 'Eklampsie, Stroke, Krampfanfall anderer Genese, Intoxikation'
   }
 ];
 
