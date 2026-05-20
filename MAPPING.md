@@ -16,7 +16,7 @@ Spalten:
 | 3 | Schwellung obere Atemwege | Atemnot Schwellung/Verlegung (resp) | AML1 Schwellung obere Atemwege | ✅ | Resp |
 | 4 | Pseudokrupp | Pseudokrupp (resp) | — | 🔹 | Resp |
 | 5 | Akuter Bronchospasmus / Asthma | Asthma bronchiale (resp) | AML1 Akuter Bronchospasmus | ✅ | Resp |
-| 6 | COPD | COPD (resp) | — (Bronchospasmus-Algo deckt teilweise ab) | ⚠️ | Resp |
+| 6 | COPD | COPD (resp) | AML1 Akuter Bronchospasmus | ✅ | Resp |
 | 7 | Atemnot (Dyspnoe) – Übersicht | Atemnot Dyspnoe (resp) | — | 🔹 | Resp |
 | 8 | Lungenödem | Lungen-Ödem (resp) | — | 🔹 | Resp/Cardio |
 | 9 | Lungenembolie | Lungen-Embolie (resp) | — | 🔹 | Resp/Cardio |
@@ -25,7 +25,7 @@ Spalten:
 | 12 | Spannungspneumothorax | Spannungspneu (resp) | — | 🔹 | Resp/Trauma |
 | 13 | Akutes Koronarsyndrom (ACS) | ACS (cardio) | AML1 ACS + AML2 ACS i.v. | ✅ | Cardio |
 | 14 | Hypertensiver Notfall | Hypertensiver Notfall (cardio) | AML2 Hypertensiver Notfall | ✅ | Cardio |
-| 15 | Schock / Hypovolämie | Schock (cardio) | AML2 Hypovolämie | ⚠️ | Cardio |
+| 15 | Schock / Hypovolämie | Schock (cardio) | AML2 Hypovolämie | ✅ | Cardio |
 | 16 | Kollaps / Synkope | Kollaps (cardio) | — | 🔹 | Cardio/Neuro |
 | 17 | Atem-Kreislaufstillstand Erwachsene | — | AML2 Atem-Kreislaufstillstand Erw. | ➕ | Reanimation |
 | 18 | Atem-Kreislaufstillstand Kinder | — | AML2 Atem-Kreislaufstillstand Kind | ➕ | Reanimation |
@@ -40,7 +40,7 @@ Spalten:
 | 27 | Starke Schmerzen | — | AML1 + AML2 Starke Schmerzen | ➕ | Schmerz |
 | 28 | SHT (Schädel-Hirn-Trauma) | SHT (trauma) | — | 🔹 | Trauma/Neuro |
 | 29 | Wirbelsäulentrauma | Wirbelsäulentrauma (trauma) | — | 🔹 | Trauma |
-| 30 | Nicht-traumat. Rückenschmerzen | (trauma) | (ggf. Starke Schmerzen) | ⚠️ | Schmerz |
+| ~~30~~ | ~~Nicht-traumat. Rückenschmerzen~~ | weggelassen | — | — | — |
 | 31 | Bauchtrauma | Bauchtrauma (trauma) | — | 🔹 | Trauma |
 | 32 | Brustkorbverletzung | Brustkorb Verletzung (trauma) | — | 🔹 | Trauma |
 | 33 | Akutes Abdomen | akutes Abdomen (other) | — | 🔹 | Sonstiges |
@@ -49,7 +49,7 @@ Spalten:
 | 36 | Verbrennung | Verbrennung (other) | — | 🔹 | Trauma |
 | 37 | Ertrinken | Ertrinken (other) | — | 🔹 | Resp |
 | 38 | Extrauteringravidität | ExtraUterin-Gravidität (other) | — | 🔹 | Sonstiges |
-| 39 | Schwangerschaftshypertonie / Eklampsie | Schwangerschaft (other) | (ggf. Hypertens. Notfall + Krampf) | ⚠️ | Sonstiges |
+| 39 | Schwangerschaftshypertonie / Eklampsie | Schwangerschaft (other) | — | 🔹 | Sonstiges |
 | 40 | Kinder-Dosierungen (Übersicht) | — | AML2 Anhang Kinder-Dosierungen | ➕ | Übersicht |
 
 ## Zahlen

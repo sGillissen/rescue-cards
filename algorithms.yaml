@@ -1,0 +1,1033 @@
+- id: anaphylaxie
+  title: Schwere anaphylaktische Reaktion
+  categories:
+  - allergie
+  - resp
+  - cardio
+  bilder:
+  - Anaphylaxie.PNG
+  definition: 'Schwere systemische Allergie-Reaktion vom Soforttyp. Erster Eindruck: Rötung, Schwellung, Atemnot, Schock.'
+  abcde:
+    A: |-
+      Atemnot
+      Stridor, Schwellung der Atemwege
+    B: Tachypnoe, SpO₂-Abfall
+    C: |-
+      ⬆️ Blutdruck (initial), spätestens ⬇️ Schock
+      Schwitzen, Blässe, Rekap > 4 Sek, Hypotonie
+    D: |-
+      ⬇️ Bewusstsein
+      Somnolenz, Schwindel
+    E: |-
+      Rötung, Schwellung, Nesselausschlag
+      ⬆️ Hauttemperatur
+      Quaddeln
+  diagnose:
+  - 'Leitsymptome: Atemnot · Hautrötung / Quaddeln · Kreislaufzeichen (Hypotonie, Tachykardie)'
+  - Ereignisbezogener Zusammenhang (Insektenstich, Medikamente, Nahrungsmittel, etc.)
+  - Schwere Atemnot, Stridor, Bronchospasmus
+  - Schocksymptome
+  - Eventuell Rötung der Haut, Quaddeln
+  massnahmen:
+  - Beine hoch
+  dd: Asthma / COPD, Angioödem, septischer / kardiogener Schock, Panikattacke, Epiglottitis
+  keypoints:
+  - Maßnahmen nach ABCDE setzen
+  - Auslöser entfernen
+  - Reanimationsbereitschaft
+  medikamente:
+  - name: Adrenalin (Autoinjektor)
+    route: i.m.
+    icon: syringe
+    dosierung:
+    - label: 3.–6. vLJ
+      value: 0,15 mg i.m.
+    - label: 6.–12. vLJ
+      value: 0,3 mg i.m.
+    - label: ab 12. vLJ (beide Autoinjektoren)
+      value: 0,45 mg i.m.
+    ki: < 15 kg KG und < 3. vLJ
+    nw: Zittern/Unruhe, Herzfrequenzanstieg/Blutdruckanstieg
+  - type: venenzugang
+  - name: Isotone Elektrolytlösung
+    route: i.v.
+    icon: drop
+    dosierung:
+    - label: Erwachsene
+      value: 500 ml i.v.
+    - label: Kinder
+      value: 10 ml / kg KG i.v.
+    ki: < 6. vLJ
+    nw: Keine
+  - name: Diphenhydramin
+    route: i.v.
+    note: (Keine Wiederholung)
+    icon: syringe
+    dosierung:
+    - label: einmalig ab 18 kg KG
+      value: 30 mg i.v. (1 Ampulle)
+    ki: < 18 kg KG
+    nw: Müdigkeit
+  reevaluation:
+    heading: Keine Besserung nach 5 Minuten?
+    text: 'Einmalige Wiederholung von Adrenalin (Suprarenin® 1:1000) i.m. in folgenden Dosierungen erlaubt:'
+    doses:
+    - '3. bis 6. vLJ: 0,15 mg i.m. = 0,15 ml'
+    - '6. bis 12. vLJ: 0,3 mg i.m. = 0,3 ml'
+    - '> 12. vLJ: 0,5 mg i.m. = 0,5 ml'
+- id: allergische-reaktion
+  title: Allergische Reaktion
+  categories:
+  - allergie
+  bilder: []
+  abcde:
+    A: KEINE Atemwegsproblematik
+    B: KEINE Atemnot
+    C: KEINE Kreislaufproblematik
+    D: KEINE neurologische Symptomatik
+    E: Hautreaktion, anamnestisch Allergie bekannt?
+  diagnose:
+  - Generalisierte Hautreaktion (Rötung, Quaddeln)
+  - Juckreiz, Schwellung
+  - Anzeichen einer schweren Anaphylaxie? Wechsel zu Algorithmus „Schwere anaphylaktische Reaktion"!
+  keypoints:
+  - Maßnahmen nach ABCDE setzen
+  medikamente:
+  - type: venenzugang
+  - name: Diphenhydramin
+    route: i.v.
+    icon: syringe
+    dosierung:
+    - label: einmalig ab 18 kg KG
+      value: 30 mg i.v. (2 ml = 1 Ampulle Dibondrin®)
+    ki: < 18 kg KG
+    nw: Müdigkeit
+  reevaluation:
+    text: KEINE Wiederholung der Medikamente
+- id: schwellung-atemwege
+  title: Schwellung der oberen Atemwege
+  categories:
+  - resp
+  - allergie
+  bilder: []
+  abcde:
+    A: Stridor, Schwellung der Atemwege
+    B: Tachypnoe, SpO₂-Abfall
+    C: Schwitzen, Blässe, Rekap > 4 Sek, Hypotonie
+    D: ''
+    E: ''
+  diagnose:
+  - Inspiratorischer Stridor
+  - A+B Problem
+  - z.B. bei Epiglottitis, Inhalationstrauma
+  keypoints:
+  - Maßnahmen nach ABCDE setzen
+  medikamente:
+  - name: Adrenalin (1:1000)
+    route: via Verneblermaske
+    icon: syringe
+    dosierung:
+    - label: Dosis
+      value: 1 mg (1 ml) unverdünnt mit 8 l/Min. Sauerstoff vernebeln
+    ki: keine
+    nw: Zittern/Unruhe, Herzfrequenzanstieg/Blutdruckanstieg
+  reevaluation:
+    heading: Keine Besserung nach 5 Minuten?
+    text: Bei Patienten > 3. vLJ einmalige Wiederholung der Inhalation in gleicher Dosierung (1 mg bzw. 1 ml Suprarenin® 1:1000)
+      möglich. Evtl. kann es nötig sein, den Algorithmus „schwere Anaphylaktische Reaktion" parallel anzuwenden.
+- id: bronchospasmus
+  title: Akuter Bronchospasmus / Asthma / COPD
+  categories:
+  - resp
+  bilder: []
+  abcde:
+    A: Stridor, Verlegung der Atemwege
+    B: Tachypnoe, SpO₂-Abfall
+    C: Tachykardie
+    D: Angst, Agitiertheit, Somnolenz
+    E: 'Patientengeschichte: COPD? Asthma bronchiale?'
+  diagnose:
+  - Akute Atemnot
+  - Erhöhte Atemfrequenz
+  - Atemgeräusche (Giemen, Brummen, Pfeifen)
+  - Verlängertes Exspirium
+  keypoints:
+  - Maßnahmen nach ABCDE setzen
+  medikamente:
+  - name: Fenoterol / Ipratropium
+    route: inhal.
+    icon: syringe
+    dosierung:
+    - label: 6.–12. vLJ
+      value: 0,6 ml mit 2 ml NaCl verdünnt
+    - label: ab 12. vLJ
+      value: 1,8 ml mit 2 ml NaCl verdünnt
+    ki: '< 6. vLJ, Kinder: HF > 180'
+    nw: Zittern/Unruhe, Herzfrequenzanstieg/Blutdruckanstieg
+  reevaluation:
+    notes:
+    - strong: 'Berodual LS®:'
+      text: ab dem 6. vLJ (bis zum 12.) 6 Hübe + 2 ml NaCl; ab dem 12. vLJ 18 Hübe + 2 ml NaCl
+    - strong: 'Berodualin®:'
+      text: ab dem 6. vLJ (bis zum 12.) 12 Tropfen + 2 ml NaCl; ab dem 12. vLJ 36 Tropfen + 2 ml NaCl
+    text: 'Weitere Möglichkeiten, sollte die Inhalation keine Wirkung zeigen:'
+    doses:
+    - CPAP nach Boussignac
+    - Assistierte Beatmung
+- id: acs
+  title: Akutes Koronarsyndrom (ACS)
+  categories:
+  - cardio
+  bilder:
+  - 60C4C2FC-5EB5-4535-BC3C-2DC134123088.PNG
+  definition: 'Herzkranzgefäß verengt / verschlossen. Erster Eindruck: unruhig, Todesangst.'
+  massnahmen:
+  - Oberkörper hoch
+  - 15 l O₂
+  - keine Anstrengung
+  - NEF
+  einteilung: Angina Pectoris / Myokardinfarkt — Verschluss → Ischämie → O₂ ⬇ → Absterben Herzmuskelzelle
+  dd: Lungenembolie, Aortendissektion, Pneumothorax, Reflux, Pankreatitis, Angststörung
+  abcde:
+    A: je nach Bewusstseinszustand frei, gefährdet, verlegt
+    B: AF? SpO₂? Lungenödem?
+    C: Puls peripher tastbar? Haut kaltschweißig? RR? Recap?
+    D: Bewusstseinseintrübung? Synkope?
+    E: Anamnese nach SAMPLER
+  diagnose:
+  - 'Leitsymptome: retrosternaler Schmerz · Ausstrahlung · kaltschweißig · Zyanose'
+  - ischämietypischer Thoraxschmerz
+  keypoints:
+  - Maßnahmen nach ABCDE setzen
+  - 12-Kanal-EKG innerhalb von 10 Minuten
+  - Aufkleben der DefiPads bei STEMI bzw. bei kritischem Patient
+  - Wenn orale Gabe nicht möglich ist (Bsp. Schluckstörung, Erbrechen…) → i.v. Gabe
+  medikamente:
+  - name: Acetylsalicylsäure
+    route: oral
+    icon: syringe
+    dosierung:
+    - label: Erwachsene
+      value: 250 mg p.o.
+    ki: Kinder
+    nw: keine Relevanten
+  - name: Acetylsalicylsäure
+    route: i.v.
+    note: (falls oral nicht möglich)
+    icon: syringe
+    dosierung:
+    - label: Erwachsene
+      value: 250 mg i.v. (2,5 ml)
+    ki: Kinder
+    nw: keine Relevanten
+  reevaluation:
+    text: KEINE Wiederholung der Acetylsalicylsäure
+- id: hypertensiver-notfall
+  title: Hypertensiver Notfall
+  categories:
+  - cardio
+  bilder:
+  - Hypertension.jpg
+  definition: 'Akuter bedrohlicher RR ⬆. Erster Eindruck: unruhig, hochroter Kopf.'
+  massnahmen:
+  - Oberkörper ⬆ / Beine ⬇
+  - Nitrospray
+  einteilung: Medikamente · Hormone · Vergiftung · Tumor · Drogen
+  dd: Schlaganfall, Aortendissektion, Präeklampsie / Eklampsie, Intoxikation (Kokain, Amphetamine)
+  abcde:
+    A: je nach Bewusstseinszustand frei, gefährdet, verlegt
+    B: AF? SpO₂? Lungenödem?
+    C: Angina Pectoris? Aortensyndrom?
+    D: neurologisches Defizit (siehe unten)
+    E: Hypertensive urgency ≠ emergency
+  diagnose:
+  - 'Leitsymptome: Kopfschmerzen · Ohrensausen · Nasenbluten'
+  - 'RR über 200 mmHg (systolisch) mit Symptomatik:'
+  - – Angina Pectoris
+  - – Lungenödem
+  - – neurolog. Defizit
+  - – Kopfschmerz
+  - – Sehstörung
+  keypoints:
+  - Maßnahmen nach ABCDE setzen
+  medikamente:
+  - type: venenzugang
+  - name: Urapidil
+    route: i.v.
+    icon: syringe
+    dosierung:
+    - label: Erwachsene
+      value: 5 mg i.v.
+    - label: Ziel
+      value: RR-Senkung max. 25% des Ausgangswertes UND nicht unter 160 mmHg (systolisch)
+    ki: Kinder
+    nw: übermäßiger Blutdruckabfall
+  reevaluation:
+    text: 'Wiederholung alle 5 Minuten nach Blutdruckkontrolle bis Ziel erreicht: Senkung des Blutdrucks um max. 25% des Ausgangswertes
+      UND nicht unter 160 mmHg (systolisch). NICHT mehr als 25 mg Urapidil verabreichen!'
+- id: hypoglykaemie
+  title: Hypoglykämie
+  categories:
+  - meta
+  - neuro
+  bilder:
+  - Hypoglykämie.png
+  - Hypoglykämie_info.jpg
+  definition: 'Insulin ⬆ / Blutzucker ⬇. Erster Eindruck: schlechter Gesamtzustand.'
+  massnahmen:
+  - Beine hoch
+  - Glucose oral wenn wach
+  dd: Stroke / TIA, Krampfanfall, Intoxikation, Sepsis, psychiatrische Störungen
+  abcde:
+    A: je nach Bewusstseinszustand frei, gefährdet, verlegt
+    B: 'Zyanose? AF? SpO₂? Auskultation: bds. belüftet?'
+    C: Hämodynamische Differentialdiagnose?
+    D: Bewusstseinsstörung – neurologische Differentialdiagnose?
+    E: Typ I Diabetes? Insulinpumpe?
+  diagnose:
+  - 'Leitsymptome: Zittern · Schwitzen · Palpitationen · Tachykardie · Heißhunger · Blässe · Benommenheit · Verwirrtheit ·
+    Sprachstörung · Sehstörung · Parästhesien · ggf. Krampfanfall, Bewusstlosigkeit'
+  - Bewusstseinsstörung
+  - UND
+  - Blutzucker unter 50 mg/dL
+  keypoints:
+  - Maßnahmen nach ABCDE setzen
+  - ggf. Insulinpumpe diskonnektieren
+  medikamente:
+  - type: venenzugang
+  - name: Glucose 33%
+    route: i.v.
+    icon: syringe
+    dosierung:
+    - label: Erwachsene
+      value: 13,2 g rasch i.v. (40 ml)
+    - label: Kinder
+      value: 6,6 g rasch i.v. (20 ml)
+    ki: < 6. vLJ
+    nw: Lokale Venenreizung
+  reevaluation:
+    text: Mit 20 ml isotoner Elektrolytlösung i.v. nachspülen. Wiederholung der Glucose-Boli bis der Normwert erreicht ist.
+- id: hypovolaemie
+  title: Hypovolämie / Schock
+  categories:
+  - cardio
+  bilder:
+  - Schock.png
+  definition: 'O₂-Angebot < O₂-Bedarf. Erster Eindruck: unruhig, Blutung?'
+  einteilung: kompensiert / beginnend / manifest — Hypovolämisch · Distributiv (anaphylakt., septisch, neurogen) · Kardiogen
+    (ACS, Lungenödem) · Obstruktiv (Lungenembolie, Spannungspneu, Tamponade)
+  dd: Kardiogener Schock, distributiver Schock, obstruktiver Schock (Lungenembolie, Tamponade, Spannungspneumothorax)
+  abcde:
+    A: je nach Bewusstseinszustand frei, gefährdet, verlegt
+    B: AF? SpO₂? Lungenödem?
+    C: Puls peripher tastbar? Blässe, Kaltschweißigkeit, Tachykardie
+    D: Neurologische Symptome? Stroke?
+    E: richtungsweisende Anamnese (siehe unten)
+  diagnose:
+  - 'Leitsymptome: Puls n/⬆/⬆⬆ · AF n/⬆/⬆⬆ · RR n/⬇/⬇⬇'
+  - Hinweise auf einen Flüssigkeitsverlust in der Anamnese (z.B. Blutverlust, Verbrennung, Schwitzen, Diarrhoe)
+  - Rekap-Zeit über 2 s
+  - klinisches Bild einer schweren Beeinträchtigung (Blässe, Kaltschweißigkeit, Tachykardie, Bewusstseinsstörung)
+  keypoints:
+  - Maßnahmen nach ABCDE setzen
+  medikamente:
+  - type: venenzugang
+  - name: Isotone Elektrolytlösung
+    route: i.v.
+    icon: drop
+    dosierung:
+    - label: Erwachsene
+      value: 500 ml i.v.
+    - label: Kinder
+      value: 10 ml / kg KG i.v.
+    ki: Lungenödem, Kinder < 6 vLJ
+    nw: keine Nebenwirkungen zu erwarten
+  reevaluation:
+    heading: 'Keine Besserung nach Infusionsende? Wiederholung:'
+    doses:
+    - Erwachsene max. 1000 ml
+    - Kinder bis max. 40 ml / kg KG in 10 ml / kg KG Schritten und dazwischen reevaluieren
+- id: uebelkeit-erbrechen
+  title: Übelkeit und Erbrechen
+  categories:
+  - sonstiges
+  bilder: []
+  abcde:
+    A: je nach Bewusstseinszustand frei, gefährdet, verlegt
+    B: Tachypnoe?
+    C: Tachykardie?, Blässe?
+    D: Schmerzen, Schwindel?, Unruhe?
+    E: Massive Übelkeit, bereits Erbrochen?
+  diagnose:
+  - Ausgeprägte Übelkeit und/oder Erbrechen jeglicher Herkunft
+  - Längere Transportwege
+  keypoints:
+  - Maßnahmen nach ABCDE setzen
+  - Nicht mit anderen Medikamenten in einer Infusion mischen
+  medikamente:
+  - type: venenzugang
+  - name: Granisetron
+    route: i.v.
+    icon: syringe
+    dosierung:
+    - label: ab 12. vLJ
+      value: 3 mg langsam i.v.
+    ki: < 12. vLJ, Schwangerschaft
+    nw: Kopfschmerzen, Wärmegefühl, Flush, QT-Verlängerung
+  reevaluation:
+    text: KEINE Wiederholung
+- id: krampfanfall
+  title: Bestehender zerebraler Krampfanfall
+  categories:
+  - neuro
+  bilder:
+  - Krampfanfall.png
+  definition: 'Störung ZNS → Spontanentladung. Erster Eindruck: krampfend oder Nachschlafphase.'
+  massnahmen:
+  - Seitenlage, 30°
+  - 6–8 l O₂
+  - NEF
+  einteilung: fokal / generalisiert
+  dd: Synkope, Hypoglykämie, Intoxikation, SHT, Fieberkrampf, Stroke/TIA, psychogener Anfall
+  abcde:
+    A: bedroht, verlegt, Aspiration
+    B: Abnorme Atmung
+    C: Kreislauf vorhanden?
+    D: Pupillengröße & -reaktion?
+    E: Stuhl- bzw. Harnverlust? Zungenbiss?
+  diagnose:
+  - 'Leitsymptome: Amnesie · Zungenbiss · RR ⬆ · Zyanose'
+  - Plötzliche Bewusstlosigkeit
+  - Tonisch-klonische Krämpfe
+  - Passagerer Atemstillstand
+  keypoints:
+  - Maßnahmen nach ABCDE setzen
+  - 'CAVE: Atem-Kreislaufstillstand → Wechsel zu ALS Algorithmus'
+  - Eigen- und Fremdschutz
+  medikamente:
+  - name: Diazepam
+    route: rektal
+    icon: syringe
+    dosierung:
+    - label: 1.–3. vLJ / 10–15 kg
+      value: 5 mg rektal
+    - label: 3.–7. vLJ
+      value: 10 mg rektal
+    ki: < 1. vLJ
+    nw: Müdigkeit, Atemdepression
+  - name: Midazolam
+    route: nasal über MAD
+    icon: syringe
+    dosierung:
+    - label: ab dem 8. vLJ
+      value: Gesamt 10 mg nasal
+    - label: Midazolam® 3 ml / 15 mg
+      value: 1 ml (5 mg) pro Naseloch
+    ki: < 8. vLJ
+    nw: Müdigkeit, Atemdepression
+  reevaluation:
+    text: KEINE Wiederholung der Benzodiazepine
+- id: fieberkrampf
+  title: Fieber mit Krampfanfall bei Kindern
+  categories:
+  - neuro
+  - meta
+  bilder: []
+  abcde:
+    A: In der Regel keine Beeinträchtigung zu erwarten
+    B: Tachypnoe? Zyanose? Einziehungen? Nasenflügeln?
+    C: Tachykardie? Bradykardie?
+    D: Altersentsprechende Reaktion?
+    E: Anamnestisch Fieberkrämpfe bekannt? Aktueller Infekt?
+  diagnose:
+  - Fieber > 38,5 °C UND Krampfanamnese (aktuell oder anamnestisch)
+  - Kind krampft noch? Wechsel zu Algorithmus „Bestehender zerebraler Krampfanfall"!
+  keypoints:
+  - Maßnahmen nach ABCDE setzen
+  - Kind krampft noch? → Wechsel zu Algorithmus Bestehender Zerebraler Krampfanfall
+  - Temperatur nachmessen
+  - Medikation durch Eltern?
+  medikamente:
+  - name: Paracetamol Supp.
+    route: rektal
+    icon: syringe
+    dosierung:
+    - label: 6. LM – 2. vLJ
+      value: 125 mg rektal
+    - label: 2. – 8. vLJ
+      value: 250 mg rektal
+    ki: < 6. LM, Paracetamolgabe in den letzten 6h
+    nw: keine Nebenwirkungen zu erwarten
+  reevaluation:
+    text: KEINE Wiederholung des Paracetamols
+- id: schmerzen
+  title: Starke Schmerzen
+  categories:
+  - schmerz
+  bilder: []
+  abcde:
+    A: je nach Bewusstseinszustand frei, gefährdet, verlegt
+    B: Tachypnoe?
+    C: Tachykardie?, Blässe?
+    D: Schmerzen, Schwindel?, Unruhe?
+    E: Ereignisbezogener Zusammenhang (Trauma, ..)? Schonhaltung, Mimik, Gestik
+  diagnose:
+  - allgemeine atraumatische Schmerzen ab NRS > 3
+  - Viszeralschmerz ab NRS > 3
+  - Traumatisch bedingter Schmerz
+  keypoints:
+  - Maßnahmen nach ABCDE setzen
+  medikamente:
+  - type: venenzugang
+  - name: Methoxyfluran
+    route: inhal.
+    icon: syringe
+    dosierung:
+    - label: ab 18. vLJ
+      value: 1 E
+    ki: Kinder, Kopfverletzung, kardiovaskuläre Instabilität, resp. Insuffizienz, Niereninsuffizienz, Bewusstlosigkeit, maligne
+      Hyperthermie
+    nw: keine Nebenwirkungen zu erwarten
+  - type: und-oder
+  - name: Paracetamol
+    route: i.v.
+    icon: syringe
+    dosierung:
+    - label: ab Pubertät
+      value: 1000 mg i.v.
+    - label: 12. vLJ – Pubertät
+      value: 15 mg / kg KG i.v. (1,5 ml)
+    ki: < 12. vLJ, schwere Leberschädigung, chron. Alkoholismus, Einnahme innerhalb der letzten 6h
+    nw: keine Nebenwirkungen zu erwarten
+  reevaluation:
+    heading: Reevaluation (ABCDE, NRS)
+    notes:
+    - icon: syringe
+      text: 'Methoxyfluran: 1× wiederholbar'
+    - icon: syringe
+      text: 'Paracetamol: nicht wiederholbar'
+- id: schlaganfall
+  title: Schlaganfall
+  categories:
+  - neuro
+  bilder:
+  - fe342e98-c3e3-4eff-9a26-2e0087122d30.png
+  definition: 'Plötzliche neurologische Ausfälle durch ischämische oder hämorrhagische Ursache. Erster Eindruck: Sprechstörung.'
+  abcde:
+    A: Schluckbeeinträchtigung
+    D: |-
+      ⬇️ Bewusstsein, verwirrt
+      AVPU: Schwindel
+      ZOPS: vermindert
+      FAST > 0
+      Pupillen: Herdblick, anisokor
+    E: |-
+      Sprache beeinträchtigt
+      Lähmung
+      💩 Harn-/Stuhlabgang
+  diagnose:
+  - 'Leitsymptome: FAST > 0 · Herdblick · Anisokorie · Einseitige Symptomatik'
+  massnahmen:
+  - Seitenlage, Oberkörper 30°
+  - 15 l O₂
+  - Absaugen
+  einteilung: ischämisch / hämorrhagisch
+  dd: Hypo-/Hyperglykämie, postiktaler Zustand, Migräne, Intoxikation, SHT, Meningitis / Enzephalitis, Synkope
+- id: exsikkose
+  title: Exsikkose
+  categories:
+  - meta
+  bilder:
+  - Exsikkose.png
+  definition: Flüssigkeit ⬇ im Extrazellularraum.
+  abcde:
+    A: trockene Schleimhaut
+    C: |-
+      HF: ⬆
+      RR: ⬇
+      Haut: exsikkotisch
+    D: 'Bewusstsein: ⬇'
+    E: |-
+      Übelkeit / Erbrechen
+      starker Durst
+  einteilung: 'Ursachen: Durchfall, Erbrechen, Fieber, Flüssigkeitszufuhr ⬇, Schwitzen, Verbrennung, Diabetes'
+  dd: Infektion, Hyperglykämie, Elektrolytstörung, Sepsis
+- id: hyperglykaemie
+  title: Diabetes Hyperglykämie
+  categories:
+  - meta
+  bilder:
+  - Hyperglykämie.JPG
+  - Hyperglykämie_Kussmaul.jpg
+  definition: 'Insulin ⬇ / Blutzucker ⬆. Erster Eindruck: schlechter Gesamtzustand.'
+  abcde:
+    A: 'Typ 1: Azetongeruch'
+    B: |-
+      AF: ⬆ vertieft
+      Kußmaul-Atmung
+    D: |-
+      Bewusstsein: ⬇ verwirrt
+      AVPU: ⬇ Schwindel
+      ZOPS: vermindert
+      Exsikkose
+      BZ: ⬆
+    E: |-
+      Krämpfe
+      Übelkeit / Erbrechen
+      Polyurie
+      starker Durst
+  diagnose:
+  - 'Leitsymptome: Kußmaul-Atmung · Azetongeruch · Polyurie · Polydipsie'
+  massnahmen:
+  - Beine hoch
+  einteilung: 'Typ 1: kein Insulin · Typ 2: Resistenz / Therapiefehler · Blutzucker ⬆'
+  dd: Sepsis, Stroke, Hypovolämie, Intoxikation, Elektrolytstörungen, Pankreatitis
+- id: vergiftung
+  title: Vergiftung
+  categories:
+  - sonstiges
+  bilder: []
+  definition: 'Aufnahme schädlicher Substanzen. Erster Eindruck: erregt — Anamnese W-Fragen.'
+  abcde:
+    D: |-
+      Bewusstsein: gestört
+      AVPU: ⬇ Schwindel
+      ZOPS: vermindert
+    E: |-
+      Krämpfe, Bauch — Einstichstellen?
+      Übelkeit / Erbrechen
+      Harn-/Stuhlabgang
+  diagnose:
+  - 'Leitsymptome: Pupillenveränderungen'
+  massnahmen:
+  - Seitenlage
+  einteilung: oral / Inhalation / transdermal / intravenös
+  dd: Hypo-/Hyperglykämie, Sepsis, Stroke, Krampfanfall, Hypoxie, Delir
+- id: sht
+  title: Schädel-Hirn-Trauma (SHT)
+  categories:
+  - trauma
+  bilder:
+  - SHT.JPG
+  - SHT_info.jpg
+  definition: 'Gewalteinwirkung auf Schädel / Gehirn. Erster Eindruck: Verletzung Kopf, Unfallkinetik.'
+  abcde:
+    C: 'HF: ⬇ — kräftiger Puls'
+    D: |-
+      Bewusstsein: ⬇ (I < 15 min · II < 24 h · III > 24 h)
+      AVPU: ⬇ Schwindel
+      ZOPS: vermindert
+      Pupillendifferenz
+      Flüssigkeit aus Nase / Ohr (Blut, Liquor)
+    E: |-
+      Lähmung, Krämpfe, ev. Stufenbildung Schädel
+      Übelkeit / Erbrechen
+  diagnose:
+  - 'Leitsymptome: kräftiger Puls · Anisokorie · Amnesie · Brillenhämatom · Flüssigkeit aus Nase/Ohr · Übelkeit'
+  massnahmen:
+  - Oberkörper 30°
+  - 15 l O₂
+  - Absaugen
+  - Schaufeltrage / Vakuummatratze, KEINE HWS-Schiene!
+  einteilung: offen / geschlossen · primär / sekundär · I Gehirnerschütterung · II Gehirnprellung · III Gehirnquetschung ·
+    epi-/subdurale / intrazerebrale Blutung · Kalottenfraktur · Schädelbasisbruch
+  dd: Stroke, Intoxikation, Hypoglykämie, Synkope, postiktaler Zustand, Meningitis
+- id: wirbelsaeulen-trauma
+  title: Wirbelsäulentrauma
+  categories:
+  - trauma
+  bilder:
+  - Wirbelsäulentrauma.PNG
+  definition: 'Gewalteinwirkung Wirbelsäule. Erster Eindruck: Unfallkinetik beachten.'
+  abcde:
+    E: Schmerzen spontan / beim Abtasten WS, Prellmarken, bds. Gefühlsstörung bis Lähmung der Extremitäten
+  diagnose:
+  - 'Leitsymptome: bds. Gefühlsstörung bis Lähmung Extremitäten'
+  dd: Aortendissektion, retroperitoneale Blutung, Nierenkolik, Meningitis, Bandscheibenproblem
+- id: bauchtrauma
+  title: Bauchtrauma
+  categories:
+  - trauma
+  bilder:
+  - Bauchtrauma.png
+  definition: 'Gewalteinwirkung Bauchraum. Erster Eindruck: Verletzung Bauch, Unfallkinetik, Beine angezogen.'
+  abcde:
+    C: |-
+      HF: ⬆
+      Haut: kaltschweißig
+    E: |-
+      Schmerzen Bauch, brettharter Bauch, Hämatome, offene Wunden
+      Übelkeit / Erbrechen
+  diagnose:
+  - 'Leitsymptome: kaltschweißig · brettharter Bauch · Bauchschmerz'
+  massnahmen:
+  - flach, Beine angezogen
+  - Schaufeltrage / Vakuummatratze
+  einteilung: Milzruptur · Leber · Magen-Darm · Pankreas
+  dd: Milz-/Leberruptur, Darmperforation, retroperitoneale Blutung, Beckenfraktur, akutes Abdomen
+- id: brustkorb-verletzung
+  title: Brustkorbverletzung
+  categories:
+  - trauma
+  bilder: []
+  definition: 'Gewalteinwirkung Brustkorb. Erster Eindruck: Unfallkinetik beachten.'
+  abcde:
+    A: Atemnot
+    B: |-
+      AF: ⬆
+      paradoxe / einseitige Atmung?
+      Zyanose
+      SpO₂: ⬇
+      Halsvenen gestaut
+    C: |-
+      HF: ⬆
+      RR: ⬇
+    D: ev. schaumiges Blut aus Wunden
+  diagnose:
+  - 'Leitsymptome: paradoxe Atmung · schaumiges Blut aus Wunde · gestaute Halsvenen · Zyanose'
+  massnahmen:
+  - Oberkörper 30° auf verletzte Seite
+  - 15 l O₂
+  - Absaugen
+  - Schaufeltrage / Vakuummatratze
+  dd: Pneumothorax, Herzbeuteltamponade, Lungenkontusion, Rippenfraktur, Zwerchfellruptur
+- id: asthma-bronchiale
+  title: Asthma bronchiale
+  categories:
+  - resp
+  bilder:
+  - Asthma.JPG
+  definition: 'Chronisch entzündliche Erkrankung der Atemwege. Erster Eindruck: unruhig, agitiert, Atemhilfsmuskulatur, Angst.'
+  abcde:
+    A: frei (Bronchien verengt), verlängerte Ausatmung
+    B: |-
+      exspiratorischer Stridor
+      Zyanose
+      SpO₂: ⬇
+    C: 'HF: ⬆'
+    D: Sprechdyspnoe
+  diagnose:
+  - 'Leitsymptome: verlängerte Ausatmung · exspiratorischer Stridor · Zyanose'
+  massnahmen:
+  - Oberkörper 90°
+  - 15 l O₂
+  - Asthmaspray (Patient)
+  einteilung: allergisch / nicht-allergisch · anfallsweise Atemwegsverengung durch Reize
+  dd: COPD, Pneumonie, Lungenembolie, Anaphylaxie, Fremdkörper, Herzinsuffizienz
+- id: copd
+  title: COPD
+  categories:
+  - resp
+  bilder:
+  - COPD.png
+  definition: 'Zunehmende, irreversible Atemwegsverengung. Erster Eindruck: unruhig, agitiert, Atemhilfsmuskulatur.'
+  abcde:
+    A: durch Schleim beeinträchtigt, verlängerte Ausatmung
+    B: |-
+      exspiratorischer Stridor, Husten, Auswurf
+      Zyanose
+      SpO₂: ⬇
+    C: 'HF: ⬆'
+  diagnose:
+  - 'Leitsymptome: verlängerte Ausatmung · exsp. Stridor · Husten / Auswurf · Zyanose'
+  massnahmen:
+  - Oberkörper 90°
+  - 15 l O₂
+  - CPAP, Lippenbremse
+  dd: Pneumonie, Asthma, Lungenembolie, Herzinsuffizienz, Pneumothorax
+- id: atemnot-dyspnoe
+  title: Atemnot (Dyspnoe) — Schwellung / Verlegung
+  categories:
+  - resp
+  bilder:
+  - Dyspnoe.JPG
+  definition: 'Subjektiv erschwerte Atmung, ggf. Aspiration. Erster Eindruck: unruhig, agitiert.'
+  abcde:
+    A: Atemnot — zugeschwollen? verlegt? Speise / Blut / Erbrochenes
+    B: |-
+      AF: ⬆
+      inspiratorischer Stridor (Schwellung)
+      Zyanose
+      SpO₂: ⬇
+    C: 'HF: ⬆'
+    E: ev. Gesicht angeschwollen, Einstichstelle Insekt, Sprachverlust
+  diagnose:
+  - 'Leitsymptome: Atemwege zugeschwollen · Gesicht angeschwollen'
+  massnahmen:
+  - Oberkörper hoch
+  - Einstichstelle kühlen
+  einteilung: akut / chronisch · Belastung / Ruhe · obere Atemwege (Fremdkörper, Schleimhautschwellung, Tumor, Verletzung)
+    · untere Atemwege (Ventilation, Diffusion, Perfusion)
+  dd: Anaphylaxie, Epiglottitis, Pseudokrupp, Fremdkörper, Angioödem
+- id: pneumonie
+  title: Pneumonie (Lungenentzündung)
+  categories:
+  - resp
+  bilder: []
+  definition: 'Infektiöse Erkrankung der Lunge. Erster Eindruck: schlechter Gesamtzustand.'
+  abcde:
+    A: Atemnot
+    B: |-
+      AF: ⬆
+      Zyanose
+      SpO₂: ⬇
+    C: 'HF: ⬆'
+    E: 'Temp: ⬆'
+  diagnose:
+  - 'Leitsymptome: ev. Husten · Fieber'
+  massnahmen:
+  - Oberkörper hoch
+  einteilung: bakteriell (plötzliches hohes Fieber, Husten) · viral (milder, schleichend) · Pilze · Aspiration
+  dd: Lungenembolie, COPD / Asthma, Lungenödem, Pleuritis, Sepsis
+- id: lungenoedem
+  title: Lungenödem
+  categories:
+  - resp
+  - cardio
+  bilder:
+  - Lungenödem.JPG
+  - Lungenödem_info.jpg
+  definition: 'Flüssigkeit zwischen oder in Lungenbläschen. Erster Eindruck: schlechter Gesamtzustand.'
+  abcde:
+    A: Atemnot, fleischwasserfarbener Schaum
+    B: |-
+      AF: ⬆
+      rasselnd / brodelnd, Husten
+      Zyanose
+      SpO₂: ⬇
+    C: |-
+      HF: ⬆
+      blass, kaltschweißig
+    E: Beinödeme
+  diagnose:
+  - 'Leitsymptome: fleischwasserfarbener Schaum · rasselnd/brodelnd · Beinödeme · Zyanose'
+  massnahmen:
+  - Oberkörper ⬆ / Beine ⬇
+  - 15 l O₂
+  - Absaugen
+  - CPAP
+  einteilung: kardial (Linksherzinsuffizienz) · renal (Niereninsuffizienz) · toxisch (Atemgifte / Brand / Höhe)
+  dd: COPD / Asthma, Pneumonie, Lungenembolie, Anaphylaxie, Nierenversagen
+- id: lungenembolie
+  title: Lungenembolie
+  categories:
+  - resp
+  - cardio
+  bilder:
+  - Lungenembolie.JPG
+  - Lungenembolie_info.jpg
+  definition: Verschluss einer Lungenarterie.
+  abcde:
+    A: Atemnot, ev. Hämoptyse
+    B: |-
+      AF: ⬆
+      Zyanose
+      SpO₂: ⬇
+      Halsvenen gestaut
+    C: |-
+      HF: ⬆, schwer tastbar
+      RR: ⬇
+    E: Schmerzen Brust, gestaute Halsvenen → Stillstand!
+  diagnose:
+  - 'Leitsymptome: obstr. Schock · gestaute Halsvenen · Puls kaum tastbar · Zyanose'
+  massnahmen:
+  - Oberkörper hoch
+  - 15 l O₂
+  - Absaugen
+  - keine Anstrengung
+  einteilung: Thrombus aus Beinvene · Fettembolie · Luftembolie · Fruchtwasserembolie
+  dd: Pneumonie, Aortendissektion, ACS, Pneumothorax, Herzinsuffizienz, Panikattacke
+- id: hyperventilation
+  title: Hyperventilation / Tetanie
+  categories:
+  - resp
+  bilder:
+  - Hyperventilation.PNG
+  - Hyperventilation_info.jpg
+  definition: 'Schnelle tiefe Atmung → Abatmung von CO₂. Erster Eindruck: erregt.'
+  abcde:
+    B: |-
+      AF: ⬆
+      tiefe Atemzüge
+      KEINE Zyanose
+      SpO₂: normal
+    C: 'HF: ⬆'
+    E: Pfötchenstellung, Kribbeln
+  diagnose:
+  - 'Leitsymptome: Pfötchenstellung · Kribbeln'
+  massnahmen:
+  - Oberkörper hoch
+  - CO₂-Rückatmung
+  einteilung: respiratorische Alkalose (pH ⬆)
+  dd: Lungenembolie, metabolische Azidose, Angst / Panik, Intoxikation, Sepsis, Hypokalzämie
+- id: spannungspneumothorax
+  title: Spannungspneumothorax
+  categories:
+  - resp
+  - trauma
+  bilder:
+  - Spannungspneumothorax.JPG
+  - Spannungspneu_info.jpg
+  definition: 'Luft im Pleuraspalt → Lunge fällt zusammen. Erster Eindruck: Unfallkinetik?'
+  abcde:
+    A: asymmetrische Atmung
+    B: |-
+      AF: ⬆
+      Atemgeräusch einseitig abgeschwächt
+      Zyanose
+      SpO₂: ⬇
+    C: |-
+      HF: ⬆
+      RR: ⬇⬇ (massiv — mechanische Behinderung venöser Rückstrom → Schock)
+    E: Schmerzen Brust, gestaute Halsvenen
+  diagnose:
+  - 'Leitsymptome: Hypotonie · Dyspnoe · gestaute Halsvenen · Tachykardie'
+  einteilung: offen / geschlossen · spontan / traumatisch
+  dd: Lungenembolie, Asthma / COPD, Herzbeuteltamponade, Rippenfraktur, Panikattacke
+- id: pseudokrupp
+  title: Pseudokrupp
+  categories:
+  - resp
+  bilder:
+  - Pseudokrupp.JPG
+  definition: Subglottische Atemwegsverengung bei Kindern.
+  abcde:
+    A: flatternde Nasenflügel
+    B: |-
+      bellender Husten, inspiratorisch ziehend
+      Zyanose
+    C: 'RR: ⬇'
+  diagnose:
+  - 'Leitsymptome: bellender Husten · Nasenflügelatmen · inspiratorisch ziehend · Zyanose'
+  dd: Epiglottitis, Anaphylaxie, Fremdkörper, virale Atemwegsinfekte
+- id: kollaps
+  title: Kollaps / Synkope
+  categories:
+  - cardio
+  - neuro
+  bilder: []
+  definition: Kurzfristiger Bewusstseinsverlust durch Minderperfusion.
+  abcde:
+    C: 'RR: ⬇'
+    D: 'AVPU: Schwindel'
+    E: kurze Bewusstlosigkeit
+  massnahmen:
+  - Beine hoch
+  dd: Arrhythmien, Hypoglykämie, Lungenembolie, Aortendissektion, SHT, Intoxikation, Volumenmangel
+- id: akutes-abdomen
+  title: Akutes Abdomen
+  categories:
+  - sonstiges
+  bilder:
+  - akutes_Abdomen.png
+  definition: Akute, plötzliche Bauchschmerzen.
+  abcde:
+    C: |-
+      HF: ⬆
+      RR: ⬇
+      blass, kaltschweißig
+    E: |-
+      Schmerzen Bauch, Abwehrspannung, Durchfall / Obstipation, Bluterbrechen ❗, Blut im Stuhl
+      Übelkeit / Erbrechen
+  diagnose:
+  - 'Leitsymptome: Bauchschmerzen · Beine angezogen'
+  dd: Appendizitis, Cholezystitis, Pankreatitis, Ileus, Aortenaneurysma / -dissektion, Ureterkolik, EUG
+- id: hitze
+  title: Hitzenotfall
+  categories:
+  - sonstiges
+  bilder: []
+  definition: 'Hyperthermie durch Hitzeexposition. Erster Eindruck: hochroter Kopf oder Blässe.'
+  abcde:
+    C: |-
+      HF: ⬆
+      RR: ⬇
+      blass, kaltschweißig
+    D: |-
+      Bewusstsein: ⬇
+      AVPU: Schwindel
+      Nackensteifigkeit
+    E: |-
+      Kopfschmerzen, Schüttelfrost, Krämpfe
+      Übelkeit / Erbrechen
+      Temp: ⬆
+  massnahmen:
+  - Oberkörper hoch
+  - kühlen
+  einteilung: Hitzekrampf · Hitzeerschöpfung · Hitzschlag · Sonnenstich
+  dd: Sepsis, Exsikkose, Hypoglykämie, Intoxikation, Hitzschlag vs. Kollaps
+- id: unterkuehlung
+  title: Unterkühlung (Hypothermie)
+  categories:
+  - sonstiges
+  bilder:
+  - Hypothermie.PNG
+  definition: Körperkerntemperatur < 35 °C → Störung der Organfunktion.
+  abcde:
+    E: 'Temp: ⬇'
+  diagnose:
+  - 'Leitsymptome: AF / HF / RR variabel je nach Stadium'
+  massnahmen:
+  - '! vorsichtig bewegen (Afterdrop-Gefahr)'
+  einteilung: Abwehr → Erschöpfung → Lähmung → (Schein-)Tod
+  dd: Hypoglykämie, Intoxikation, Hypothyreose, Sepsis
+- id: verbrennung
+  title: Verbrennung
+  categories:
+  - trauma
+  bilder: []
+  definition: Thermische Hautschädigung.
+  massnahmen:
+  - Beine hoch
+  - Wunden steril abdecken
+  - NICHT großflächig kühlen
+  dd: Inhalationstrauma, CO-Intoxikation, Trauma allgemein, Infektion
+- id: ertrinken
+  title: Ertrinken
+  categories:
+  - resp
+  bilder: []
+  definition: Asphyxie durch Submersion / Immersion.
+  diagnose:
+  - 'Leitsymptome: brodelnd · Zyanose'
+  dd: Hypoxie anderer Genese, Arrhythmien, Trauma, Hypoglykämie
+- id: extrauteringraviditaet
+  title: Extrauteringravidität
+  categories:
+  - sonstiges
+  bilder:
+  - Extrauteringravidität.png
+  definition: 'Eizelle außerhalb der Gebärmutter. Erster Eindruck: starke Bauchschmerzen, Beine angezogen.'
+  abcde:
+    C: |-
+      HF: ⬆
+      RR: ⬇
+      blass, kaltschweißig
+    E: |-
+      Schwangerschaft möglich
+      Übelkeit / Erbrechen
+  diagnose:
+  - 'Leitsymptome: brettharter Bauch · Blässe · Kaltschweißigkeit'
+  massnahmen:
+  - Lagerung nach Fritsch
+  dd: rupturierte Zyste, Appendizitis, Kolik, Adnexitis, Abort, anderes akutes Abdomen
+- id: eklampsie
+  title: Schwangerschaftshypertonie / Eklampsie
+  categories:
+  - sonstiges
+  - neuro
+  bilder: []
+  definition: 'Hypertonie → Eiweißausscheidung ⬆ → Krämpfe. Erster Eindruck: Schwangere mit Krampfanfall.'
+  abcde:
+    A: blutiger Schaum, Zungenbiss?
+    B: Zyanose
+    C: 'RR: ⬆'
+    D: 'Bewusstsein: ⬇'
+    E: |-
+      Hinweis im Mutter-Kind-Pass!
+      Harn-/Stuhlabgang
+  diagnose:
+  - 'Leitsymptome: Amnesie · Zungenbiss · RR ⬆ · Zyanose'
+  massnahmen:
+  - NEF
+  dd: Eklampsie, Stroke, Krampfanfall anderer Genese, Intoxikation
