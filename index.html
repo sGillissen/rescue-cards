@@ -513,15 +513,16 @@ main {
 .karten-bilder {
   margin: 8px 0;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 8px;
 }
 .karten-bilder img {
-  max-width: 100%;
-  max-height: 280px;
+  width: 100%;
+  height: auto;
   border-radius: 8px;
   border: 1px solid var(--border);
   cursor: zoom-in;
+  display: block;
 }
 
 /* ===== Collapsible-Blöcke (Maßnahmen / Einteilung / DD) ===== */
